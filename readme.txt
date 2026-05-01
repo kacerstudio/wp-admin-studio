@@ -1,10 +1,10 @@
-=== Admin Studio ===
+=== WP Admin Studio ===
 Contributors: kacerstudio
 Tags: admin, customization, maintenance, login, scripts
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.9.3
+Stable tag: 1.9.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -115,16 +115,12 @@ Basic functionality works on multisite. SVG upload support is enabled per-site.
 
 The plugin automatically creates a backup before saving. You can restore the previous version using the "Restore backup" button on the Editor settings page.
 
-== Screenshots ==
-
-1. Main settings panel overview
-2. Admin customization options
-3. Custom scripts and PHP code editor
-4. Login page customization
-5. Maintenance mode settings
-6. robots.txt and .htaccess editor
-
 == Changelog ==
+
+= 1.9.4 =
+* Fixed: Login page password field now shows correct Feather outline eye icons (open/crossed) instead of lock icons — previous code used wrong dashicons unicode values
+* Fixed: Eye icon vertical alignment in password field corrected (centered)
+* Fixed: Sticky save bar no longer drifts into the left admin menu on sites with non-default menu widths — positioning is now calculated dynamically from actual menu width
 
 = 1.9.3 =
 * Security: SVG capability now granted dynamically via map_meta_cap filter — no permanent role modifications
@@ -147,8 +143,3 @@ The plugin automatically creates a backup before saving. You can restore the pre
 * Added visual translation editor
 * Added post status color coding
 * Added duplicate posts feature
-
-== Upgrade Notice ==
-
-= 1.9.3 =
-Security improvement: SVG upload support no longer permanently modifies user role capabilities in the database. If you previously had SVG upload enabled, the `unfiltered_upload` capability will be managed dynamically while the plugin is active.
