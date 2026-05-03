@@ -6286,6 +6286,28 @@ add_filter(\'wp_footer\', function() {
         }
 
         $this->add_sticky_nav_script();
+
+        // Dynamic sticky footer positioning based on actual admin menu width
+        echo "<script>
+        (function() {
+            function updateStickyFooterLeft() {
+                var footer = document.querySelector('.wpc-sticky-footer');
+                if (!footer) return;
+                if (window.innerWidth < 783) { footer.style.left = ''; return; }
+                var menu = document.getElementById('adminmenuback');
+                if (!menu) return;
+                var menuWidth = menu.offsetWidth;
+                footer.style.left = menuWidth + 'px';
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                updateStickyFooterLeft();
+                var observer = new MutationObserver(updateStickyFooterLeft);
+                observer.observe(document.body, { attributes: true, attributeFilter: ['class'] });
+                window.addEventListener('resize', updateStickyFooterLeft);
+            });
+        })();
+        </script>";
     }
     
     public function unset_url_field($fields) {
@@ -7378,7 +7400,7 @@ add_filter(\'wp_footer\', function() {
                 padding: 0 !important;
                 position: absolute !important;
                 right: 8px !important;
-                top: 40% !important;
+                top: 50% !important;
                 transform: translateY(-50%) !important;
                 width: 40px !important;
                 height: 40px !important;
@@ -7553,33 +7575,8 @@ add_filter(\'wp_footer\', function() {
                 margin: 15px !important;
                 padding: 0 !important;
             }
-            }
             
-            /* Password visibility toggle icons - FORCED */
-            .dashicons-visibility:before {
-                content: "\f160" !important;
-                color: <?php echo esc_attr($primary_color); ?> !important;
-            }
-            
-            .dashicons-hidden:before {
-                content: "\f528" !important;
-                color: <?php echo esc_attr($primary_color); ?> !important;
-            }
-            
-            /* Extra specificity to override WordPress */
-            body.login .dashicons-visibility:before,
-            .login .dashicons-visibility:before,
-            .wp-pwd .dashicons-visibility:before {
-                content: "\f160" !important;
-                color: <?php echo esc_attr($primary_color); ?> !important;
-            }
-            
-            body.login .dashicons-hidden:before,
-            .login .dashicons-hidden:before,
-            .wp-pwd .dashicons-hidden:before {
-                content: "\f528" !important;
-                color: <?php echo esc_attr($primary_color); ?> !important;
-            }
+            /* Password visibility toggle icons - handled via JS SVG injection */
             
             /* Remember me checkbox */
             .login .forgetmenot {
@@ -7649,6 +7646,41 @@ add_filter(\'wp_footer\', function() {
             }
             window.addEventListener('load', removeBackToText);
             setTimeout(removeBackToText, 100);
+        })();
+        </script>
+        <script>
+        (function() {
+            var COLOR = '<?php echo esc_js($primary_color); ?>';
+            var SVG_OPEN = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+            var SVG_OFF  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+
+            function injectEyeIcons() {
+                var btn = document.querySelector('.wp-hide-pw');
+                if (!btn) return;
+                var span = btn.querySelector('.dashicons');
+                if (span) span.style.display = 'none';
+                var iconEl = btn.querySelector('.wpc-eye-icon');
+                if (!iconEl) {
+                    iconEl = document.createElement('span');
+                    iconEl.className = 'wpc-eye-icon';
+                    iconEl.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;color:' + COLOR + ';';
+                    btn.appendChild(iconEl);
+                    btn.addEventListener('click', function() {
+                        setTimeout(function() {
+                            var input = document.querySelector('#user_pass');
+                            iconEl.innerHTML = (input && input.type === 'text') ? SVG_OFF : SVG_OPEN;
+                        }, 10);
+                    });
+                }
+                iconEl.innerHTML = SVG_OPEN;
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', injectEyeIcons);
+            } else {
+                injectEyeIcons();
+            }
+            setTimeout(injectEyeIcons, 150);
         })();
         </script>
         <?php
