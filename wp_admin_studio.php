@@ -3,30 +3,23 @@
  * Plugin Name: WP Admin Studio
  * Plugin URI: https://kacer.studio/wpadminstudio
  * Description: Professional WordPress customization: admin settings, pages & posts, translations, custom scripts & codes, robots.txt & .htaccess editor
- * Version: 1.9.3
- * Requires at least: 5.8
- * Requires PHP: 7.4
+ * Version: 1.9.5
  * Author: KACER STUDIO s.r.o.
  * Author URI: https://kacer.studio
  * License: GPL v2 or later
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: wp-admin-studio
  */
 
 if (!defined('ABSPATH')) exit;
 
-// GitHub auto-updater
-require_once plugin_dir_path(__FILE__) . 'updater.php';
-new WPAdminStudioUpdater(__FILE__, WPAdminStudio::VERSION);
-
 if (!function_exists('wpc_current_year')) {
     function wpc_current_year() {
-        return gmdate('Y');
+        return date('Y');
     }
 }
 
 class WPAdminStudio {
-    const VERSION = '1.9.3';
+    const VERSION = '1.9.5';
     const MAX_UPLOAD_SIZE = 5242880; 
     const MAX_FILE_SIZE = 5242880; 
     
@@ -202,10 +195,6 @@ class WPAdminStudio {
                 'duplicate_action' => 'Vytvořit kopii',
                 'duplicate_success' => 'Kopie byla vytvořena a otevřena pro editaci.',
                 
-                'enable_svg_upload' => 'Podpora SVG souborů',
-                'enable_svg_upload_desc' => 'Povolit nahrávání SVG souborů',
-                'enable_svg_upload_tip' => 'Umožní nahrávání SVG souborů do knihovny médií ve WordPressu. Oprávnění pro nahrávání SVG je uděleno dynamicky přes WordPress filter a nevyžaduje změnu rolí v databázi. Soubory jsou při nahrání automaticky sanitizovány.',
-
                 'enable_media_replace' => 'Nahrazení souborů v médiích',
                 'enable_media_replace_desc' => 'Přidat možnost nahradit soubor přímo v knihovně médií',
                 'mr_row_action' => 'Nahradit soubor',
@@ -236,6 +225,10 @@ class WPAdminStudio {
                 'mr_error_id' => 'Neplatné ID přílohy.',
                 'mr_error_not_found' => 'Příloha nebyla nalezena.',
                 'mr_js_no_file' => 'Vyberte prosím soubor pro nahrání.',
+                
+                'enable_svg_upload' => 'Podpora SVG souborů',
+                'enable_svg_upload_desc' => 'Povolit nahrávání SVG souborů',
+                'enable_svg_upload_tip' => 'Umožní nahrávání SVG souborů do knihovny médií ve WordPressu.',
                 
                 'wp_emails' => 'E-maily WordPressu',
                 'wp_emails_desc' => 'Změnit odesílatele e-mailů',
@@ -278,7 +271,7 @@ Funguje na adresách jako /tema/XXX/ nebo /stitek/XXX/',
                 'year_shortcode' => 'Povolit shortcode [year]',
                 'year_shortcode_desc' => 'Aktivovat shortcode pro zobrazení aktuálního roku',
                 'year_shortcode_tip' => 'Aktivuje shortcode [year] který funguje VŠUDE: v obsahu příspěvků/stránek, widgetech, menu, výňatcích, nastavení šablon (footer copyright text všech populárních témat), a dalších místech. PHP kód funguje pouze v souborech .php.',
-                'year_example' => 'Použití: [year] zobrazí aktuální rok (' . gmdate('Y') . ')',
+                'year_example' => 'Použití: [year] zobrazí aktuální rok (' . date('Y') . ')',
                 
                 'responsive_images' => 'Vypnout responzivní obrázky',
                 'responsive_images_desc' => 'Zakázat automatické generování srcset a sizes',
@@ -484,7 +477,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Přidá vlastní Apache pravidla do .htaccess souboru. POZOR: Nesprávná konfigurace může způsobit nefunkčnost webu!',
                 'htaccess_content' => 'Vlastní .htaccess pravidla',
                 'htaccess_warning' => 'VAROVÁNÍ: Nesprávná pravidla mohou způsobit nefunkčnost webu! Plugin automaticky vytvoří zálohu jako <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Pravidla se <strong>přidají NA ZAČÁTEK</strong> .htaccess souboru (nepřepisují celý soubor). Obklopí se komentáři <code># BEGIN WP WP Admin Studio</code> a <code># END WP WP Admin Studio</code>.',
+                'htaccess_info' => 'ℹ️ Pravidla se <strong>přidají NA ZAČÁTEK</strong> .htaccess souboru (nepřepisují celý soubor). Obklopí se komentáři <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Šablona',
                 'htaccess_template_security' => 'Bezpečnostní pravidla',
                 'htaccess_template_cache' => 'Cache hlavičky',
@@ -510,7 +503,6 @@ add_filter(\'wp_footer\', function() {
                 'bug_report_screenshot_desc' => 'PNG nebo JPG, max 5 MB',
                 'bug_report_system_info' => 'Systémové informace',
                 'bug_report_url' => 'URL webu',
-                'bug_report_consent' => 'Odesláním tohoto hlášení souhlasíte s tím, že výše uvedené systémové informace budou předány autorovi pluginu (KACER STUDIO s.r.o.) výhradně za účelem diagnostiky a vyřešení nahlášeného problému.',
                 'bug_report_send' => 'Odeslat',
                 'bug_report_success' => 'Děkujeme! Váš report byl úspěšně odeslán.',
                 'bug_report_error_empty' => 'Prosím vyplňte popis chyby.',
@@ -612,10 +604,6 @@ add_filter(\'wp_footer\', function() {
                 'duplicate_action' => 'Create copy',
                 'duplicate_success' => 'Copy has been created and opened for editing.',
                 
-                'enable_svg_upload' => 'SVG File Support',
-                'enable_svg_upload_desc' => 'Enable SVG file uploads',
-                'enable_svg_upload_tip' => 'Allows uploading SVG files to the WordPress media library. Permission is granted dynamically via a WordPress filter and does not permanently modify user roles. Uploaded files are automatically sanitized.',
-
                 'enable_media_replace' => 'Media File Replacement',
                 'enable_media_replace_desc' => 'Add option to replace a file directly in the media library',
                 'mr_row_action' => 'Replace file',
@@ -646,6 +634,10 @@ add_filter(\'wp_footer\', function() {
                 'mr_error_id' => 'Invalid attachment ID.',
                 'mr_error_not_found' => 'Attachment not found.',
                 'mr_js_no_file' => 'Please select a file to upload.',
+                
+                'enable_svg_upload' => 'SVG File Support',
+                'enable_svg_upload_desc' => 'Enable SVG file uploads',
+                'enable_svg_upload_tip' => 'Allows uploading SVG files to the WordPress media library.',
                 
                 'wp_emails' => 'WordPress Emails',
                 'wp_emails_desc' => 'Change email sender',
@@ -688,7 +680,7 @@ Works on URLs like /category/XXX/ or /tag/XXX/',
                 'year_shortcode' => 'Enable [year] shortcode',
                 'year_shortcode_desc' => 'Activate shortcode to display current year',
                 'year_shortcode_tip' => 'Activates the [year] shortcode that works EVERYWHERE: in post/page content, widgets, menus, excerpts, theme settings (footer copyright text for all popular themes), and more. PHP code only works in .php files.',
-                'year_example' => 'Usage: [year] displays current year (' . gmdate('Y') . ')',
+                'year_example' => 'Usage: [year] displays current year (' . date('Y') . ')',
                 
                 'responsive_images' => 'Disable responsive images',
                 'responsive_images_desc' => 'Disable automatic generation of srcset and sizes',
@@ -894,7 +886,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Adds custom Apache rules to the .htaccess file. WARNING: Incorrect configuration can break your site!',
                 'htaccess_content' => 'Custom .htaccess rules',
                 'htaccess_warning' => 'WARNING: Incorrect rules can break your site! Plugin automatically creates backup as <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Rules will be <strong>added TO THE BEGINNING</strong> of the .htaccess file (not overwriting the entire file). They will be wrapped with comments <code># BEGIN WP WP Admin Studio</code> and <code># END WP WP Admin Studio</code>.',
+                'htaccess_info' => 'ℹ️ Rules will be <strong>added TO THE BEGINNING</strong> of the .htaccess file (not overwriting the entire file). They will be wrapped with comments <code># BEGIN WP Admin Studio</code> and <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Template',
                 'htaccess_template_security' => 'Security rules',
                 'htaccess_template_cache' => 'Cache headers',
@@ -920,7 +912,6 @@ add_filter(\'wp_footer\', function() {
                 'bug_report_screenshot_desc' => 'PNG or JPG, max 5 MB',
                 'bug_report_system_info' => 'System Information',
                 'bug_report_url' => 'Site URL',
-                'bug_report_consent' => 'By sending this report you agree that the above system information will be transmitted to the plugin author (KACER STUDIO s.r.o.) solely for the purpose of diagnosing and resolving the reported issue.',
                 'bug_report_send' => 'Send',
                 'bug_report_success' => 'Thank you! Your report has been sent successfully.',
                 'bug_report_error_empty' => 'Please fill in the bug description.',
@@ -1021,10 +1012,6 @@ add_filter(\'wp_footer\', function() {
                 'duplicate_action' => 'Kopie erstellen',
                 'duplicate_success' => 'Kopie wurde erstellt und zur Bearbeitung geöffnet.',
                 
-                'enable_svg_upload' => 'SVG-Dateiunterstützung',
-                'enable_svg_upload_desc' => 'SVG-Datei-Uploads aktivieren',
-                'enable_svg_upload_tip' => 'Ermöglicht das Hochladen von SVG-Dateien in die WordPress-Mediathek.',
-
                 'enable_media_replace' => 'Mediendateien ersetzen',
                 'enable_media_replace_desc' => 'Option zum Ersetzen von Dateien direkt in der Mediathek hinzufügen',
                 'mr_row_action' => 'Datei ersetzen',
@@ -1055,6 +1042,10 @@ add_filter(\'wp_footer\', function() {
                 'mr_error_id' => 'Ungültige Anhang-ID.',
                 'mr_error_not_found' => 'Anhang nicht gefunden.',
                 'mr_js_no_file' => 'Bitte wählen Sie eine Datei zum Hochladen aus.',
+                
+                'enable_svg_upload' => 'SVG-Dateiunterstützung',
+                'enable_svg_upload_desc' => 'SVG-Datei-Uploads aktivieren',
+                'enable_svg_upload_tip' => 'Ermöglicht das Hochladen von SVG-Dateien in die WordPress-Mediathek.',
                 
                 'wp_emails' => 'WordPress E-Mails',
                 'wp_emails_desc' => 'E-Mail-Absender ändern',
@@ -1097,7 +1088,7 @@ Funktioniert bei URLs wie /category/XXX/ oder /tag/XXX/',
                 'year_shortcode' => 'Shortcode [year] aktivieren',
                 'year_shortcode_desc' => 'Shortcode zur Anzeige des aktuellen Jahres aktivieren',
                 'year_shortcode_tip' => 'Aktiviert den Shortcode [year], der ÜBERALL funktioniert: in Beitrags-/Seiteninhalten, Widgets, Menüs, Auszügen, Theme-Einstellungen (Footer Copyright-Text für alle populären Themes) und mehr. PHP-Code funktioniert nur in .php-Dateien.',
-                'year_example' => 'Verwendung: [year] zeigt das aktuelle Jahr (' . gmdate('Y') . ')',
+                'year_example' => 'Verwendung: [year] zeigt das aktuelle Jahr (' . date('Y') . ')',
                 
                 'responsive_images' => 'Responsive Bilder deaktivieren',
                 'responsive_images_desc' => 'Automatische Generierung von srcset und sizes deaktivieren',
@@ -1296,7 +1287,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Fügt benutzerdefinierte Apache-Regeln zur .htaccess-Datei hinzu. WARNUNG: Falsche Konfiguration kann Ihre Website unbrauchbar machen!',
                 'htaccess_content' => 'Eigene .htaccess Regeln',
                 'htaccess_warning' => 'WARNUNG: Falsche Regeln können Ihre Website unbrauchbar machen! Plugin erstellt automatisch Backup als <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Regeln werden <strong>AM ANFANG</strong> der .htaccess-Datei hinzugefügt (nicht die gesamte Datei überschreibend). Sie werden mit Kommentaren <code># BEGIN WP WP Admin Studio</code> und <code># END WP WP Admin Studio</code> umschlossen.',
+                'htaccess_info' => 'ℹ️ Regeln werden <strong>AM ANFANG</strong> der .htaccess-Datei hinzugefügt (nicht die gesamte Datei überschreibend). Sie werden mit Kommentaren <code># BEGIN WP Admin Studio</code> und <code># END WP Admin Studio</code> umschlossen.',
                 'htaccess_template' => 'Vorlage',
                 'htaccess_template_security' => 'Sicherheitsregeln',
                 'htaccess_template_cache' => 'Cache-Header',
@@ -1322,7 +1313,6 @@ add_filter(\'wp_footer\', function() {
                 'bug_report_screenshot_desc' => 'PNG, JPG oder GIF, max 5 MB',
                 'bug_report_system_info' => 'Systeminformationen',
                 'bug_report_url' => 'Website-URL',
-                'bug_report_consent' => 'Mit dem Absenden dieses Berichts stimmen Sie zu, dass die oben genannten Systeminformationen an den Plugin-Autor (KACER STUDIO s.r.o.) ausschließlich zum Zweck der Diagnose und Lösung des gemeldeten Problems übermittelt werden.',
                 'bug_report_send' => 'Senden',
                 'bug_report_success' => 'Vielen Dank! Ihr Bericht wurde erfolgreich gesendet.',
                 'bug_report_error_empty' => 'Bitte füllen Sie die Fehlerbeschreibung aus.',
@@ -1422,10 +1412,6 @@ add_filter(\'wp_footer\', function() {
                 'duplicate_action' => 'Vytvoriť kópiu',
                 'duplicate_success' => 'Kópia bola vytvorená a otvorená na úpravu.',
                 
-                'enable_svg_upload' => 'Podpora SVG súborov',
-                'enable_svg_upload_desc' => 'Povoliť nahrávanie SVG súborov',
-                'enable_svg_upload_tip' => 'Umožní nahrávanie SVG súborov do knižnice médií vo WordPresse.',
-
                 'enable_media_replace' => 'Nahrádzanie súborov v médiách',
                 'enable_media_replace_desc' => 'Pridať možnosť nahradiť súbor priamo v knižnici médií',
                 'mr_row_action' => 'Nahradiť súbor',
@@ -1456,6 +1442,10 @@ add_filter(\'wp_footer\', function() {
                 'mr_error_id' => 'Neplatné ID prílohy.',
                 'mr_error_not_found' => 'Príloha nebola nájdená.',
                 'mr_js_no_file' => 'Vyberte prosím súbor na nahranie.',
+                
+                'enable_svg_upload' => 'Podpora SVG súborov',
+                'enable_svg_upload_desc' => 'Povoliť nahrávanie SVG súborov',
+                'enable_svg_upload_tip' => 'Umožní nahrávanie SVG súborov do knižnice médií vo WordPresse.',
                 
                 'wp_emails' => 'E-maily WordPressu',
                 'wp_emails_desc' => 'Zmeniť odosielateľa e-mailov',
@@ -1498,7 +1488,7 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'year_shortcode' => 'Automatický shortcode [rok]',
                 'year_shortcode_desc' => 'Zobrazí aktuálny rok',
                 'year_shortcode_tip' => 'Aktivuje shortcode [rok], ktorý funguje VŠADE: v obsahu príspevkov/stránok, widgetoch, menu, výňatkoch, nastavení šablón (footer copyright text všetkých populárnych tém) a ďalších miestach. PHP kód funguje len v .php súboroch.',
-                'year_example' => 'Použitie: [rok] zobrazí aktuálny rok (' . gmdate('Y') . ')',
+                'year_example' => 'Použitie: [rok] zobrazí aktuálny rok (' . date('Y') . ')',
                 
                 'responsive_images' => 'Responzívne obrázky',
                 'responsive_images_desc' => 'Pridať srcset a sizes atribúty',
@@ -1702,7 +1692,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Pridá vlastné Apache pravidlá do .htaccess súboru. POZOR: Nesprávna konfigurácia môže spôsobiť nefunkčnosť webu!',
                 'htaccess_content' => 'Vlastné .htaccess pravidlá',
                 'htaccess_warning' => 'VAROVANIE: Nesprávne pravidlá môžu spôsobiť nefunkčnosť webu! Plugin automaticky vytvorí zálohu ako <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Pravidlá sa <strong>pridajú NA ZAČIATOK</strong> .htaccess súboru (neprepíšu celý súbor). Obklopí sa komentármi <code># BEGIN WP WP Admin Studio</code> a <code># END WP WP Admin Studio</code>.',
+                'htaccess_info' => 'ℹ️ Pravidlá sa <strong>pridajú NA ZAČIATOK</strong> .htaccess súboru (neprepíšu celý súbor). Obklopí sa komentármi <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Šablóna',
                 'htaccess_template_security' => 'Bezpečnostné pravidlá',
                 'htaccess_template_cache' => 'Cache hlavičky',
@@ -1728,7 +1718,6 @@ add_filter(\'wp_footer\', function() {
                 'bug_report_screenshot_desc' => 'PNG, JPG alebo GIF, max 5 MB',
                 'bug_report_system_info' => 'Systémové informácie',
                 'bug_report_url' => 'URL webu',
-                'bug_report_consent' => 'Odoslaním tohto hlásenia súhlasíte s tým, že vyššie uvedené systémové informácie budú odovzdané autorovi pluginu (KACER STUDIO s.r.o.) výhradne na účely diagnostiky a vyriešenia nahláseného problému.',
                 'bug_report_send' => 'Odoslať',
                 'bug_report_success' => 'Ďakujeme! Váš report bol úspešne odoslaný.',
                 'bug_report_error_empty' => 'Prosím vyplňte popis chyby.',
@@ -1828,10 +1817,6 @@ add_filter(\'wp_footer\', function() {
                 'duplicate_action' => 'Utwórz kopię',
                 'duplicate_success' => 'Kopia została utworzona i otwarta do edycji.',
                 
-                'enable_svg_upload' => 'Obsługa plików SVG',
-                'enable_svg_upload_desc' => 'Włącz przesyłanie plików SVG',
-                'enable_svg_upload_tip' => 'Umożliwia przesyłanie plików SVG do biblioteki mediów WordPress.',
-
                 'enable_media_replace' => 'Zastępowanie plików w mediach',
                 'enable_media_replace_desc' => 'Dodaj opcję zastąpienia pliku bezpośrednio w bibliotece mediów',
                 'mr_row_action' => 'Zastąp plik',
@@ -1862,6 +1847,10 @@ add_filter(\'wp_footer\', function() {
                 'mr_error_id' => 'Nieprawidłowe ID załącznika.',
                 'mr_error_not_found' => 'Załącznik nie został znaleziony.',
                 'mr_js_no_file' => 'Proszę wybrać plik do przesłania.',
+                
+                'enable_svg_upload' => 'Obsługa plików SVG',
+                'enable_svg_upload_desc' => 'Włącz przesyłanie plików SVG',
+                'enable_svg_upload_tip' => 'Umożliwia przesyłanie plików SVG do biblioteki mediów WordPress.',
                 
                 'wp_emails' => 'E-maile WordPress',
                 'wp_emails_desc' => 'Zmień nadawcę e-maili',
@@ -1904,7 +1893,7 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'year_shortcode' => 'Automatyczny shortcode [rok]',
                 'year_shortcode_desc' => 'Wyświetla bieżący rok',
                 'year_shortcode_tip' => 'Aktywuje shortcode [rok], który działa WSZĘDZIE: w treści wpisów/stron, widgetach, menu, fragmentach, ustawieniach motywu (footer copyright text dla wszystkich popularnych motywów) i innych miejscach. Kod PHP działa tylko w plikach .php.',
-                'year_example' => 'Użycie: [rok] wyświetla bieżący rok (' . gmdate('Y') . ')',
+                'year_example' => 'Użycie: [rok] wyświetla bieżący rok (' . date('Y') . ')',
                 
                 'responsive_images' => 'Responsywne obrazy',
                 'responsive_images_desc' => 'Dodaj atrybuty srcset i sizes',
@@ -2108,7 +2097,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Dodaje własne reguły Apache do pliku .htaccess. UWAGA: Nieprawidłowa konfiguracja może zepsuć stronę!',
                 'htaccess_content' => 'Własne reguły .htaccess',
                 'htaccess_warning' => 'OSTRZEŻENIE: Nieprawidłowe reguły mogą zepsuć stronę! Wtyczka automatycznie tworzy kopię zapasową jako <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Reguły zostaną <strong>dodane NA POCZĄTKU</strong> pliku .htaccess (nie nadpisując całego pliku). Zostaną otoczone komentarzami <code># BEGIN WP WP Admin Studio</code> i <code># END WP WP Admin Studio</code>.',
+                'htaccess_info' => 'ℹ️ Reguły zostaną <strong>dodane NA POCZĄTKU</strong> pliku .htaccess (nie nadpisując całego pliku). Zostaną otoczone komentarzami <code># BEGIN WP Admin Studio</code> i <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Szablon',
                 'htaccess_template_security' => 'Reguły bezpieczeństwa',
                 'htaccess_template_cache' => 'Nagłówki cache',
@@ -2134,7 +2123,6 @@ add_filter(\'wp_footer\', function() {
                 'bug_report_screenshot_desc' => 'PNG, JPG lub GIF, max 5 MB',
                 'bug_report_system_info' => 'Informacje systemowe',
                 'bug_report_url' => 'URL strony',
-                'bug_report_consent' => 'Wysyłając ten raport, zgadzasz się, że powyższe informacje systemowe zostaną przesłane autorowi wtyczki (KACER STUDIO s.r.o.) wyłącznie w celu diagnozy i rozwiązania zgłoszonego problemu.',
                 'bug_report_send' => 'Wyślij',
                 'bug_report_success' => 'Dziękujemy! Twój raport został pomyślnie wysłany.',
                 'bug_report_error_empty' => 'Proszę wypełnić opis błędu.',
@@ -2150,7 +2138,7 @@ add_filter(\'wp_footer\', function() {
     
     public function ajax_change_language() {
         check_ajax_referer('wpc_nonce', 'nonce');
-        $lang = isset($_POST['lang']) ? sanitize_text_field(wp_unslash($_POST['lang'])) : 'cs';
+        $lang = isset($_POST['lang']) ? sanitize_text_field($_POST['lang']) : 'cs';
         $allowed = array('cs', 'de', 'sk', 'pl', 'en');
         if (in_array($lang, $allowed)) {
             update_option($this->lang_option, $lang);
@@ -2164,14 +2152,14 @@ add_filter(\'wp_footer\', function() {
             wp_send_json_error(array('message' => $this->t('bug_report_error_security')));
         }
 
-        $transient_key = 'wpc_bug_report_' . md5(isset($_SERVER['REMOTE_ADDR']) ? sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR'])) : '');
+        $transient_key = 'wpc_bug_report_' . md5($_SERVER['REMOTE_ADDR']);
         if (get_transient($transient_key)) {
             wp_send_json_error(array('message' => 'Please wait 5 minutes before sending another report.'));
         }
 
-        $email = isset($_POST['email']) ? sanitize_email(wp_unslash($_POST['email'])) : '';
-        $message = isset($_POST['message']) ? sanitize_textarea_field(wp_unslash($_POST['message'])) : '';
-        $system_info_json = isset($_POST['system_info']) ? sanitize_textarea_field(wp_unslash($_POST['system_info'])) : '{}';
+        $email = isset($_POST['email']) ? sanitize_email($_POST['email']) : '';
+        $message = isset($_POST['message']) ? sanitize_textarea_field($_POST['message']) : '';
+        $system_info_json = isset($_POST['system_info']) ? $_POST['system_info'] : '{}';
         $system_info = json_decode($system_info_json, true);
 
         if (empty($email) || empty($message)) {
@@ -2184,7 +2172,7 @@ add_filter(\'wp_footer\', function() {
 
         $attachments = array();
         if (isset($_FILES['screenshot']) && !empty($_FILES['screenshot']['tmp_name'])) {
-            $file = $_FILES['screenshot']; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- validated via finfo MIME check below
+            $file = $_FILES['screenshot'];
 
             if ($file['error'] !== UPLOAD_ERR_OK) {
                 wp_send_json_error(array('message' => 'File upload error. Please try again.'));
@@ -2214,7 +2202,7 @@ add_filter(\'wp_footer\', function() {
             $upload_dir = wp_upload_dir();
             $temp_file = $upload_dir['basedir'] . '/wpc-bug-' . time() . '-' . $safe_filename;
             
-            if (move_uploaded_file($file['tmp_name'], $temp_file)) { // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found
+            if (move_uploaded_file($file['tmp_name'], $temp_file)) {
                 $attachments[] = $temp_file;
             } else {
                 error_log('WP Admin Studio: Failed to move uploaded file');
@@ -2249,7 +2237,7 @@ add_filter(\'wp_footer\', function() {
         if (!empty($attachments)) {
             foreach ($attachments as $attachment) {
                 if (file_exists($attachment)) {
-                    if (!wp_delete_file($attachment)) {
+                    if (!unlink($attachment)) {
                         error_log('WP Admin Studio: Failed to delete temp file: ' . $attachment);
                     }
                 }
@@ -2274,8 +2262,7 @@ add_filter(\'wp_footer\', function() {
             wp_send_json_error(array('message' => 'Insufficient permissions'));
         }
 
-        // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- sanitized in sanitize_settings()
-        $settings = isset($_POST[$this->option_name]) ? wp_unslash($_POST[$this->option_name]) : array();
+        $settings = isset($_POST[$this->option_name]) ? $_POST[$this->option_name] : array();
 
         $sanitized = $this->sanitize_settings($settings);
 
@@ -2307,7 +2294,7 @@ add_filter(\'wp_footer\', function() {
             return;
         }
         
-        if (!is_writable(ABSPATH)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+        if (!is_writable(ABSPATH)) {
             wp_send_json_error(array('message' => 'Root adresář není zapisovatelný - zkontrolujte oprávnění.'));
             return;
         }
@@ -2398,6 +2385,16 @@ add_filter(\'wp_footer\', function() {
             
             if (is_multisite()) {
                 add_filter('upload_mimes', array($this, 'enable_svg_mime_type_multisite'), 999);
+            }
+            
+            $administrator_role = get_role('administrator');
+            if ($administrator_role && !$administrator_role->has_cap('unfiltered_upload')) {
+                $administrator_role->add_cap('unfiltered_upload');
+            }
+            
+            $editor_role = get_role('editor');
+            if ($editor_role && !$editor_role->has_cap('unfiltered_upload')) {
+                $editor_role->add_cap('unfiltered_upload');
             }
         }
         if (!empty($o['post_colors'])) add_action('admin_head', array($this, 'posts_status_color'));
@@ -2519,7 +2516,7 @@ add_filter(\'wp_footer\', function() {
     }
     
     public function add_admin_menu() {
-        add_options_page('WP WP Admin Studio', 'WP WP Admin Studio', 'manage_options', 'wp-admin-studio', array($this, 'settings_page'));
+        add_options_page('WP Admin Studio', 'WP Admin Studio', 'manage_options', 'wp-admin-studio', array($this, 'settings_page'));
     }
     
     public function register_settings() {
@@ -2638,10 +2635,10 @@ add_filter(\'wp_footer\', function() {
             if (!empty($input['robots_enable']) && !empty($input['robots_content'])) {
                 $robots_file = ABSPATH . 'robots.txt';
 
-                if (!is_writable(ABSPATH)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+                if (!is_writable(ABSPATH)) {
                     add_settings_error('wpc_robots', 'wpc_robots_error', 'Root adresář není zapisovatelný - zkontrolujte oprávnění.', 'error');
                     error_log('WP Admin Studio: ABSPATH is not writable for robots.txt');
-                } else if (file_exists($robots_file) && !is_writable($robots_file)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+                } else if (file_exists($robots_file) && !is_writable($robots_file)) {
                     add_settings_error('wpc_robots', 'wpc_robots_error', 'Soubor robots.txt není zapisovatelný - zkontrolujte oprávnění.', 'error');
                     error_log('WP Admin Studio: robots.txt is not writable');
                 } else {
@@ -2669,10 +2666,10 @@ add_filter(\'wp_footer\', function() {
 
             if (!empty($input['htaccess_enable']) && !empty($input['htaccess_content'])) {
 
-                if (!is_writable(ABSPATH)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+                if (!is_writable(ABSPATH)) {
                     add_settings_error('wpc_htaccess', 'wpc_htaccess_error', 'Root adresář není zapisovatelný - zkontrolujte oprávnění.', 'error');
                     error_log('WP Admin Studio: ABSPATH is not writable for .htaccess');
-                } else if (file_exists($htaccess_file) && !is_writable($htaccess_file)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+                } else if (file_exists($htaccess_file) && !is_writable($htaccess_file)) {
                     add_settings_error('wpc_htaccess', 'wpc_htaccess_error', 'Soubor .htaccess není zapisovatelný - zkontrolujte oprávnění.', 'error');
                     error_log('WP Admin Studio: .htaccess is not writable');
                 } else {
@@ -2689,14 +2686,14 @@ add_filter(\'wp_footer\', function() {
                             add_settings_error('wpc_htaccess', 'wpc_htaccess_error', 'Nepodařilo se přečíst .htaccess.', 'error');
                         } else {
                             
-                            $clean_content = preg_replace('/# BEGIN WP WP Admin Studio.*?# END WP WP Admin Studio\n?/s', '', $current_content);
+                            $clean_content = preg_replace('/# BEGIN WP Admin Studio.*?# END WP Admin Studio\n?/s', '', $current_content);
 
                             $backup_file = $htaccess_file . '.wp-admin-studio-backup';
                             if (strlen($clean_content) > 0 || file_exists($htaccess_file)) {
                                 @file_put_contents($backup_file, $clean_content);
                             }
 
-                            $custom_rules = "# BEGIN WP WP Admin Studio\n" . $content . "\n# END WP WP Admin Studio\n\n";
+                            $custom_rules = "# BEGIN WP Admin Studio\n" . $content . "\n# END WP Admin Studio\n\n";
                             $new_content = $custom_rules . $clean_content;
                             
                             $result = @file_put_contents($htaccess_file, $new_content);
@@ -2718,11 +2715,11 @@ add_filter(\'wp_footer\', function() {
                 }
             } else {
                 
-                if (file_exists($htaccess_file) && is_writable($htaccess_file)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
+                if (file_exists($htaccess_file) && is_writable($htaccess_file)) {
                     
                     $current_content = @file_get_contents($htaccess_file);
                     if ($current_content !== false) {
-                        $clean_content = preg_replace('/# BEGIN WP WP Admin Studio.*?# END WP WP Admin Studio\n?/s', '', $current_content);
+                        $clean_content = preg_replace('/# BEGIN WP Admin Studio.*?# END WP Admin Studio\n?/s', '', $current_content);
                         
                         $backup_file = $htaccess_file . '.wp-admin-studio-backup';
                         @file_put_contents($backup_file, $clean_content);
@@ -2814,14 +2811,23 @@ add_filter(\'wp_footer\', function() {
         $old_svg_enabled = !empty($old_options['enable_svg_upload']);
         $new_svg_enabled = !empty($output['enable_svg_upload']);
         
-        if ($old_svg_enabled && !$new_svg_enabled) {
+        if ($old_svg_enabled !== $new_svg_enabled) {
             $administrator_role = get_role('administrator');
             if ($administrator_role) {
-                $administrator_role->remove_cap('unfiltered_upload');
+                if ($new_svg_enabled) {
+                    $administrator_role->add_cap('unfiltered_upload');
+                } else {
+                    $administrator_role->remove_cap('unfiltered_upload');
+                }
             }
+            
             $editor_role = get_role('editor');
             if ($editor_role) {
-                $editor_role->remove_cap('unfiltered_upload');
+                if ($new_svg_enabled) {
+                    $editor_role->add_cap('unfiltered_upload');
+                } else {
+                    $editor_role->remove_cap('unfiltered_upload');
+                }
             }
         }
 
@@ -2843,33 +2849,30 @@ add_filter(\'wp_footer\', function() {
         wp_enqueue_script('wp-theme-plugin-editor');
         wp_enqueue_style('wp-codemirror');
 
-        $assets_url = plugin_dir_url(__FILE__) . 'assets/';
-        $assets_ver = self::VERSION;
-
         wp_enqueue_script(
             'codemirror-addon-lint',
-            $assets_url . 'js/codemirror/addon/lint/lint.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.js',
             array('wp-codemirror'),
-            $assets_ver,
+            '5.65.2',
             true
         );
         wp_enqueue_style(
             'codemirror-addon-lint-css',
-            $assets_url . 'css/codemirror/addon/lint/lint.min.css',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/lint.min.css',
             array('wp-codemirror'),
-            $assets_ver
+            '5.65.2'
         );
         wp_enqueue_script(
             'codemirror-addon-css-lint',
-            $assets_url . 'js/codemirror/addon/lint/css-lint.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/addon/lint/css-lint.min.js',
             array('codemirror-addon-lint'),
-            $assets_ver,
+            '5.65.2',
             true
         );
-
+        
         wp_enqueue_script(
             'csslint',
-            $assets_url . 'js/csslint.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/csslint/1.0.5/csslint.min.js',
             array(),
             '1.0.5',
             true
@@ -2877,45 +2880,45 @@ add_filter(\'wp_footer\', function() {
 
         wp_enqueue_script(
             'codemirror-mode-clike',
-            $assets_url . 'js/codemirror/mode/clike.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/clike/clike.min.js',
             array('wp-codemirror'),
-            $assets_ver,
+            '5.65.2',
             true
         );
         wp_enqueue_script(
             'codemirror-mode-php',
-            $assets_url . 'js/codemirror/mode/php.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/php/php.min.js',
             array('wp-codemirror', 'codemirror-mode-clike'),
-            $assets_ver,
+            '5.65.2',
             true
         );
 
         wp_enqueue_script(
             'codemirror-mode-xml',
-            $assets_url . 'js/codemirror/mode/xml.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js',
             array('wp-codemirror'),
-            $assets_ver,
+            '5.65.2',
             true
         );
         wp_enqueue_script(
             'codemirror-mode-javascript',
-            $assets_url . 'js/codemirror/mode/javascript.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js',
             array('wp-codemirror'),
-            $assets_ver,
+            '5.65.2',
             true
         );
         wp_enqueue_script(
             'codemirror-mode-css-js',
-            $assets_url . 'js/codemirror/mode/css.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js',
             array('wp-codemirror'),
-            $assets_ver,
+            '5.65.2',
             true
         );
         wp_enqueue_script(
             'codemirror-mode-htmlmixed',
-            $assets_url . 'js/codemirror/mode/htmlmixed.min.js',
+            'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js',
             array('wp-codemirror', 'codemirror-mode-xml', 'codemirror-mode-javascript', 'codemirror-mode-css-js'),
-            $assets_ver,
+            '5.65.2',
             true
         );
 
@@ -2923,9 +2926,9 @@ add_filter(\'wp_footer\', function() {
         foreach ($themes as $theme) {
             wp_enqueue_style(
                 'codemirror-theme-' . $theme,
-                $assets_url . 'css/codemirror/theme/' . $theme . '.min.css',
+                'https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/' . $theme . '.min.css',
                 array('wp-codemirror'),
-                $assets_ver
+                '5.65.2'
             );
         }
     }
@@ -2933,23 +2936,23 @@ add_filter(\'wp_footer\', function() {
     public function export_settings() {
         check_admin_referer('wpc_export');
         if (!current_user_can('manage_options')) {
-            wp_die(esc_html__('Unauthorized', 'wp-admin-studio'), 403);
+            wp_die(__('Unauthorized', 'wp-admin-studio'), 403);
         }
-        $data = array('settings' => get_option($this->option_name, array()), 'version' => self::VERSION, 'export_date' => gmdate('Y-m-d H:i:s'));
+        $data = array('settings' => get_option($this->option_name, array()), 'version' => '1.7.3', 'export_date' => date('Y-m-d H:i:s'));
         header('Content-Type: application/json');
-        header('Content-Disposition: attachment; filename="wpc-settings-' . gmdate('Y-m-d') . '.json"');
-        echo wp_json_encode($data, JSON_PRETTY_PRINT); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- JSON download response
+        header('Content-Disposition: attachment; filename="wpc-settings-' . date('Y-m-d') . '.json"');
+        echo json_encode($data, JSON_PRETTY_PRINT);
         exit;
     }
     
     public function import_settings() {
         check_admin_referer('wpc_import');
         if (!current_user_can('manage_options')) {
-            wp_die(esc_html__('Unauthorized', 'wp-admin-studio'), 403);
+            wp_die(__('Unauthorized', 'wp-admin-studio'), 403);
         }
         $status = 'error';
         if (!empty($_FILES['import_file']['tmp_name'])) {
-            $data = json_decode(file_get_contents($_FILES['import_file']['tmp_name']), true); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            $data = json_decode(file_get_contents($_FILES['import_file']['tmp_name']), true);
             if ($data && isset($data['settings'])) {
                 
                 $current = get_option($this->option_name, array());
@@ -2994,8 +2997,7 @@ add_filter(\'wp_footer\', function() {
                 $status = 'invalid';
             }
         }
-        wp_safe_redirect(add_query_arg(array('page' => 'wp-admin-studio', 'import' => $status), admin_url('options-general.php')));
-        exit;
+        wp_redirect(add_query_arg(array('page' => 'wp-admin-studio', 'import' => $status), admin_url('options-general.php')));
         exit;
     }
     
@@ -3003,7 +3005,7 @@ add_filter(\'wp_footer\', function() {
         check_admin_referer('wpc_import_translations');
         $status = 'error';
         if (!empty($_FILES['import_translations_file']['tmp_name'])) {
-            $data = json_decode(file_get_contents($_FILES['import_translations_file']['tmp_name']), true); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+            $data = json_decode(file_get_contents($_FILES['import_translations_file']['tmp_name']), true);
             if ($data && isset($data['translations']) && is_array($data['translations'])) {
                 $current = get_option($this->option_name, array());
                 $new_translations = array();
@@ -3022,8 +3024,7 @@ add_filter(\'wp_footer\', function() {
                 $status = 'invalid';
             }
         }
-        wp_safe_redirect(add_query_arg(array('page' => 'wp-admin-studio', 'import' => $status), admin_url('options-general.php')));
-        exit;
+        wp_redirect(add_query_arg(array('page' => 'wp-admin-studio', 'import' => $status), admin_url('options-general.php')));
         exit;
     }
 
@@ -3069,8 +3070,7 @@ add_filter(\'wp_footer\', function() {
                      'archive_tag_prefix' => 'Téma: ', 'translations' => $this->get_default_translations(), 'admin_bar_items' => array());
         $o = wp_parse_args($o, $defs);
         
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only GET param for import result notice
-        if (isset($_GET['import'])) { $import_status = sanitize_key(wp_unslash($_GET['import'])); echo '<div class="notice notice-' . ($import_status === 'success' ? 'success' : 'error') . ' is-dismissible"><p>' . esc_html($this->t('import_' . $import_status)) . '</p></div>'; }
+        if (isset($_GET['import'])) echo '<div class="notice notice-' . ($_GET['import'] === 'success' ? 'success' : 'error') . ' is-dismissible"><p>' . esc_html($this->t('import_' . $_GET['import'])) . '</p></div>';
         
         $lang = $this->get_lang();
         ?>
@@ -3123,41 +3123,41 @@ add_filter(\'wp_footer\', function() {
                     <h2><span class="dashicons dashicons-admin-settings"></span> <?php echo esc_html($this->t('admin_section')); ?></h2>
                     <table class="form-table">
                         <tr>
-                            <th><label><?php echo esc_html($this->t('admin_bar')); ?> <?php echo $this->tip($this->t('admin_bar_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
+                            <th><label><?php echo esc_html($this->t('admin_bar')); ?> <?php echo $this->tip($this->t('admin_bar_tip')); ?></label></th>
                             <td>
                                 <?php $items = isset($o['admin_bar_items']) ? $o['admin_bar_items'] : array(); ?>
-                                <label><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[admin_bar_items][]" value="wp-logo" <?php checked(in_array('wp-logo', $items)); ?>> <?php echo esc_html($this->t('admin_bar_logo')); ?></label><br>
-                                <label><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[admin_bar_items][]" value="updates" <?php checked(in_array('updates', $items)); ?>> <?php echo esc_html($this->t('admin_bar_updates')); ?></label><br>
-                                <label><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[admin_bar_items][]" value="new-content" <?php checked(in_array('new-content', $items)); ?>> <?php echo esc_html($this->t('admin_bar_new')); ?></label><br>
-                                <label><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[admin_bar_items][]" value="view-site" <?php checked(in_array('view-site', $items)); ?>> <?php echo esc_html($this->t('admin_bar_view')); ?></label><br>
-                                <label><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[admin_bar_items][]" value="my-account-avatar" <?php checked(in_array('my-account-avatar', $items)); ?>> <?php echo esc_html($this->t('admin_bar_avatar')); ?></label>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="wp-logo" <?php checked(in_array('wp-logo', $items)); ?>> <?php echo esc_html($this->t('admin_bar_logo')); ?></label><br>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="updates" <?php checked(in_array('updates', $items)); ?>> <?php echo esc_html($this->t('admin_bar_updates')); ?></label><br>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="new-content" <?php checked(in_array('new-content', $items)); ?>> <?php echo esc_html($this->t('admin_bar_new')); ?></label><br>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="view-site" <?php checked(in_array('view-site', $items)); ?>> <?php echo esc_html($this->t('admin_bar_view')); ?></label><br>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="my-account-avatar" <?php checked(in_array('my-account-avatar', $items)); ?>> <?php echo esc_html($this->t('admin_bar_avatar')); ?></label>
                             </td>
                         </tr>
                         <tr>
-                            <th><label><?php echo esc_html($this->t('hide_updates')); ?> <?php echo $this->tip($this->t('hide_updates_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[hide_updates_non_admin]" value="1" <?php checked(1, !empty($o['hide_updates_non_admin'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('hide_updates_desc')); ?></span></label></td>
+                            <th><label><?php echo esc_html($this->t('hide_updates')); ?> <?php echo $this->tip($this->t('hide_updates_tip')); ?></label></th>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[hide_updates_non_admin]" value="1" <?php checked(1, !empty($o['hide_updates_non_admin'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('hide_updates_desc')); ?></span></label></td>
                         </tr>
                         <tr>
-                            <th><label><?php echo esc_html($this->t('disable_auto_update_emails')); ?> <?php echo $this->tip($this->t('disable_auto_update_emails_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[disable_auto_update_emails]" value="1" <?php checked(1, !empty($o['disable_auto_update_emails'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_auto_update_emails_desc')); ?></span></label></td>
+                            <th><label><?php echo esc_html($this->t('disable_auto_update_emails')); ?> <?php echo $this->tip($this->t('disable_auto_update_emails_tip')); ?></label></th>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[disable_auto_update_emails]" value="1" <?php checked(1, !empty($o['disable_auto_update_emails'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_auto_update_emails_desc')); ?></span></label></td>
                         </tr>
                         <tr>
-                            <th><label><?php echo esc_html($this->t('hide_admin_notices')); ?> <?php echo $this->tip($this->t('hide_admin_notices_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
+                            <th><label><?php echo esc_html($this->t('hide_admin_notices')); ?> <?php echo $this->tip($this->t('hide_admin_notices_tip')); ?></label></th>
                             <td>
                                 <label class="wpc-toggle-label">
-                                    <span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[hide_admin_notices]" value="1" <?php checked(1, !empty($o['hide_admin_notices'])); ?>><span class="wpc-toggle-slider"></span></span>
+                                    <span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[hide_admin_notices]" value="1" <?php checked(1, !empty($o['hide_admin_notices'])); ?>><span class="wpc-toggle-slider"></span></span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('hide_admin_notices_desc')); ?></span>
                                 </label>
                                 <div style="margin-top:8px;">
                                     <label class="wpc-toggle-label">
-                                        <span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[show_notices_current_user]" value="1" <?php checked(1, !empty($o['show_notices_current_user'])); ?>><span class="wpc-toggle-slider"></span></span>
+                                        <span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[show_notices_current_user]" value="1" <?php checked(1, !empty($o['show_notices_current_user'])); ?>><span class="wpc-toggle-slider"></span></span>
                                         <span class="wpc-toggle-text"><?php
                                             $current_user = wp_get_current_user();
                                             $display_name = !empty($current_user->display_name) ? $current_user->display_name : $current_user->user_login;
                                             echo esc_html($this->t('show_notices_current_user_desc')) . esc_html($display_name);
                                         ?></span>
                                     </label>
-                                    <input type="hidden" name="<?php echo esc_attr($this->option_name); ?>[notices_user_id]" value="<?php echo esc_attr(get_current_user_id()); ?>">
+                                    <input type="hidden" name="<?php echo $this->option_name; ?>[notices_user_id]" value="<?php echo esc_attr(get_current_user_id()); ?>">
                                 </div>
                             </td>
                         </tr>
@@ -3165,22 +3165,22 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('hide_howdy')); ?>
-                                    <?php echo $this->tip($this->t('hide_howdy_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('hide_howdy_tip')); ?>
                                 </label>
                             </th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[hide_howdy]" value="1" <?php checked(1, !empty($o['hide_howdy'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('hide_howdy_desc')); ?></span></label></td>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[hide_howdy]" value="1" <?php checked(1, !empty($o['hide_howdy'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('hide_howdy_desc')); ?></span></label></td>
                         </tr>
                         <tr>
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('hide_wp_version')); ?>
-                                    <?php echo $this->tip($this->t('hide_wp_version_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('hide_wp_version_tip')); ?>
                                 </label>
                             </th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[hide_wp_version]" value="1" <?php checked(1, !empty($o['hide_wp_version'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('hide_wp_version_desc')); ?></span></label></td>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[hide_wp_version]" value="1" <?php checked(1, !empty($o['hide_wp_version'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('hide_wp_version_desc')); ?></span></label></td>
                         </tr>
                         <tr>
-                            <th><label><?php echo esc_html($this->t('hide_dashboard_widgets')); ?> <?php echo $this->tip($this->t('hide_dashboard_widgets_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
+                            <th><label><?php echo esc_html($this->t('hide_dashboard_widgets')); ?> <?php echo $this->tip($this->t('hide_dashboard_widgets_tip')); ?></label></th>
                             <td>
                                 <?php
                                 $detected = get_transient('wpc_detected_widgets');
@@ -3196,7 +3196,7 @@ add_filter(\'wp_footer\', function() {
                                 foreach ($widgets_list as $widget_id => $widget_title):
                                 ?>
                                 <label style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-                                    <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[hidden_dashboard_widgets][]" value="<?php echo esc_attr($widget_id); ?>" <?php checked(in_array($widget_id, $hidden_widgets)); ?>>
+                                    <input type="checkbox" name="<?php echo $this->option_name; ?>[hidden_dashboard_widgets][]" value="<?php echo esc_attr($widget_id); ?>" <?php checked(in_array($widget_id, $hidden_widgets)); ?>>
                                     <?php echo esc_html($widget_title); ?>
                                 </label>
                                 <?php endforeach; ?>
@@ -3206,19 +3206,19 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('admin_page_titles')); ?>
-                                    <?php echo $this->tip($this->t('admin_page_titles_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('admin_page_titles_tip')); ?>
                                 </label>
                             </th>
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[admin_page_titles_enable]" value="1" <?php checked(1, !empty($o['admin_page_titles_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[admin_page_titles_enable]" value="1" <?php checked(1, !empty($o['admin_page_titles_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('admin_page_titles_desc')); ?></span>
                                     </label>
                                 <div style="margin-top: 12px;">
-                                    <input type="text" name="<?php echo esc_attr($this->option_name); ?>[admin_page_title_format]" value="<?php echo isset($o['admin_page_title_format']) ? esc_attr($o['admin_page_title_format']) : '%page% - %site_title%'; ?>" style="width: 100%; max-width: 400px; padding: 3px 5px; font-size: 14px; display: block;">
+                                    <input type="text" name="<?php echo $this->option_name; ?>[admin_page_title_format]" value="<?php echo isset($o['admin_page_title_format']) ? esc_attr($o['admin_page_title_format']) : '%page% - %site_title%'; ?>" style="width: 100%; max-width: 400px; padding: 3px 5px; font-size: 14px; display: block;">
                                     <p class="description" style="margin-top: 8px; clear: both;">
                                         <strong>%page%</strong> = <?php echo esc_html($this->t('admin_page_title_page_tag')); ?> &nbsp;|&nbsp; <strong>%site_title%</strong> = <?php echo esc_html($this->t('admin_page_title_site_tag')); ?>
                                     </p>
@@ -3229,25 +3229,25 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('wp_emails')); ?>
-                                    <?php echo $this->tip($this->t('wp_emails_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('wp_emails_tip')); ?>
                                 </label>
                             </th>
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[wp_emails_enable]" value="1" <?php checked(1, !empty($o['wp_emails_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[wp_emails_enable]" value="1" <?php checked(1, !empty($o['wp_emails_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('wp_emails_desc')); ?></span>
                                     </label>
                                 <div style="margin-top: 12px;">
                                     <label style="display: block; margin-bottom: 6px; font-weight: 500;"><?php echo esc_html($this->t('wp_email_from_name')); ?></label>
-                                    <input type="text" name="<?php echo esc_attr($this->option_name); ?>[wp_email_from_name]" value="<?php echo isset($o['wp_email_from_name']) ? esc_attr($o['wp_email_from_name']) : ''; ?>" style="width: 100%; max-width: 400px; padding: 3px 5px; font-size: 14px; display: block;">
+                                    <input type="text" name="<?php echo $this->option_name; ?>[wp_email_from_name]" value="<?php echo isset($o['wp_email_from_name']) ? esc_attr($o['wp_email_from_name']) : ''; ?>" style="width: 100%; max-width: 400px; padding: 3px 5px; font-size: 14px; display: block;">
                                 </div>
                                 <div style="margin-top: 12px;">
                                     <label style="display: block; margin-bottom: 6px; font-weight: 500;"><?php echo esc_html($this->t('wp_email_from_email')); ?></label>
-                                    <input type="email" name="<?php echo esc_attr($this->option_name); ?>[wp_email_from_email]" value="<?php echo isset($o['wp_email_from_email']) ? esc_attr($o['wp_email_from_email']) : ''; ?>" placeholder="<?php 
-                                        $site_domain = wp_parse_url(get_site_url(), PHP_URL_HOST);
+                                    <input type="email" name="<?php echo $this->option_name; ?>[wp_email_from_email]" value="<?php echo isset($o['wp_email_from_email']) ? esc_attr($o['wp_email_from_email']) : ''; ?>" placeholder="<?php 
+                                        $site_domain = parse_url(get_site_url(), PHP_URL_HOST);
                                         $site_domain = preg_replace('/^www\./', '', $site_domain);
                                         $current_lang = $this->get_lang();
                                         $placeholder_prefix = $current_lang === 'cs' ? 'např.' : ($current_lang === 'de' ? 'z.B.' : ($current_lang === 'sk' ? 'napr.' : ($current_lang === 'pl' ? 'np.' : 'e.g.')));
@@ -3260,31 +3260,31 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('auto_delete_files')); ?>
-                                    <?php echo $this->tip($this->t('auto_delete_files_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('auto_delete_files_tip')); ?>
                                 </label>
                             </th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[auto_delete_files]" value="1" <?php checked(1, !empty($o['auto_delete_files'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('auto_delete_files_desc')); ?></span></label></td>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[auto_delete_files]" value="1" <?php checked(1, !empty($o['auto_delete_files'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('auto_delete_files_desc')); ?></span></label></td>
                         </tr>
                         <tr>
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('disable_user_enumeration')); ?> 
-                                    <?php echo $this->tip($this->t('disable_user_enumeration_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('disable_user_enumeration_tip')); ?>
                                 </label>
                             </th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[disable_user_enumeration]" value="1" <?php checked(1, !empty($o['disable_user_enumeration'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_user_enumeration_desc')); ?></span></label></td>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[disable_user_enumeration]" value="1" <?php checked(1, !empty($o['disable_user_enumeration'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_user_enumeration_desc')); ?></span></label></td>
                         </tr>
                         <tr>
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('change_login_url')); ?> 
-                                    <?php echo $this->tip($this->t('change_login_url_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('change_login_url_tip')); ?>
                                 </label>
                             </th>
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[change_login_url]" value="1" <?php checked(1, !empty($o['change_login_url'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[change_login_url]" value="1" <?php checked(1, !empty($o['change_login_url'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('change_login_url_desc')); ?></span>
@@ -3293,7 +3293,7 @@ add_filter(\'wp_footer\', function() {
                                 <div id="wpc-custom-login-url-wrapper" style="margin-top: 12px;">
                                     <code id="wpc-login-url-display" style="background: #f0f0f1; padding: 2px 6px; border-radius: 3px; font-family: Consolas, Monaco, monospace; font-size: 14px; color: #50575e; border: 1px solid #dcdcde; white-space: nowrap;"><?php echo esc_html(home_url('/')); ?></code>
                                     <input type="text" 
-                                           name="<?php echo esc_attr($this->option_name); ?>[custom_login_slug]" 
+                                           name="<?php echo $this->option_name; ?>[custom_login_slug]" 
                                            id="wpc-custom-login-slug"
                                            value="<?php echo isset($o['custom_login_slug']) ? esc_attr($o['custom_login_slug']) : ''; ?>" 
                                            style="width: 300px; padding: 3px 5px; font-size: 14px; margin-left: 5px;">
@@ -3339,7 +3339,7 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label" id="custom_css_toggle_label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[custom_css_enable]" value="1" <?php checked(!empty($o['custom_css_enable'])); ?> id="custom_css_enable_checkbox">
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[custom_css_enable]" value="1" <?php checked(!empty($o['custom_css_enable'])); ?> id="custom_css_enable_checkbox">
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('custom_css_desc')); ?></span>
@@ -3371,7 +3371,7 @@ add_filter(\'wp_footer\', function() {
                                             </button>
                                         </div>
                                     </div>
-                                    <select id="css_editor_theme" name="<?php echo esc_attr($this->option_name); ?>[css_editor_theme]" class="wpc-theme-select">
+                                    <select id="css_editor_theme" name="<?php echo $this->option_name; ?>[css_editor_theme]" class="wpc-theme-select">
                                         <?php $current_theme = isset($o['css_editor_theme']) && !empty($o['css_editor_theme']) ? $o['css_editor_theme'] : 'material-darker'; ?>
                                         <option value="material-darker" <?php selected($current_theme, 'material-darker'); ?>>Material Darker</option>
                                         <option value="material" <?php selected($current_theme, 'material'); ?>>Material</option>
@@ -3381,7 +3381,7 @@ add_filter(\'wp_footer\', function() {
                                         <option value="default" <?php selected($current_theme, 'default'); ?>>Světlý</option>
                                     </select>
                                 </div>
-                                <textarea id="custom_css_editor" name="<?php echo esc_attr($this->option_name); ?>[custom_css_code]" rows="8" class="wpc-code-textarea"><?php echo isset($o['custom_css_code']) ? esc_textarea($o['custom_css_code']) : ''; ?></textarea>
+                                <textarea id="custom_css_editor" name="<?php echo $this->option_name; ?>[custom_css_code]" rows="8" class="wpc-code-textarea"><?php echo isset($o['custom_css_code']) ? esc_textarea($o['custom_css_code']) : ''; ?></textarea>
                                 <p class="description" style="margin-top:8px;"><?php echo wp_kses_post($this->t('custom_css_info')); ?></p>
                                 <p style="margin-top:10px;">
                                     <button type="submit" form="wpc-main-form" class="button button-primary">
@@ -3404,13 +3404,13 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[script_head_enable]" value="1" <?php checked(!empty($o['script_head_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[script_head_enable]" value="1" <?php checked(!empty($o['script_head_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('script_head_desc')); ?></span>
                                     </label>
                                 <br>
-                                <textarea name="<?php echo esc_attr($this->option_name); ?>[script_head_code]" rows="8" class="wpc-code-textarea"><?php echo isset($o['script_head_code']) ? esc_textarea($o['script_head_code']) : ''; ?></textarea>
+                                <textarea name="<?php echo $this->option_name; ?>[script_head_code]" rows="8" class="wpc-code-textarea"><?php echo isset($o['script_head_code']) ? esc_textarea($o['script_head_code']) : ''; ?></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -3427,13 +3427,13 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[script_body_start_enable]" value="1" <?php checked(!empty($o['script_body_start_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[script_body_start_enable]" value="1" <?php checked(!empty($o['script_body_start_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('script_body_start_desc')); ?></span>
                                     </label>
                                 <br>
-                                <textarea name="<?php echo esc_attr($this->option_name); ?>[script_body_start_code]" rows="8" class="wpc-code-textarea"><?php echo isset($o['script_body_start_code']) ? esc_textarea($o['script_body_start_code']) : ''; ?></textarea>
+                                <textarea name="<?php echo $this->option_name; ?>[script_body_start_code]" rows="8" class="wpc-code-textarea"><?php echo isset($o['script_body_start_code']) ? esc_textarea($o['script_body_start_code']) : ''; ?></textarea>
                             </td>
                         </tr>
                         <tr>
@@ -3441,7 +3441,7 @@ add_filter(\'wp_footer\', function() {
                                 <label><?php echo esc_html($this->t('google_maps_api_key')); ?></label>
                             </th>
                             <td>
-                                <input type="text" name="<?php echo esc_attr($this->option_name); ?>[google_maps_api_key]" value="<?php echo isset($o['google_maps_api_key']) ? esc_attr($o['google_maps_api_key']) : ''; ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px; display: block;">
+                                <input type="text" name="<?php echo $this->option_name; ?>[google_maps_api_key]" value="<?php echo isset($o['google_maps_api_key']) ? esc_attr($o['google_maps_api_key']) : ''; ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px; display: block;">
                                 <p class="description" style="margin-top: 8px; clear: both;"><?php echo esc_html($this->t('google_maps_api_key_desc')); ?> <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank"><?php echo esc_html($this->t('google_maps_api_key_link')); ?></a>.</p>
                             </td>
                         </tr>
@@ -3459,7 +3459,7 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[custom_functions_enable]" value="1" <?php checked(!empty($o['custom_functions_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[custom_functions_enable]" value="1" <?php checked(!empty($o['custom_functions_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('custom_functions_desc')); ?></span>
@@ -3491,7 +3491,7 @@ add_filter(\'wp_footer\', function() {
                                             </button>
                                         </div>
                                     </div>
-                                    <select id="php_editor_theme" name="<?php echo esc_attr($this->option_name); ?>[php_editor_theme]" class="wpc-theme-select">
+                                    <select id="php_editor_theme" name="<?php echo $this->option_name; ?>[php_editor_theme]" class="wpc-theme-select">
                                             <?php $php_theme = isset($o['php_editor_theme']) && !empty($o['php_editor_theme']) ? $o['php_editor_theme'] : 'material-darker'; ?>
                                             <option value="material-darker" <?php selected($php_theme, 'material-darker'); ?>>Material Darker</option>
                                             <option value="material"        <?php selected($php_theme, 'material'); ?>>Material</option>
@@ -3501,12 +3501,8 @@ add_filter(\'wp_footer\', function() {
                                             <option value="default"         <?php selected($php_theme, 'default'); ?>>Světlý</option>
                                         </select>
                                 </div>
-                                <textarea id="custom_functions_editor" name="<?php echo esc_attr($this->option_name); ?>[custom_functions_code]" rows="12" class="wpc-code-textarea"><?php echo isset($o['custom_functions_code']) ? esc_textarea($o['custom_functions_code']) : ''; ?></textarea>
+                                <textarea id="custom_functions_editor" name="<?php echo $this->option_name; ?>[custom_functions_code]" rows="12" class="wpc-code-textarea"><?php echo isset($o['custom_functions_code']) ? esc_textarea($o['custom_functions_code']) : ''; ?></textarea>
                                 <p class="description" style="margin-top: 8px;"><?php echo wp_kses_post($this->t('custom_functions_info')); ?></p>
-                                <p class="description" style="margin-top:6px;color:#b32d2e;">
-                                    <span class="dashicons dashicons-lock" style="font-size:14px;vertical-align:middle;"></span>
-                                    <?php esc_html_e('This feature executes PHP code stored in the database. Access is restricted to administrators with the manage_options capability. Never paste code from untrusted sources.', 'wp-admin-studio'); ?>
-                                </p>
                             </td>
                         </tr>
                     </table>
@@ -3530,14 +3526,14 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[maintenance_enable]" value="1" <?php checked(!empty($o['maintenance_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[maintenance_enable]" value="1" <?php checked(!empty($o['maintenance_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('maintenance_enable_desc')); ?></span>
                                     </label>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[maintenance_show_logged]" value="1" <?php checked(!empty($o['maintenance_show_logged'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[maintenance_show_logged]" value="1" <?php checked(!empty($o['maintenance_show_logged'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('maintenance_show_logged_desc')); ?></span>
@@ -3548,11 +3544,11 @@ add_filter(\'wp_footer\', function() {
                             <th><?php echo esc_html($this->t('maintenance_mode_type')); ?></th>
                             <td>
                                 <label class="wpc-maintenance-radio">
-                                    <input type="radio" name="<?php echo esc_attr($this->option_name); ?>[maintenance_mode_type]" value="simple" <?php checked(empty($o['maintenance_mode_type']) || $o['maintenance_mode_type'] === 'simple'); ?> onclick="document.getElementById('maintenance-simple-mode').style.display='block'; document.getElementById('maintenance-advanced-mode').style.display='none';">
+                                    <input type="radio" name="<?php echo $this->option_name; ?>[maintenance_mode_type]" value="simple" <?php checked(empty($o['maintenance_mode_type']) || $o['maintenance_mode_type'] === 'simple'); ?> onclick="document.getElementById('maintenance-simple-mode').style.display='block'; document.getElementById('maintenance-advanced-mode').style.display='none';">
                                     <span><?php echo esc_html($this->t('maintenance_mode_simple')); ?></span>
                                 </label>
                                 <label class="wpc-maintenance-radio">
-                                    <input type="radio" name="<?php echo esc_attr($this->option_name); ?>[maintenance_mode_type]" value="advanced" <?php checked(!empty($o['maintenance_mode_type']) && $o['maintenance_mode_type'] === 'advanced'); ?> onclick="document.getElementById('maintenance-simple-mode').style.display='none'; document.getElementById('maintenance-advanced-mode').style.display='block';">
+                                    <input type="radio" name="<?php echo $this->option_name; ?>[maintenance_mode_type]" value="advanced" <?php checked(!empty($o['maintenance_mode_type']) && $o['maintenance_mode_type'] === 'advanced'); ?> onclick="document.getElementById('maintenance-simple-mode').style.display='none'; document.getElementById('maintenance-advanced-mode').style.display='block';">
                                     <span><?php echo esc_html($this->t('maintenance_mode_advanced')); ?></span>
                                 </label>
                                 
@@ -3565,12 +3561,12 @@ add_filter(\'wp_footer\', function() {
                                             <?php if (!empty($o['maintenance_image'])): ?>
                                                 <img src="<?php echo esc_url($o['maintenance_image']); ?>" style="<?php echo !empty($o['maintenance_image_max_width']) ? 'width: 100%; max-width: ' . intval($o['maintenance_image_max_width']) . 'px;' : 'max-width: 100%;'; ?> display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px; height: auto;" id="maintenance_image_preview">
                                             <?php endif; ?>
-                                            <input type="hidden" id="maintenance_image" name="<?php echo esc_attr($this->option_name); ?>[maintenance_image]" value="<?php echo esc_attr(!empty($o['maintenance_image']) ? $o['maintenance_image'] : ''); ?>">
+                                            <input type="hidden" id="maintenance_image" name="<?php echo $this->option_name; ?>[maintenance_image]" value="<?php echo esc_attr(!empty($o['maintenance_image']) ? $o['maintenance_image'] : ''); ?>">
                                             <button type="button" class="button" id="maintenance_image_upload"><?php echo esc_html($this->t('maintenance_image_upload')); ?></button>
                                             <button type="button" class="button" id="maintenance_image_remove" style="<?php echo empty($o['maintenance_image']) ? 'display:none;' : ''; ?>"><?php echo esc_html($this->t('maintenance_image_remove')); ?></button>
                                             <div style="margin-top: 10px;">
                                                 <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('maintenance_image_max_width')); ?></label>
-                                                <input type="number" name="<?php echo esc_attr($this->option_name); ?>[maintenance_image_max_width]" value="<?php echo esc_attr(!empty($o['maintenance_image_max_width']) ? $o['maintenance_image_max_width'] : ''); ?>" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
+                                                <input type="number" name="<?php echo $this->option_name; ?>[maintenance_image_max_width]" value="<?php echo esc_attr(!empty($o['maintenance_image_max_width']) ? $o['maintenance_image_max_width'] : ''); ?>" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
                                             </div>
                                         </div>
                                     </div>
@@ -3578,35 +3574,35 @@ add_filter(\'wp_footer\', function() {
                                     <!-- Heading -->
                                     <div style="margin-bottom: 15px;">
                                         <label class="wpc-maintenance-field-label" style="display: block; font-weight: 600; margin-bottom: 5px;"><?php echo esc_html($this->t('maintenance_heading')); ?></label>
-                                        <input type="text" name="<?php echo esc_attr($this->option_name); ?>[maintenance_heading]" value="<?php echo esc_attr(!empty($o['maintenance_heading']) ? $o['maintenance_heading'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px;">
+                                        <input type="text" name="<?php echo $this->option_name; ?>[maintenance_heading]" value="<?php echo esc_attr(!empty($o['maintenance_heading']) ? $o['maintenance_heading'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px;">
                                     </div>
                                     
                                     <!-- Message -->
                                     <div style="margin-bottom: 15px;">
                                         <label class="wpc-maintenance-field-label" style="display: block; font-weight: 600; margin-bottom: 5px;"><?php echo esc_html($this->t('maintenance_message')); ?></label>
-                                        <textarea name="<?php echo esc_attr($this->option_name); ?>[maintenance_message]" rows="4" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px;"><?php echo esc_textarea(!empty($o['maintenance_message']) ? $o['maintenance_message'] : ''); ?></textarea>
+                                        <textarea name="<?php echo $this->option_name; ?>[maintenance_message]" rows="4" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px;"><?php echo esc_textarea(!empty($o['maintenance_message']) ? $o['maintenance_message'] : ''); ?></textarea>
                                     </div>
                                     
                                     <!-- Colors - Background and Text -->
                                     <div style="margin-bottom: 15px;">
                                         <div style="margin-bottom: 10px;">
                                             <label class="wpc-maintenance-field-label" style="display: block; margin-bottom: 5px; white-space: nowrap;"><?php echo esc_html($this->t('maintenance_bg_color')); ?></label>
-                                            <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[maintenance_bg_color]" value="<?php echo esc_attr(!empty($o['maintenance_bg_color']) ? $o['maintenance_bg_color'] : '#ffffff'); ?>" />
+                                            <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[maintenance_bg_color]" value="<?php echo esc_attr(!empty($o['maintenance_bg_color']) ? $o['maintenance_bg_color'] : '#ffffff'); ?>" />
                                         </div>
                                         <div>
                                             <label class="wpc-maintenance-field-label" style="display: block; margin-bottom: 5px;"><?php echo esc_html($this->t('maintenance_text_color')); ?></label>
-                                            <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[maintenance_text_color]" value="<?php echo esc_attr(!empty($o['maintenance_text_color']) ? $o['maintenance_text_color'] : '#000000'); ?>" />
+                                            <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[maintenance_text_color]" value="<?php echo esc_attr(!empty($o['maintenance_text_color']) ? $o['maintenance_text_color'] : '#000000'); ?>" />
                                         </div>
                                     </div>
                                     
                                     <!-- Button -->
                                     <div style="margin-bottom: 15px;">
                                         <label class="wpc-maintenance-field-label" style="display: block; font-weight: 600; margin-bottom: 5px;"><?php echo esc_html($this->t('maintenance_button_text')); ?></label>
-                                        <input type="text" name="<?php echo esc_attr($this->option_name); ?>[maintenance_button_text]" value="<?php echo esc_attr(!empty($o['maintenance_button_text']) ? $o['maintenance_button_text'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px; display: block; margin-bottom: 8px;">
+                                        <input type="text" name="<?php echo $this->option_name; ?>[maintenance_button_text]" value="<?php echo esc_attr(!empty($o['maintenance_button_text']) ? $o['maintenance_button_text'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px; display: block; margin-bottom: 8px;">
                                         <label class="wpc-maintenance-field-label" style="display: block; font-weight: 600; margin-bottom: 5px; margin-top: 10px;"><?php echo esc_html($this->t('maintenance_button_url')); ?></label>
-                                        <input type="text" name="<?php echo esc_attr($this->option_name); ?>[maintenance_button_url]" value="<?php echo esc_attr(!empty($o['maintenance_button_url']) ? $o['maintenance_button_url'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px; display: block; margin-bottom: 10px;">
+                                        <input type="text" name="<?php echo $this->option_name; ?>[maintenance_button_url]" value="<?php echo esc_attr(!empty($o['maintenance_button_url']) ? $o['maintenance_button_url'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px; display: block; margin-bottom: 10px;">
                                         <label>
-                                            <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[maintenance_button_show]" value="1" <?php checked(!empty($o['maintenance_button_show'])); ?>>
+                                            <input type="checkbox" name="<?php echo $this->option_name; ?>[maintenance_button_show]" value="1" <?php checked(!empty($o['maintenance_button_show'])); ?>>
                                             <span><?php echo esc_html($this->t('maintenance_button_show')); ?></span>
                                         </label>
                                         
@@ -3614,15 +3610,15 @@ add_filter(\'wp_footer\', function() {
                                         <div style="margin-top: 15px;">
                                             <div style="margin-bottom: 10px;">
                                                 <label class="wpc-maintenance-field-label" style="display: block; margin-bottom: 5px; white-space: nowrap;"><?php echo esc_html($this->t('maintenance_button_bg_color')); ?></label>
-                                                <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[maintenance_button_bg_color]" value="<?php echo esc_attr(!empty($o['maintenance_button_bg_color']) ? $o['maintenance_button_bg_color'] : '#000000'); ?>" />
+                                                <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[maintenance_button_bg_color]" value="<?php echo esc_attr(!empty($o['maintenance_button_bg_color']) ? $o['maintenance_button_bg_color'] : '#000000'); ?>" />
                                             </div>
                                             <div style="margin-bottom: 10px;">
                                                 <label class="wpc-maintenance-field-label" style="display: block; margin-bottom: 5px; white-space: nowrap;"><?php echo esc_html($this->t('maintenance_button_text_color')); ?></label>
-                                                <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[maintenance_button_text_color]" value="<?php echo esc_attr(!empty($o['maintenance_button_text_color']) ? $o['maintenance_button_text_color'] : '#ffffff'); ?>" />
+                                                <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[maintenance_button_text_color]" value="<?php echo esc_attr(!empty($o['maintenance_button_text_color']) ? $o['maintenance_button_text_color'] : '#ffffff'); ?>" />
                                             </div>
                                             <div>
                                                 <label class="wpc-maintenance-field-label" style="display: block; margin-bottom: 5px; white-space: nowrap;"><?php echo esc_html($this->t('maintenance_button_radius')); ?></label>
-                                                <input type="number" name="<?php echo esc_attr($this->option_name); ?>[maintenance_button_radius]" value="<?php echo esc_attr(!empty($o['maintenance_button_radius']) ? $o['maintenance_button_radius'] : '12'); ?>" min="0" max="50" style="width: 80px; padding: 6px 10px; font-size: 14px;"> px
+                                                <input type="number" name="<?php echo $this->option_name; ?>[maintenance_button_radius]" value="<?php echo esc_attr(!empty($o['maintenance_button_radius']) ? $o['maintenance_button_radius'] : '12'); ?>" min="0" max="50" style="width: 80px; padding: 6px 10px; font-size: 14px;"> px
                                             </div>
                                         </div>
                                     </div>
@@ -3659,7 +3655,7 @@ add_filter(\'wp_footer\', function() {
                                                 </button>
                                             </div>
                                         </div>
-                                        <select id="maintenance_html_editor_theme" name="<?php echo esc_attr($this->option_name); ?>[maintenance_html_editor_theme]" class="wpc-theme-select">
+                                        <select id="maintenance_html_editor_theme" name="<?php echo $this->option_name; ?>[maintenance_html_editor_theme]" class="wpc-theme-select">
                                             <?php $current_theme = isset($o['maintenance_html_editor_theme']) && !empty($o['maintenance_html_editor_theme']) ? $o['maintenance_html_editor_theme'] : 'material-darker'; ?>
                                             <option value="material-darker" <?php selected($current_theme, 'material-darker'); ?>>Material Darker</option>
                                             <option value="material" <?php selected($current_theme, 'material'); ?>>Material</option>
@@ -3669,7 +3665,7 @@ add_filter(\'wp_footer\', function() {
                                             <option value="default" <?php selected($current_theme, 'default'); ?>>Světlý</option>
                                         </select>
                                     </div>
-                                    <textarea id="maintenance_html_editor" name="<?php echo esc_attr($this->option_name); ?>[maintenance_html_code]" rows="20" class="wpc-code-textarea"><?php echo isset($o['maintenance_html_code']) ? esc_textarea($o['maintenance_html_code']) : esc_textarea($this->get_default_maintenance_html()); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></textarea>
+                                    <textarea id="maintenance_html_editor" name="<?php echo $this->option_name; ?>[maintenance_html_code]" rows="20" class="wpc-code-textarea"><?php echo isset($o['maintenance_html_code']) ? esc_textarea($o['maintenance_html_code']) : $this->get_default_maintenance_html(); ?></textarea>
                                     <p style="margin-top:10px;">
                                         <button type="submit" form="wpc-main-form" class="button button-primary">
                                             <?php echo esc_html($this->t('save')); ?>
@@ -3699,7 +3695,7 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[login_customize]" value="1" <?php checked(!empty($o['login_customize'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[login_customize]" value="1" <?php checked(!empty($o['login_customize'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_customize_desc')); ?></span>
@@ -3713,16 +3709,16 @@ add_filter(\'wp_footer\', function() {
                                             <?php if (!empty($o['login_logo'])): ?>
                                                 <img src="<?php echo esc_url($o['login_logo']); ?>" style="<?php echo !empty($o['login_logo_height']) ? 'height: ' . intval($o['login_logo_height']) . 'px; width: auto;' : 'max-height: 100px; width: auto;'; ?> display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px;" id="login_logo_preview">
                                             <?php endif; ?>
-                                            <input type="hidden" id="login_logo" name="<?php echo esc_attr($this->option_name); ?>[login_logo]" value="<?php echo esc_attr(!empty($o['login_logo']) ? $o['login_logo'] : ''); ?>">
+                                            <input type="hidden" id="login_logo" name="<?php echo $this->option_name; ?>[login_logo]" value="<?php echo esc_attr(!empty($o['login_logo']) ? $o['login_logo'] : ''); ?>">
                                             <button type="button" class="button" id="login_logo_upload"><?php echo esc_html($this->t('login_logo_upload')); ?></button>
                                             <button type="button" class="button" id="login_logo_remove" style="<?php echo empty($o['login_logo']) ? 'display:none;' : ''; ?>"><?php echo esc_html($this->t('login_logo_remove')); ?></button>
                                             <div style="margin-top: 10px;">
                                                 <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_logo_height')); ?></label>
-                                                <input type="number" name="<?php echo esc_attr($this->option_name); ?>[login_logo_height]" value="<?php echo esc_attr(!empty($o['login_logo_height']) ? $o['login_logo_height'] : ''); ?>" min="50" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
+                                                <input type="number" name="<?php echo $this->option_name; ?>[login_logo_height]" value="<?php echo esc_attr(!empty($o['login_logo_height']) ? $o['login_logo_height'] : ''); ?>" min="50" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
                                             </div>
                                             <div style="margin-top: 10px;">
                                                 <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_logo_url')); ?></label>
-                                                <input type="text" name="<?php echo esc_attr($this->option_name); ?>[login_logo_url]" value="<?php echo esc_attr(!empty($o['login_logo_url']) ? $o['login_logo_url'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px;">
+                                                <input type="text" name="<?php echo $this->option_name; ?>[login_logo_url]" value="<?php echo esc_attr(!empty($o['login_logo_url']) ? $o['login_logo_url'] : ''); ?>" style="width: 100%; max-width: 500px; padding: 6px 10px; font-size: 14px;">
                                             </div>
                                         </div>
                                     </div>
@@ -3730,21 +3726,21 @@ add_filter(\'wp_footer\', function() {
                                     <!-- Background -->
                                     <div style="margin-bottom: 20px;">
                                         <h4 style="margin: 0 0 10px 0; font-size: 14px; white-space: nowrap;"><?php echo esc_html($this->t('login_bg_color')); ?></h4>
-                                        <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[login_bg_color]" value="<?php echo esc_attr(!empty($o['login_bg_color']) ? $o['login_bg_color'] : '#eef2f0'); ?>" />
+                                        <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[login_bg_color]" value="<?php echo esc_attr(!empty($o['login_bg_color']) ? $o['login_bg_color'] : '#eef2f0'); ?>" />
                                         
                                         <div style="margin-top: 15px;">
                                             <label class="wpc-maintenance-field-label" style="display: block; font-weight: 600; margin-bottom: 5px;"><?php echo esc_html($this->t('login_bg_image')); ?></label>
                                             <?php if (!empty($o['login_bg_image'])): ?>
                                                 <img src="<?php echo esc_url($o['login_bg_image']); ?>" style="max-width: 200px; display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px; height: auto;" id="login_bg_image_preview">
                                             <?php endif; ?>
-                                            <input type="hidden" id="login_bg_image" name="<?php echo esc_attr($this->option_name); ?>[login_bg_image]" value="<?php echo esc_attr(!empty($o['login_bg_image']) ? $o['login_bg_image'] : ''); ?>">
+                                            <input type="hidden" id="login_bg_image" name="<?php echo $this->option_name; ?>[login_bg_image]" value="<?php echo esc_attr(!empty($o['login_bg_image']) ? $o['login_bg_image'] : ''); ?>">
                                             <button type="button" class="button" id="login_bg_image_upload"><?php echo esc_html($this->t('login_bg_image_upload')); ?></button>
                                             <button type="button" class="button" id="login_bg_image_remove" style="<?php echo empty($o['login_bg_image']) ? 'display:none;' : ''; ?>"><?php echo esc_html($this->t('login_bg_image_remove')); ?></button>
                                         </div>
                                         
                                         <div style="margin-top: 10px;">
                                             <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_bg_size')); ?></label>
-                                            <select name="<?php echo esc_attr($this->option_name); ?>[login_bg_size]" style="width: 250px;">
+                                            <select name="<?php echo $this->option_name; ?>[login_bg_size]" style="width: 250px;">
                                                 <option value="cover" <?php selected(!empty($o['login_bg_size']) ? $o['login_bg_size'] : 'cover', 'cover'); ?>><?php echo esc_html($this->t('login_bg_size_cover')); ?></option>
                                                 <option value="contain" <?php selected(!empty($o['login_bg_size']) ? $o['login_bg_size'] : 'cover', 'contain'); ?>><?php echo esc_html($this->t('login_bg_size_contain')); ?></option>
                                                 <option value="repeat" <?php selected(!empty($o['login_bg_size']) ? $o['login_bg_size'] : 'cover', 'repeat'); ?>><?php echo esc_html($this->t('login_bg_size_repeat')); ?></option>
@@ -3755,51 +3751,51 @@ add_filter(\'wp_footer\', function() {
                                     <!-- Colors -->
                                     <div style="margin-bottom: 20px;">
                                         <h4 style="margin: 0 0 10px 0; font-size: 14px; white-space: nowrap;"><?php echo esc_html($this->t('login_primary_color')); ?></h4>
-                                        <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[login_primary_color]" value="<?php echo esc_attr(!empty($o['login_primary_color']) ? $o['login_primary_color'] : '#0000ff'); ?>" />
+                                        <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[login_primary_color]" value="<?php echo esc_attr(!empty($o['login_primary_color']) ? $o['login_primary_color'] : '#0000ff'); ?>" />
                                     </div>
                                     
                                     <!-- Form Radius -->
                                     <div style="margin-bottom: 20px;">
                                         <label style="display: block; font-weight: 600; margin-bottom: 5px; white-space: nowrap;"><?php echo esc_html($this->t('login_form_radius')); ?></label>
-                                        <input type="number" name="<?php echo esc_attr($this->option_name); ?>[login_form_radius]" value="<?php echo esc_attr(isset($o['login_form_radius']) ? $o['login_form_radius'] : '8'); ?>" min="0" max="50" style="width: 80px; padding: 6px 10px; font-size: 14px;"> px
+                                        <input type="number" name="<?php echo $this->option_name; ?>[login_form_radius]" value="<?php echo esc_attr(isset($o['login_form_radius']) ? $o['login_form_radius'] : '8'); ?>" min="0" max="50" style="width: 80px; padding: 6px 10px; font-size: 14px;"> px
                                     </div>
                                     
                                     <!-- Form colors -->
                                     <div style="margin-bottom: 20px;">
                                         <h4 style="margin: 0 0 10px 0; font-size: 14px; white-space: nowrap;"><?php echo esc_html($this->t('login_form_bg_color')); ?></h4>
-                                        <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[login_form_bg_color]" value="<?php echo esc_attr(!empty($o['login_form_bg_color']) ? $o['login_form_bg_color'] : '#ffffff'); ?>" />
+                                        <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[login_form_bg_color]" value="<?php echo esc_attr(!empty($o['login_form_bg_color']) ? $o['login_form_bg_color'] : '#ffffff'); ?>" />
                                         
                                         <div style="margin-top: 10px;">
                                             <h4 style="margin: 0 0 10px 0; font-size: 14px; white-space: nowrap;"><?php echo esc_html($this->t('login_form_text_color')); ?></h4>
-                                            <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[login_form_text_color]" value="<?php echo esc_attr(!empty($o['login_form_text_color']) ? $o['login_form_text_color'] : '#3c434a'); ?>" />
+                                            <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[login_form_text_color]" value="<?php echo esc_attr(!empty($o['login_form_text_color']) ? $o['login_form_text_color'] : '#3c434a'); ?>" />
                                         </div>
                                     </div>
                                     
                                     <!-- Button -->
                                     <div style="margin-bottom: 20px;">
                                         <h4 style="margin: 0 0 10px 0; font-size: 14px; white-space: nowrap;"><?php echo esc_html($this->t('login_button_bg')); ?></h4>
-                                        <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[login_button_bg]" value="<?php echo esc_attr(!empty($o['login_button_bg']) ? $o['login_button_bg'] : '#0000ff'); ?>" />
+                                        <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[login_button_bg]" value="<?php echo esc_attr(!empty($o['login_button_bg']) ? $o['login_button_bg'] : '#0000ff'); ?>" />
                                         
                                         <div style="margin-top: 10px;">
                                             <h4 style="margin: 0 0 10px 0; font-size: 14px; white-space: nowrap;"><?php echo esc_html($this->t('login_button_text_color')); ?></h4>
-                                            <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[login_button_text_color]" value="<?php echo esc_attr(!empty($o['login_button_text_color']) ? $o['login_button_text_color'] : '#ffffff'); ?>" />
+                                            <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[login_button_text_color]" value="<?php echo esc_attr(!empty($o['login_button_text_color']) ? $o['login_button_text_color'] : '#ffffff'); ?>" />
                                         </div>
                                         
                                         <div style="margin-top: 10px;">
                                             <label style="display: block; font-weight: 600; margin-bottom: 5px; white-space: nowrap;"><?php echo esc_html($this->t('login_button_radius')); ?></label>
-                                            <input type="number" name="<?php echo esc_attr($this->option_name); ?>[login_button_radius]" value="<?php echo esc_attr(isset($o['login_button_radius']) ? $o['login_button_radius'] : '4'); ?>" min="0" max="50" style="width: 80px; padding: 6px 10px; font-size: 14px;"> px
+                                            <input type="number" name="<?php echo $this->option_name; ?>[login_button_radius]" value="<?php echo esc_attr(isset($o['login_button_radius']) ? $o['login_button_radius'] : '4'); ?>" min="0" max="50" style="width: 80px; padding: 6px 10px; font-size: 14px;"> px
                                         </div>
                                     </div>
                                     
                                     <!-- Links -->
                                     <div style="margin-bottom: 20px;">
                                         <h4 style="margin: 0 0 10px 0; font-size: 14px; white-space: nowrap;"><?php echo esc_html($this->t('login_links_color')); ?></h4>
-                                        <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[login_links_color]" value="<?php echo esc_attr(!empty($o['login_links_color']) ? $o['login_links_color'] : '#0000ff'); ?>" />
+                                        <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[login_links_color]" value="<?php echo esc_attr(!empty($o['login_links_color']) ? $o['login_links_color'] : '#0000ff'); ?>" />
                                         
                                         <div style="margin-top: 15px;">
                                             <label class="wpc-toggle-label">
                                                 <span class="wpc-toggle-switch">
-                                                    <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[disable_login_switcher]" value="1" <?php checked(!empty($o['disable_login_switcher'])); ?>>
+                                                    <input type="checkbox" name="<?php echo $this->option_name; ?>[disable_login_switcher]" value="1" <?php checked(!empty($o['disable_login_switcher'])); ?>>
                                                     <span class="wpc-toggle-slider"></span>
                                                 </span>
                                                 <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_lang_desc')); ?></span>
@@ -3807,7 +3803,7 @@ add_filter(\'wp_footer\', function() {
                                             <br>
                                             <label class="wpc-toggle-label">
                                                 <span class="wpc-toggle-switch">
-                                                    <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[login_hide_lostpassword]" value="1" <?php checked(!empty($o['login_hide_lostpassword'])); ?>>
+                                                    <input type="checkbox" name="<?php echo $this->option_name; ?>[login_hide_lostpassword]" value="1" <?php checked(!empty($o['login_hide_lostpassword'])); ?>>
                                                     <span class="wpc-toggle-slider"></span>
                                                 </span>
                                                 <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_hide_lostpassword')); ?></span>
@@ -3815,7 +3811,7 @@ add_filter(\'wp_footer\', function() {
                                             <br>
                                             <label class="wpc-toggle-label">
                                                 <span class="wpc-toggle-switch">
-                                                    <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[login_hide_backtoblog]" value="1" <?php checked(!empty($o['login_hide_backtoblog'])); ?>>
+                                                    <input type="checkbox" name="<?php echo $this->option_name; ?>[login_hide_backtoblog]" value="1" <?php checked(!empty($o['login_hide_backtoblog'])); ?>>
                                                     <span class="wpc-toggle-slider"></span>
                                                 </span>
                                                 <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_hide_backtoblog')); ?></span>
@@ -3823,7 +3819,7 @@ add_filter(\'wp_footer\', function() {
                                             <br>
                                             <label class="wpc-toggle-label">
                                                 <span class="wpc-toggle-switch">
-                                                    <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[login_hide_rememberme]" value="1" <?php checked(!empty($o['login_hide_rememberme'])); ?>>
+                                                    <input type="checkbox" name="<?php echo $this->option_name; ?>[login_hide_rememberme]" value="1" <?php checked(!empty($o['login_hide_rememberme'])); ?>>
                                                     <span class="wpc-toggle-slider"></span>
                                                 </span>
                                                 <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_hide_rememberme')); ?></span>
@@ -3831,7 +3827,7 @@ add_filter(\'wp_footer\', function() {
                                             <br>
                                             <label class="wpc-toggle-label">
                                                 <span class="wpc-toggle-switch">
-                                                    <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[login_hide_privacy]" value="1" <?php checked(!empty($o['login_hide_privacy'])); ?>>
+                                                    <input type="checkbox" name="<?php echo $this->option_name; ?>[login_hide_privacy]" value="1" <?php checked(!empty($o['login_hide_privacy'])); ?>>
                                                     <span class="wpc-toggle-slider"></span>
                                                 </span>
                                                 <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_hide_privacy')); ?></span>
@@ -3869,7 +3865,7 @@ add_filter(\'wp_footer\', function() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <textarea id="login_custom_css_editor" name="<?php echo esc_attr($this->option_name); ?>[login_custom_css]" rows="8" class="wpc-code-textarea"><?php echo isset($o['login_custom_css']) ? esc_textarea($o['login_custom_css']) : ''; ?></textarea>
+                                        <textarea id="login_custom_css_editor" name="<?php echo $this->option_name; ?>[login_custom_css]" rows="8" class="wpc-code-textarea"><?php echo isset($o['login_custom_css']) ? esc_textarea($o['login_custom_css']) : ''; ?></textarea>
                                     </div>
                                 </div>
                             </td>
@@ -3895,7 +3891,7 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[robots_enable]" value="1" <?php checked(!empty($o['robots_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[robots_enable]" value="1" <?php checked(!empty($o['robots_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('robots_enable_desc')); ?></span>
@@ -3905,7 +3901,7 @@ add_filter(\'wp_footer\', function() {
                         <tr>
                             <th><?php echo esc_html($this->t('robots_content')); ?></th>
                             <td>
-                                <textarea name="<?php echo esc_attr($this->option_name); ?>[robots_content]" rows="12" class="wpc-code-textarea"><?php echo isset($o['robots_content']) ? esc_textarea($o['robots_content']) : ''; ?></textarea>
+                                <textarea name="<?php echo $this->option_name; ?>[robots_content]" rows="12" class="wpc-code-textarea"><?php echo isset($o['robots_content']) ? esc_textarea($o['robots_content']) : ''; ?></textarea>
                                 <p class="description" style="margin-top:8px;"><?php echo wp_kses_post($this->t('robots_info')); ?></p>
                                 <p style="margin-top:10px;">
                                     <button type="submit" form="wpc-main-form" class="button button-primary">
@@ -3938,7 +3934,7 @@ add_filter(\'wp_footer\', function() {
                             <td>
                                 <label class="wpc-toggle-label">
                                     <span class="wpc-toggle-switch">
-                                        <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[htaccess_enable]" value="1" <?php checked(!empty($o['htaccess_enable'])); ?>>
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[htaccess_enable]" value="1" <?php checked(!empty($o['htaccess_enable'])); ?>>
                                         <span class="wpc-toggle-slider"></span>
                                     </span>
                                     <span class="wpc-toggle-text"><?php echo esc_html($this->t('htaccess_enable_desc')); ?></span>
@@ -3948,7 +3944,7 @@ add_filter(\'wp_footer\', function() {
                         <tr>
                             <th><?php echo esc_html($this->t('htaccess_content')); ?></th>
                             <td>
-                                <textarea name="<?php echo esc_attr($this->option_name); ?>[htaccess_content]" rows="12" class="wpc-code-textarea"><?php echo isset($o['htaccess_content']) ? esc_textarea($o['htaccess_content']) : ''; ?></textarea>
+                                <textarea name="<?php echo $this->option_name; ?>[htaccess_content]" rows="12" class="wpc-code-textarea"><?php echo isset($o['htaccess_content']) ? esc_textarea($o['htaccess_content']) : ''; ?></textarea>
                                 <p class="description" style="margin-top:8px;"><?php echo wp_kses_post($this->t('htaccess_info')); ?></p>
                                 <p style="margin-top:10px;">
                                     <button type="submit" form="wpc-main-form" class="button button-primary">
@@ -3969,24 +3965,24 @@ add_filter(\'wp_footer\', function() {
                     <h2><span class="dashicons dashicons-edit"></span> <?php echo esc_html($this->t('editor_section')); ?></h2>
                     <table class="form-table">
                         <tr>
-                            <th><label><?php echo esc_html($this->t('disable_gutenberg')); ?> <?php echo $this->tip($this->t('disable_gutenberg_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[disable_gutenberg]" value="1" <?php checked(1, !empty($o['disable_gutenberg'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_gutenberg_desc')); ?></span></label></td>
+                            <th><label><?php echo esc_html($this->t('disable_gutenberg')); ?> <?php echo $this->tip($this->t('disable_gutenberg_tip')); ?></label></th>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[disable_gutenberg]" value="1" <?php checked(1, !empty($o['disable_gutenberg'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_gutenberg_desc')); ?></span></label></td>
                         </tr>
                         <tr>
-                            <th><label><?php echo esc_html($this->t('duplicate_posts')); ?> <?php echo $this->tip($this->t('duplicate_posts_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[duplicate_posts]" value="1" <?php checked(1, !empty($o['duplicate_posts'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('duplicate_posts_desc')); ?></span></label></td>
-                        </tr>
-                        <tr>
-                            <th><label><?php echo esc_html($this->t('enable_svg_upload')); ?> <?php echo $this->tip($this->t('enable_svg_upload_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[enable_svg_upload]" value="1" <?php checked(1, !empty($o['enable_svg_upload'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('enable_svg_upload_desc')); ?></span></label></td>
+                            <th><label><?php echo esc_html($this->t('duplicate_posts')); ?> <?php echo $this->tip($this->t('duplicate_posts_tip')); ?></label></th>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[duplicate_posts]" value="1" <?php checked(1, !empty($o['duplicate_posts'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('duplicate_posts_desc')); ?></span></label></td>
                         </tr>
                         <tr>
                             <th><label><?php echo esc_html($this->t('enable_media_replace')); ?></label></th>
                             <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[enable_media_replace]" value="1" <?php checked(1, !empty($o['enable_media_replace'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('enable_media_replace_desc')); ?></span></label></td>
                         </tr>
                         <tr>
-                            <th><label><?php echo esc_html($this->t('post_colors')); ?> <?php echo $this->tip($this->t('post_colors_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[post_colors]" value="1" <?php checked(1, !empty($o['post_colors'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('post_colors_desc')); ?></span></label></td>
+                            <th><label><?php echo esc_html($this->t('enable_svg_upload')); ?> <?php echo $this->tip($this->t('enable_svg_upload_tip')); ?></label></th>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[enable_svg_upload]" value="1" <?php checked(1, !empty($o['enable_svg_upload'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('enable_svg_upload_desc')); ?></span></label></td>
+                        </tr>
+                        <tr>
+                            <th><label><?php echo esc_html($this->t('post_colors')); ?> <?php echo $this->tip($this->t('post_colors_tip')); ?></label></th>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[post_colors]" value="1" <?php checked(1, !empty($o['post_colors'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('post_colors_desc')); ?></span></label></td>
                         </tr>
                     </table>
                     
@@ -3996,31 +3992,31 @@ add_filter(\'wp_footer\', function() {
                         <tr>
                             <th><?php echo esc_html($this->t('color_draft')); ?></th>
                             <td>
-                                <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[color_draft]" value="<?php echo esc_attr($o['color_draft']); ?>" />
+                                <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[color_draft]" value="<?php echo esc_attr($o['color_draft']); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('color_pending')); ?></th>
                             <td>
-                                <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[color_pending]" value="<?php echo esc_attr($o['color_pending']); ?>" />
+                                <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[color_pending]" value="<?php echo esc_attr($o['color_pending']); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('color_publish')); ?></th>
                             <td>
-                                <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[color_publish]" value="<?php echo esc_attr($o['color_publish']); ?>" />
+                                <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[color_publish]" value="<?php echo esc_attr($o['color_publish']); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('color_future')); ?></th>
                             <td>
-                                <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[color_future]" value="<?php echo esc_attr($o['color_future']); ?>" />
+                                <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[color_future]" value="<?php echo esc_attr($o['color_future']); ?>" />
                             </td>
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('color_private')); ?></th>
                             <td>
-                                <input type="text" class="wpc-color-picker" name="<?php echo esc_attr($this->option_name); ?>[color_private]" value="<?php echo esc_attr($o['color_private']); ?>" />
+                                <input type="text" class="wpc-color-picker" name="<?php echo $this->option_name; ?>[color_private]" value="<?php echo esc_attr($o['color_private']); ?>" />
                             </td>
                         </tr>
                     </table>
@@ -4031,25 +4027,25 @@ add_filter(\'wp_footer\', function() {
                     <h2><span class="dashicons dashicons-admin-appearance"></span> <?php echo esc_html($this->t('frontend')); ?></h2>
                     <table class="form-table">
                         <tr>
-                            <th><label><?php echo esc_html($this->t('edit_link')); ?> <?php echo $this->tip($this->t('edit_link_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[edit_link]" value="1" <?php checked(1, !empty($o['edit_link'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('edit_link_desc')); ?></span></label></td>
+                            <th><label><?php echo esc_html($this->t('edit_link')); ?> <?php echo $this->tip($this->t('edit_link_tip')); ?></label></th>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[edit_link]" value="1" <?php checked(1, !empty($o['edit_link'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('edit_link_desc')); ?></span></label></td>
                         </tr>
                         <tr>
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('archive_titles')); ?>
-                                    <?php echo $this->tip($this->t('archive_titles_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('archive_titles_tip')); ?>
                                 </label>
                             </th>
                             <td>
-                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[archive_titles]" value="1" <?php checked(1, !empty($o['archive_titles'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('archive_titles_desc')); ?></span></label>
+                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[archive_titles]" value="1" <?php checked(1, !empty($o['archive_titles'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('archive_titles_desc')); ?></span></label>
                                 <p><small>
                                     <span class="wpc-prefix-label"><?php echo esc_html($this->t('category_prefix')); ?></span><br>
-                                    <input type="text" name="<?php echo esc_attr($this->option_name); ?>[archive_category_prefix]" value="<?php echo esc_attr($o['archive_category_prefix']); ?>" class="regular-text" placeholder="<?php echo esc_attr($this->t('category_prefix_placeholder')); ?>">
+                                    <input type="text" name="<?php echo $this->option_name; ?>[archive_category_prefix]" value="<?php echo esc_attr($o['archive_category_prefix']); ?>" class="regular-text" placeholder="<?php echo esc_attr($this->t('category_prefix_placeholder')); ?>">
                                 </small></p>
                                 <p><small>
                                     <span class="wpc-prefix-label"><?php echo esc_html($this->t('tag_prefix')); ?></span><br>
-                                    <input type="text" name="<?php echo esc_attr($this->option_name); ?>[archive_tag_prefix]" value="<?php echo esc_attr($o['archive_tag_prefix']); ?>" class="regular-text" placeholder="<?php echo esc_attr($this->t('tag_prefix_placeholder')); ?>">
+                                    <input type="text" name="<?php echo $this->option_name; ?>[archive_tag_prefix]" value="<?php echo esc_attr($o['archive_tag_prefix']); ?>" class="regular-text" placeholder="<?php echo esc_attr($this->t('tag_prefix_placeholder')); ?>">
                                 </small></p>
                             </td>
                         </tr>
@@ -4057,11 +4053,11 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('year_shortcode')); ?>
-                                    <?php echo $this->tip($this->t('year_shortcode_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('year_shortcode_tip')); ?>
                                 </label>
                             </th>
                             <td>
-                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[year_shortcode]" value="1" <?php checked(1, !empty($o['year_shortcode'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('year_shortcode_desc')); ?></span></label>
+                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[year_shortcode]" value="1" <?php checked(1, !empty($o['year_shortcode'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('year_shortcode_desc')); ?></span></label>
                                 <p class="description"><?php echo esc_html($this->t('year_example')); ?></p>
                             </td>
                         </tr>
@@ -4069,11 +4065,11 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('responsive_images')); ?>
-                                    <?php echo $this->tip($this->t('responsive_images_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('responsive_images_tip')); ?>
                                 </label>
                             </th>
                             <td>
-                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[responsive_images]" value="1" <?php checked(1, !empty($o['responsive_images'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('responsive_images_desc')); ?></span></label>
+                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[responsive_images]" value="1" <?php checked(1, !empty($o['responsive_images'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('responsive_images_desc')); ?></span></label>
                                 <p class="description"><?php echo esc_html($this->t('responsive_images_note')); ?></p>
                             </td>
                         </tr>
@@ -4081,11 +4077,11 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('disable_big_image_threshold')); ?>
-                                    <?php echo $this->tip($this->t('disable_big_image_threshold_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('disable_big_image_threshold_tip')); ?>
                                 </label>
                             </th>
                             <td>
-                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[disable_big_image_threshold]" value="1" <?php checked(1, !empty($o['disable_big_image_threshold'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_big_image_threshold_desc')); ?></span></label>
+                                <label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[disable_big_image_threshold]" value="1" <?php checked(1, !empty($o['disable_big_image_threshold'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_big_image_threshold_desc')); ?></span></label>
                                 <p class="description"><?php echo esc_html($this->t('disable_big_image_threshold_note')); ?></p>
                             </td>
                         </tr>
@@ -4100,19 +4096,19 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('disable_comments_completely')); ?> 
-                                    <?php echo $this->tip($this->t('disable_comments_completely_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('disable_comments_completely_tip')); ?>
                                 </label>
                             </th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[disable_comments_completely]" value="1" <?php checked(1, !empty($o['disable_comments_completely'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_comments_completely_desc')); ?></span></label></td>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[disable_comments_completely]" value="1" <?php checked(1, !empty($o['disable_comments_completely'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('disable_comments_completely_desc')); ?></span></label></td>
                         </tr>
                         <tr>
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('comment_url')); ?> 
-                                    <?php echo $this->tip($this->t('comment_url_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('comment_url_tip')); ?>
                                 </label>
                             </th>
-                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[remove_comment_url]" value="1" <?php checked(1, !empty($o['remove_comment_url'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('comment_url_desc')); ?></span></label></td>
+                            <td><label class="wpc-toggle-label"><span class="wpc-toggle-switch"><input type="checkbox" name="<?php echo $this->option_name; ?>[remove_comment_url]" value="1" <?php checked(1, !empty($o['remove_comment_url'])); ?>><span class="wpc-toggle-slider"></span></span><span class="wpc-toggle-text"><?php echo esc_html($this->t('comment_url_desc')); ?></span></label></td>
                         </tr>
                     </table>
                 </div>
@@ -4125,7 +4121,7 @@ add_filter(\'wp_footer\', function() {
                             <th>
                                 <label>
                                     <?php echo esc_html($this->t('wpforms_countries')); ?>
-                                    <?php echo $this->tip($this->t('wpforms_countries_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+                                    <?php echo $this->tip($this->t('wpforms_countries_tip')); ?>
                                 </label>
                             </th>
                             <td>
@@ -4140,7 +4136,7 @@ add_filter(\'wp_footer\', function() {
                                 $no_plugin = empty($detected_plugins);
                                 ?>
                                 <div class="wpc-wpforms-label">
-                                    <select name="<?php echo esc_attr($this->option_name); ?>[restrict_wpforms_countries]" style="min-width:160px;<?php echo $no_plugin ? ' opacity:.45; pointer-events:none;' : ''; ?>"<?php echo $no_plugin ? ' disabled' : ''; ?>>
+                                    <select name="<?php echo $this->option_name; ?>[restrict_wpforms_countries]" style="min-width:160px;<?php echo $no_plugin ? ' opacity:.45; pointer-events:none;' : ''; ?>"<?php echo $no_plugin ? ' disabled' : ''; ?>>
                                         <option value="" <?php selected($current_restrict, ''); ?>><?php echo esc_html($this->t('phone_restrict_off')); ?></option>
                                         <option value="czsk" <?php selected($current_restrict, 'czsk'); ?>><?php echo esc_html($this->t('phone_restrict_czsk')); ?></option>
                                         <option value="europe" <?php selected($current_restrict, 'europe'); ?>><?php echo esc_html($this->t('phone_restrict_europe')); ?></option>
@@ -4167,18 +4163,18 @@ add_filter(\'wp_footer\', function() {
                     <h2><span class="dashicons dashicons-translation"></span> <?php echo esc_html($this->t('translations')); ?></h2>
                     <table class="form-table">
                         <tr>
-                            <th><label><?php echo esc_html($this->t('enable_trans')); ?> <?php echo $this->tip($this->t('enable_trans_tip')); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></label></th>
-                            <td><label><input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[enable_translations]" value="1" <?php checked(1, !empty($o['enable_translations'])); ?>> <?php echo esc_html($this->t('enable_trans_desc')); ?></label></td>
+                            <th><label><?php echo esc_html($this->t('enable_trans')); ?> <?php echo $this->tip($this->t('enable_trans_tip')); ?></label></th>
+                            <td><label><input type="checkbox" name="<?php echo $this->option_name; ?>[enable_translations]" value="1" <?php checked(1, !empty($o['enable_translations'])); ?>> <?php echo esc_html($this->t('enable_trans_desc')); ?></label></td>
                         </tr>
                     </table>
                     <h3><?php echo esc_html($this->t('trans_defs')); ?></h3>
-                    <p style="background:#f0f6fc;border-left:4px solid #72aee6;padding:12px 15px;margin:0 0 15px 0;"><?php echo wp_kses_post($this->t('trans_note')); ?></p>
+                    <p style="background:#f0f6fc;border-left:4px solid #72aee6;padding:12px 15px;margin:0 0 15px 0;"><?php echo $this->t('trans_note'); ?></p>
                     <div id="translation-rows" class="wpc-translations">
                         <?php foreach ($o['translations'] as $i => $t): ?>
                         <div class="translation-row">
-                            <span class="translation-number translation-drag-handle" title="Přetáhněte pro změnu pořadí"><span class="dashicons dashicons-menu"></span><?php echo absint($i + 1); ?>.</span>
-                            <textarea name="<?php echo esc_attr($this->option_name); ?>[translations][<?php echo absint($i); ?>][from]" placeholder="<?php echo esc_attr($this->t('from')); ?>" rows="1" class="translation-from"><?php echo esc_attr($t['from']); ?></textarea>
-                            <textarea name="<?php echo esc_attr($this->option_name); ?>[translations][<?php echo absint($i); ?>][to]" placeholder="" title="<?php echo esc_attr($this->t('trans_html_allowed')); ?>" rows="1"><?php echo isset($t['to']) ? esc_textarea($t['to']) : ''; ?></textarea>
+                            <span class="translation-number translation-drag-handle" title="Přetáhněte pro změnu pořadí"><span class="dashicons dashicons-menu"></span><?php echo ($i + 1); ?>.</span>
+                            <textarea name="<?php echo $this->option_name; ?>[translations][<?php echo $i; ?>][from]" placeholder="<?php echo esc_attr($this->t('from')); ?>" rows="1" class="translation-from"><?php echo esc_attr($t['from']); ?></textarea>
+                            <textarea name="<?php echo $this->option_name; ?>[translations][<?php echo $i; ?>][to]" placeholder="" title="<?php echo esc_attr($this->t('trans_html_allowed')); ?>" rows="1"><?php echo isset($t['to']) ? $t['to'] : ''; ?></textarea>
                             <button type="button" class="button remove-translation" title="<?php echo esc_attr($this->t('remove')); ?>"><span class="dashicons dashicons-no"></span></button>
                         </div>
                         <?php endforeach; ?>
@@ -4225,7 +4221,7 @@ add_filter(\'wp_footer\', function() {
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('server')); ?></th>
-                            <td><code><?php echo esc_html(isset($_SERVER['SERVER_SOFTWARE']) ? sanitize_text_field(wp_unslash($_SERVER['SERVER_SOFTWARE'])) : ''); ?></code></td>
+                            <td><code><?php echo esc_html($_SERVER['SERVER_SOFTWARE']); ?></code></td>
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('php_memory')); ?></th>
@@ -4247,7 +4243,7 @@ add_filter(\'wp_footer\', function() {
                 <h2><span class="dashicons dashicons-database-export"></span> <?php echo esc_html($this->t('import_export')); ?></h2>
                 <div class="wpc-backup-grid">
                     <div class="wpc-backup-item">
-                        <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>">
+                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
                             <input type="hidden" name="action" value="wpc_export_settings">
                             <?php wp_nonce_field('wpc_export'); ?>
                             <button type="submit" class="button"><span class="dashicons dashicons-download"></span> <?php echo esc_html($this->t('export')); ?></button>
@@ -4256,7 +4252,7 @@ add_filter(\'wp_footer\', function() {
                     </div>
                     
                     <div class="wpc-backup-item">
-                        <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" enctype="multipart/form-data" id="import-form">
+                        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" enctype="multipart/form-data" id="import-form">
                             <input type="hidden" name="action" value="wpc_import_settings">
                             <?php wp_nonce_field('wpc_import'); ?>
                             <label class="button" for="import-file"><span class="dashicons dashicons-upload"></span> <?php echo esc_html($this->t('import')); ?></label>
@@ -5331,14 +5327,11 @@ add_filter(\'wp_footer\', function() {
                             
                             <div class="wpc-system-info-box">
                                 <strong><?php echo esc_html($this->t('bug_report_system_info')); ?>:</strong>
-                                WordPress: <?php echo esc_html(get_bloginfo('version')); ?><br>
-                                PHP: <?php echo esc_html(PHP_VERSION); ?><br>
-                                Plugin: <?php echo esc_html(self::VERSION); ?><br>
-                                <?php echo esc_html($this->t('bug_report_url')); ?>: <?php echo esc_html(home_url()); ?>
+                                WordPress: <?php echo get_bloginfo('version'); ?><br>
+                                PHP: <?php echo PHP_VERSION; ?><br>
+                                Plugin: 1.7.3<br>
+                                <?php echo esc_html($this->t('bug_report_url')); ?>: <?php echo home_url(); ?>
                             </div>
-                            <p class="description" style="margin-top:8px;font-style:italic;">
-                                    <?php echo esc_html($this->t('bug_report_consent')); ?>
-                                </p>
                         </form>
                     </div>
                     <div class="wpc-modal-footer">
@@ -5349,7 +5342,7 @@ add_filter(\'wp_footer\', function() {
             
         </div> <!-- End .wrap -->
 
-        <form method="post" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" enctype="multipart/form-data" id="import-translations-form" style="display:none;">
+        <form method="post" action="<?php echo admin_url('admin-post.php'); ?>" enctype="multipart/form-data" id="import-translations-form" style="display:none;">
             <input type="hidden" name="action" value="wpc_import_translations">
             <?php wp_nonce_field('wpc_import_translations'); ?>
             <input type="file" name="import_translations_file" id="import-translations-file" accept=".json">
@@ -5400,7 +5393,7 @@ add_filter(\'wp_footer\', function() {
                     var url = URL.createObjectURL(blob);
                     var a = document.createElement('a');
                     a.href = url;
-                    a.download = 'wpc-translations-<?php echo esc_attr(gmdate('Y-m-d')); ?>.json';
+                    a.download = 'wpc-translations-<?php echo date('Y-m-d'); ?>.json';
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -5409,7 +5402,7 @@ add_filter(\'wp_footer\', function() {
 
                 $('#wpc-lang-select').on('change', function(){
                     var lang = $(this).val();
-                    var nonce = '<?php echo esc_attr( wp_create_nonce('wpc_nonce') ); ?>';
+                    var nonce = '<?php echo wp_create_nonce('wpc_nonce'); ?>';
                     $.post(ajaxurl, {action: 'wpc_change_language', lang: lang, nonce: nonce}, function(){ location.reload(); });
                 });
                 
@@ -5422,7 +5415,7 @@ add_filter(\'wp_footer\', function() {
                     var originalText = $button.html();
                     $button.prop('disabled', true).html('<span class="dashicons dashicons-update dashicons-spin" style="vertical-align:middle;"></span> <?php echo esc_js($this->t('saving')); ?>...');
                     
-                    var nonce = '<?php echo esc_attr( wp_create_nonce('wpc_nonce') ); ?>';
+                    var nonce = '<?php echo wp_create_nonce('wpc_nonce'); ?>';
                     
                     $.post(ajaxurl, {
                         action: 'wpc_restore_htaccess',
@@ -5431,8 +5424,8 @@ add_filter(\'wp_footer\', function() {
                         $button.prop('disabled', false).html(originalText);
                         
                         if (response.success) {
-                            $('textarea[name="<?php echo esc_attr($this->option_name); ?>[htaccess_content]"]').val('');
-                            $('input[name="<?php echo esc_attr($this->option_name); ?>[htaccess_enable]"]').prop('checked', false);
+                            $('textarea[name="<?php echo $this->option_name; ?>[htaccess_content]"]').val('');
+                            $('input[name="<?php echo $this->option_name; ?>[htaccess_enable]"]').prop('checked', false);
                             
                             notify(response.data.message, 'success');
                             
@@ -5464,8 +5457,8 @@ add_filter(\'wp_footer\', function() {
                     var rowNumber = $('#translation-rows .translation-row').length + 1;
                     var row = '<div class="translation-row">' +
                         '<span class="translation-number translation-drag-handle" title="Přetáhněte pro změnu pořadí"><span class="dashicons dashicons-menu"></span>' + rowNumber + '.</span>' +
-                        '<textarea name="<?php echo esc_attr($this->option_name); ?>[translations]['+translationIndex+'][from]" placeholder="<?php echo esc_attr($this->t('from')); ?>" rows="1" class="translation-from"></textarea>' +
-                        '<textarea name="<?php echo esc_attr($this->option_name); ?>[translations]['+translationIndex+'][to]" placeholder="" title="<?php echo esc_attr($this->t('trans_html_allowed')); ?>" rows="1"></textarea>' +
+                        '<textarea name="<?php echo $this->option_name; ?>[translations]['+translationIndex+'][from]" placeholder="<?php echo esc_attr($this->t('from')); ?>" rows="1" class="translation-from"></textarea>' +
+                        '<textarea name="<?php echo $this->option_name; ?>[translations]['+translationIndex+'][to]" placeholder="" title="<?php echo esc_attr($this->t('trans_html_allowed')); ?>" rows="1"></textarea>' +
                         '<button type="button" class="button remove-translation" title="<?php echo esc_attr($this->t('remove')); ?>"><span class="dashicons dashicons-no"></span></button>' +
                         '</div>';
                     $('#translation-rows').append(row);
@@ -5480,8 +5473,8 @@ add_filter(\'wp_footer\', function() {
                         translationIndex = 0;
                         var row = '<div class="translation-row">' +
                             '<span class="translation-number translation-drag-handle" title="Přetáhněte pro změnu pořadí"><span class="dashicons dashicons-menu"></span>1.</span>' +
-                            '<textarea name="<?php echo esc_attr($this->option_name); ?>[translations][0][from]" placeholder="<?php echo esc_attr($this->t('from')); ?>" rows="1" class="translation-from"></textarea>' +
-                            '<textarea name="<?php echo esc_attr($this->option_name); ?>[translations][0][to]" placeholder="" title="<?php echo esc_attr($this->t('trans_html_allowed')); ?>" rows="1"></textarea>' +
+                            '<textarea name="<?php echo $this->option_name; ?>[translations][0][from]" placeholder="<?php echo esc_attr($this->t('from')); ?>" rows="1" class="translation-from"></textarea>' +
+                            '<textarea name="<?php echo $this->option_name; ?>[translations][0][to]" placeholder="" title="<?php echo esc_attr($this->t('trans_html_allowed')); ?>" rows="1"></textarea>' +
                             '<button type="button" class="button remove-translation" title="<?php echo esc_attr($this->t('remove')); ?>"><span class="dashicons dashicons-no"></span></button>' +
                             '</div>';
                         $('#translation-rows').append(row);
@@ -5715,7 +5708,7 @@ add_filter(\'wp_footer\', function() {
                             }
                         });
 
-                        $('input[name="<?php echo esc_attr($this->option_name); ?>[maintenance_mode_type]"]').on('change', function() {
+                        $('input[name="<?php echo $this->option_name; ?>[maintenance_mode_type]"]').on('change', function() {
                             if ($(this).val() === 'advanced' && maintenanceCmInstance && maintenanceCmInstance.codemirror) {
                                 
                                 setTimeout(function() {
@@ -6023,14 +6016,14 @@ add_filter(\'wp_footer\', function() {
 
                 var formData = new FormData();
                 formData.append('action', 'wpc_submit_bug_report');
-                formData.append('nonce', '<?php echo esc_attr( wp_create_nonce('wpc_bug_report') ); ?>');
+                formData.append('nonce', '<?php echo wp_create_nonce('wpc_bug_report'); ?>');
                 formData.append('email', email);
                 formData.append('message', message);
                 formData.append('system_info', JSON.stringify({
-                    wp: '<?php echo esc_js(get_bloginfo('version')); ?>',
-                    php: '<?php echo esc_js(PHP_VERSION); ?>',
-                    plugin: '<?php echo esc_js(self::VERSION); ?>',
-                    url: '<?php echo esc_js(home_url()); ?>'
+                    wp: '<?php echo get_bloginfo('version'); ?>',
+                    php: '<?php echo PHP_VERSION; ?>',
+                    plugin: '1.7.3',
+                    url: '<?php echo home_url(); ?>'
                 }));
 
                 if (screenshotEl.files.length > 0) {
@@ -6105,7 +6098,7 @@ add_filter(\'wp_footer\', function() {
                         var attachment = maintenanceFrame.state().get('selection').first().toJSON();
                         $('#maintenance_image').val(attachment.url);
                         
-                        var maxWidth = $('input[name="<?php echo esc_attr($this->option_name); ?>[maintenance_image_max_width]"]').val();
+                        var maxWidth = $('input[name="<?php echo $this->option_name; ?>[maintenance_image_max_width]"]').val();
                         var styleAttr = maxWidth ? 'width: 100%; max-width: ' + parseInt(maxWidth) + 'px; height: auto;' : 'max-width: 100%; height: auto;';
                         styleAttr += ' display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px;';
 
@@ -6148,7 +6141,7 @@ add_filter(\'wp_footer\', function() {
                         var attachment = loginLogoFrame.state().get('selection').first().toJSON();
                         $('#login_logo').val(attachment.url);
                         
-                        var logoHeight = $('input[name="<?php echo esc_attr($this->option_name); ?>[login_logo_height]"]').val() || 100;
+                        var logoHeight = $('input[name="<?php echo $this->option_name; ?>[login_logo_height]"]').val() || 100;
                         var styleAttr = 'height: ' + parseInt(logoHeight) + 'px; width: auto;';
                         styleAttr += ' display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px;';
 
@@ -6323,8 +6316,7 @@ add_filter(\'wp_footer\', function() {
     public function disable_author_archives() {
         
         if (is_author()) {
-            wp_safe_redirect(home_url(), 301);
-            exit;
+            wp_redirect(home_url(), 301);
             exit;
         }
     }
@@ -6337,8 +6329,8 @@ add_filter(\'wp_footer\', function() {
         );
         
         foreach ($files_to_delete as $file) {
-            if (file_exists($file) && is_writable($file)) { // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_is_writable
-                @wp_delete_file($file);
+            if (file_exists($file) && is_writable($file)) {
+                @unlink($file);
             }
         }
     }
@@ -6637,13 +6629,13 @@ add_filter(\'wp_footer\', function() {
         
         if (defined('DOING_AJAX') && DOING_AJAX) {
             if (is_user_logged_in() && !empty($_SERVER['HTTP_REFERER']) && 
-                strpos(sanitize_text_field(wp_unslash($_SERVER['HTTP_REFERER'])), '/wp-admin/') !== false) {
+                strpos($_SERVER['HTTP_REFERER'], '/wp-admin/') !== false) {
                 return '[year]';
             }
         }
         
         if (!empty($_SERVER['REQUEST_URI'])) {
-            $uri = sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI']));
+            $uri = $_SERVER['REQUEST_URI'];
             if (strpos($uri, '/wp-admin/') !== false || 
                 strpos($uri, 'customize.php') !== false ||
                 strpos($uri, 'admin-ajax.php') !== false && is_user_logged_in()) {
@@ -6651,7 +6643,7 @@ add_filter(\'wp_footer\', function() {
             }
         }
         
-        return gmdate('Y');
+        return date('Y');
     }
     
     public function safe_do_shortcode_wrapper($content) {
@@ -6680,7 +6672,7 @@ add_filter(\'wp_footer\', function() {
             if (strpos($buffer, '[year]') !== false) {
                 $buffer = do_shortcode($buffer);
             }
-            echo $buffer; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- buffer contains full page HTML
+            echo $buffer;
         }
     }
     
@@ -6734,7 +6726,7 @@ add_filter(\'wp_footer\', function() {
             return $text;
         }
 
-        if (wp_strip_all_tags($text) !== $text) {
+        if (strip_tags($text) !== $text) {
             return $text;
         }
         
@@ -6968,7 +6960,7 @@ add_filter(\'wp_footer\', function() {
             }
 
             array_unshift($links, 'Verze ' . self::VERSION);
-            array_unshift($links, '<a href="' . esc_url($custom_url) . '" target="_blank">' . __('View details', 'wp-admin-studio') . '</a>');
+            array_unshift($links, '<a href="' . esc_url($custom_url) . '" target="_blank">' . __('View details') . '</a>');
         }
         return $links;
     }
@@ -7034,7 +7026,7 @@ add_filter(\'wp_footer\', function() {
         if (!empty($o['custom_css_code'])) {
             echo "\n<!-- WP Admin Studio: Custom CSS -->\n";
             echo "<style>\n";
-            echo $o['custom_css_code']; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- raw CSS in style tag
+            echo $o['custom_css_code'];
             echo "\n</style>\n";
             echo "<!-- /WP Admin Studio -->\n";
         }
@@ -7044,7 +7036,7 @@ add_filter(\'wp_footer\', function() {
         $o = get_option($this->option_name, array());
         if (!empty($o['script_head_code'])) {
             echo "\n<!-- WP Admin Studio: Custom Head Code -->\n";
-            echo wp_unslash($o['script_head_code']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intentional raw code output
+            echo wp_unslash($o['script_head_code']);
             echo "\n<!-- /WP Admin Studio -->\n";
         }
     }
@@ -7064,7 +7056,7 @@ add_filter(\'wp_footer\', function() {
             } else {
                 
                 echo "\n<!-- WP Admin Studio: Google Maps API -->\n";
-                echo '<script src="https://maps.googleapis.com/maps/api/js?key=' . esc_attr($api_key) . '" async defer></script>' . "\n"; // phpcs:ignore WordPress.WP.EnqueuedResources.NonEnqueuedScript
+                echo '<script src="https://maps.googleapis.com/maps/api/js?key=' . esc_attr($api_key) . '" async defer></script>' . "\n";
                 echo "<!-- /WP Admin Studio -->\n";
             }
         }
@@ -7074,30 +7066,26 @@ add_filter(\'wp_footer\', function() {
         $o = get_option($this->option_name, array());
         if (!empty($o['script_body_start_code'])) {
             echo "\n<!-- WP Admin Studio: Custom Body Start Code -->\n";
-            echo wp_unslash($o['script_body_start_code']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intentional raw code output
+            echo wp_unslash($o['script_body_start_code']);
             echo "\n<!-- /WP Admin Studio -->\n";
         }
     }
     
     public function execute_custom_functions() {
         $o = get_option($this->option_name, array());
-        if (empty($o['custom_functions_code'])) {
-            return;
-        }
+        if (!empty($o['custom_functions_code'])) {
+            $code = wp_unslash($o['custom_functions_code']);
+            
+            try {
 
-        // Custom PHP code is only settable by administrators with manage_options.
-        // We verify the option was saved by a trusted source (WordPress options API)
-        // and is not user-supplied input at runtime.
-        $code = wp_unslash($o['custom_functions_code']);
-
-        try {
-            eval($code); // phpcs:ignore Generic.PHP.ForbiddenFunctions.Found,Squiz.PHP.Eval.Discouraged -- Code stored by admin via settings page, equivalent to functions.php
-        } catch (ParseError $e) {
-            error_log('WP Admin Studio Custom Functions Parse Error: ' . $e->getMessage() . ' on line ' . $e->getLine());
-        } catch (Error $e) {
-            error_log('WP Admin Studio Custom Functions Fatal Error: ' . $e->getMessage());
-        } catch (Exception $e) {
-            error_log('WP Admin Studio Custom Functions Error: ' . $e->getMessage());
+                eval($code);
+            } catch (Exception $e) {
+                error_log('WP Admin Studio Custom Functions Error: ' . $e->getMessage());
+            } catch (ParseError $e) {
+                error_log('WP Admin Studio Custom Functions Parse Error: ' . $e->getMessage() . ' on line ' . $e->getLine());
+            } catch (Error $e) {
+                error_log('WP Admin Studio Custom Functions Fatal Error: ' . $e->getMessage());
+            }
         }
     }
 
@@ -7125,7 +7113,7 @@ add_filter(\'wp_footer\', function() {
             
             status_header(503);
             header('Retry-After: 3600');
-            echo wp_unslash($o['maintenance_html_code']); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- intentional raw code output
+            echo wp_unslash($o['maintenance_html_code']);
             exit;
         } else {
             
@@ -7635,7 +7623,7 @@ add_filter(\'wp_footer\', function() {
             <?php endif; ?>
             
             <?php if ($custom_css): ?>
-            <?php echo wp_strip_all_tags($custom_css); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>
+            <?php echo $custom_css; ?>
             <?php endif; ?>
         </style>
         <script>
@@ -7684,8 +7672,8 @@ add_filter(\'wp_footer\', function() {
             return;
         }
         
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '/';
-        $parsed = wp_parse_url($request_uri);
+        $request_uri = $_SERVER['REQUEST_URI'];
+        $parsed = parse_url($request_uri);
         $path = isset($parsed['path']) ? trim($parsed['path'], '/') : '';
         
         $path_parts = array_filter(explode('/', $path));
@@ -7706,13 +7694,6 @@ add_filter(\'wp_footer\', function() {
             status_header(200);
             
             $_SERVER['SCRIPT_NAME'] = '/wp-login.php';
-            
-            // Initialize $user_login to prevent "Undefined variable" warning in wp-login.php
-            // when the file is loaded via require_once instead of as a direct entry point.
-            if ( ! isset( $user_login ) ) {
-                $user_login = '';
-            }
-            
             require_once ABSPATH . 'wp-login.php';
             exit;
         }
@@ -7728,7 +7709,7 @@ add_filter(\'wp_footer\', function() {
         $o = get_option($this->option_name, array());
         $custom_slug = !empty($o['custom_login_slug']) ? $o['custom_login_slug'] : '';
         
-        $query_string = isset($_SERVER['QUERY_STRING']) ? sanitize_text_field(wp_unslash($_SERVER['QUERY_STRING'])) : '';
+        $query_string = $_SERVER['QUERY_STRING'] ?? '';
         if (!empty($query_string)) {
             $error = '';
             status_header(200);
@@ -7748,8 +7729,7 @@ add_filter(\'wp_footer\', function() {
             return $url;
         }
         
-        $current_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(wp_unslash($_SERVER['REQUEST_URI'])) : '';
-        if (strpos($url, 'wp-login.php') !== false && strpos($current_uri, $custom_slug) !== false) {
+        if (strpos($url, 'wp-login.php') !== false && strpos($_SERVER['REQUEST_URI'], $custom_slug) !== false) {
             $url = str_replace('wp-login.php', $custom_slug . '/', $url);
         }
         
@@ -7797,7 +7777,6 @@ add_filter(\'wp_footer\', function() {
     }
     
     public function show_duplicate_notice() {
-        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- read-only GET param for success notice
         if (isset($_GET['duplicated']) && $_GET['duplicated'] === '1') {
             echo '<div class="notice notice-success is-dismissible"><p>' . esc_html($this->get_user_translation('duplicate_success')) . '</p></div>';
         }
@@ -7844,7 +7823,7 @@ add_filter(\'wp_footer\', function() {
         $new_post_id = wp_insert_post($new_post_args);
         
         if (is_wp_error($new_post_id)) {
-            wp_die(esc_html($new_post_id->get_error_message()));
+            wp_die($new_post_id->get_error_message());
         }
         
         $post_meta = get_post_meta($post_id);
@@ -7880,8 +7859,7 @@ add_filter(\'wp_footer\', function() {
             admin_url('post.php')
         );
         
-        wp_safe_redirect($edit_url);
-        exit;
+        wp_redirect($edit_url);
         exit;
     }
     
@@ -8734,14 +8712,15 @@ add_filter(\'wp_footer\', function() {
         require_once ABSPATH . 'wp-admin/admin-footer.php';
     }
 
+
     public static function on_activation() {
         if (version_compare(PHP_VERSION, '7.4', '<')) {
             deactivate_plugins(plugin_basename(__FILE__));
-            wp_die(esc_html__('WP Admin Studio requires PHP 7.4 or higher.', 'wp-admin-studio'));
+            wp_die(esc_html__('Admin Studio requires PHP 7.4 or higher.', 'admin-studio'));
         }
         if (version_compare(get_bloginfo('version'), '5.8', '<')) {
             deactivate_plugins(plugin_basename(__FILE__));
-            wp_die(esc_html__('WP Admin Studio requires WordPress 5.8 or higher.', 'wp-admin-studio'));
+            wp_die(esc_html__('Admin Studio requires WordPress 5.8 or higher.', 'admin-studio'));
         }
     }
 
@@ -8762,6 +8741,4 @@ add_filter(\'wp_footer\', function() {
 register_deactivation_hook(__FILE__, array('WPAdminStudio', 'on_deactivation'));
 register_activation_hook(__FILE__, array('WPAdminStudio', 'on_activation'));
 
-add_action('plugins_loaded', function () {
-    new WPAdminStudio();
-});
+new WPAdminStudio();
