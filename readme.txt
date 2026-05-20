@@ -4,7 +4,7 @@ Tags: admin, customization, maintenance, login, scripts
 Requires at least: 5.8
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 1.9.5
+Stable tag: 1.9.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Basic functionality works on multisite. SVG upload support is enabled per-site.
 The plugin automatically creates a backup before saving. You can restore the previous version using the "Restore backup" button on the Editor settings page.
 
 == Changelog ==
+
+= 1.9.6 =
+* Improved: Admin UI colors now use WordPress CSS variables for full compatibility with all color schemes, including the Modern scheme introduced in WordPress 7.0
+* Added: Option to hide the Command Palette search button (Ctrl+K) from the admin bar
 
 = 1.9.5 =
 * Fixed: Media file replacement feature was missing
