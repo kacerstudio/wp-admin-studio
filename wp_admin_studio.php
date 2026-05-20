@@ -3,7 +3,7 @@
  * Plugin Name: WP Admin Studio
  * Plugin URI: https://kacer.studio/wpadminstudio
  * Description: Professional WordPress customization: admin settings, pages & posts, translations, custom scripts & codes, robots.txt & .htaccess editor
- * Version: 1.9.5
+ * Version: 1.9.6
  * Author: KACER STUDIO s.r.o.
  * Author URI: https://kacer.studio
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!function_exists('wpc_current_year')) {
 }
 
 class WPAdminStudio {
-    const VERSION = '1.9.5';
+    const VERSION = '1.9.6';
     const MAX_UPLOAD_SIZE = 5242880; 
     const MAX_FILE_SIZE = 5242880; 
     
@@ -142,6 +142,7 @@ class WPAdminStudio {
                 'admin_bar_new' => 'Akce "Přidat nový" (příspěvek, stránku, médium...)',
                 'admin_bar_view' => 'Odkaz "Zobrazit web"',
                 'admin_bar_avatar' => 'Ikona avatara u jména uživatele (pouze desktop)',
+                'admin_bar_search' => 'Vyhledávání (Ctrl + K)',
                 
                 'login_lang' => 'Skrýt přepínač jazyků',
                 'login_lang_desc' => 'Skrýt přepínač jazyků',
@@ -354,7 +355,7 @@ Funguje na adresách jako /tema/XXX/ nebo /stitek/XXX/',
                 'enable_trans_tip' => 'Nahradí vybrané anglické texty českými ekvivalenty na frontendu webu (nezasahuje do administrace).',
                 
                 'trans_defs' => 'Definice překladů',
-                'trans_note' => 'ℹ️ Upravte nebo přidejte vlastní překlady. Ponechte pole překladu prázdné pro úplné odstranění textu z výstupu. V poli překladu můžete používat HTML tagy.',
+                'trans_note' => 'Upravte nebo přidejte vlastní překlady. Ponechte pole překladu prázdné pro úplné odstranění textu z výstupu. V poli překladu můžete používat HTML tagy.',
                 'trans_html_allowed' => 'Můžete použít HTML (např. <a href="">odkaz</a>)',
                 'from' => 'Originální text',
                 'to' => 'Překlad (česky)',
@@ -418,7 +419,7 @@ Funguje na adresách jako /tema/XXX/ nebo /stitek/XXX/',
                 'custom_functions' => 'Vlastní PHP kód (functions.php)',
                 'custom_functions_desc' => 'Aktivovat vlastní PHP funkce',
                 'custom_functions_tip' => 'Přidá vlastní PHP kód který se spustí při načtení WordPress. Ekvivalent přidání kódu do functions.php vašeho theme. POZOR: Špatný kód může rozbít web!',
-                'custom_functions_info' => 'ℹ️ Zadávejte PHP kód <strong>BEZ</strong> otevíracích/uzavíracích &lt;?php ?&gt; tagů.',
+                'custom_functions_info' => 'Zadávejte PHP kód <strong>BEZ</strong> otevíracích/uzavíracích &lt;?php ?&gt; tagů.',
                 'custom_functions_placeholder' => '
 
 add_filter(\'wp_footer\', function() {
@@ -429,7 +430,7 @@ add_filter(\'wp_footer\', function() {
                 'custom_css_tip' => 'Přidá vlastní CSS styly do &lt;head&gt; sekce. Zadávejte kód BEZ &lt;style&gt; tagů - ty se přidají automaticky. Příklad: body { background: #fff; }',
                 'custom_css_active_warning' => 'Vlastní CSS je aktivní a aplikuje se na celý web. Deaktivujte, pokud web zobrazuje neočekávané styly.',
                 'custom_css_theme' => 'Téma:',
-                'custom_css_info' => 'ℹ️ Zadávejte CSS <strong>BEZ</strong> &lt;style&gt; tagů - ty se přidají automaticky.',
+                'custom_css_info' => 'Zadávejte CSS <strong>BEZ</strong> &lt;style&gt; tagů - ty se přidají automaticky.',
                 'custom_css_placeholder' => 'body {
   background: #fff;
   font-family: Arial, sans-serif;
@@ -469,7 +470,7 @@ add_filter(\'wp_footer\', function() {
                 'robots_template_custom' => 'Vlastní',
                 'robots_apply' => 'Použít šablonu',
                 'robots_tip' => 'Upravte pravidla pro vyhledávače. Soubor robots.txt říká botům (Google, Bing...), které části webu mohou indexovat.',
-                'robots_info' => 'ℹ️ Po uložení se obsah <strong>zapíše do fyzického souboru</strong> <code>robots.txt</code> v root složce webu. Pokud soubor existuje, bude přepsán.',
+                'robots_info' => 'Po uložení se obsah <strong>zapíše do fyzického souboru</strong> <code>robots.txt</code> v root složce webu. Pokud soubor existuje, bude přepsán.',
 
                 'htaccess_editor' => 'Editor .htaccess',
                 'htaccess_enable' => 'Povolit vlastní .htaccess pravidla',
@@ -477,7 +478,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Přidá vlastní Apache pravidla do .htaccess souboru. POZOR: Nesprávná konfigurace může způsobit nefunkčnost webu!',
                 'htaccess_content' => 'Vlastní .htaccess pravidla',
                 'htaccess_warning' => 'VAROVÁNÍ: Nesprávná pravidla mohou způsobit nefunkčnost webu! Plugin automaticky vytvoří zálohu jako <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Pravidla se <strong>přidají NA ZAČÁTEK</strong> .htaccess souboru (nepřepisují celý soubor). Obklopí se komentáři <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
+                'htaccess_info' => 'Pravidla se <strong>přidají NA ZAČÁTEK</strong> .htaccess souboru (nepřepisují celý soubor). Obklopí se komentáři <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Šablona',
                 'htaccess_template_security' => 'Bezpečnostní pravidla',
                 'htaccess_template_cache' => 'Cache hlavičky',
@@ -559,6 +560,7 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_new' => 'Action "Add New" (post, page, media...)',
                 'admin_bar_view' => 'Link "View Site"',
                 'admin_bar_avatar' => 'Avatar icon next to username (desktop only)',
+                'admin_bar_search' => 'Search (Ctrl + K)',
                 
                 'login_lang' => 'Hide language switcher',
                 'login_lang_desc' => 'Hide language switcher',
@@ -763,7 +765,7 @@ Works on URLs like /category/XXX/ or /tag/XXX/',
                 'enable_trans_tip' => 'Replaces selected English texts with Czech equivalents on the website frontend (does not affect admin area).',
                 
                 'trans_defs' => 'Translation Definitions',
-                'trans_note' => 'ℹ️ Edit or add custom translations. Leave the translation field empty to completely remove text from output. You can use HTML tags in the translation field.',
+                'trans_note' => 'Edit or add custom translations. Leave the translation field empty to completely remove text from output. You can use HTML tags in the translation field.',
                 'trans_html_allowed' => 'You can use HTML (e.g. <a href="">link</a>)',
                 'from' => 'Original text',
                 'to' => 'Translation (Czech)',
@@ -827,7 +829,7 @@ Works on URLs like /category/XXX/ or /tag/XXX/',
                 'custom_functions' => 'Custom PHP Code (functions.php)',
                 'custom_functions_desc' => 'Enable custom PHP functions',
                 'custom_functions_tip' => 'Adds custom PHP code that runs when WordPress loads. Equivalent to adding code to your theme\'s functions.php. WARNING: Bad code can break your site!',
-                'custom_functions_info' => 'ℹ️ Enter PHP code <strong>WITHOUT</strong> opening/closing &lt;?php ?&gt; tags.',
+                'custom_functions_info' => 'Enter PHP code <strong>WITHOUT</strong> opening/closing &lt;?php ?&gt; tags.',
                 'custom_functions_placeholder' => '
 
 add_filter(\'wp_footer\', function() {
@@ -838,7 +840,7 @@ add_filter(\'wp_footer\', function() {
                 'custom_css_tip' => 'Adds custom CSS styles to the &lt;head&gt; section. Enter code WITHOUT &lt;style&gt; tags - they will be added automatically. Example: body { background: #fff; }',
                 'custom_css_active_warning' => 'Custom CSS is active and applied site-wide. Deactivate if the site displays unexpected styles.',
                 'custom_css_theme' => 'Theme:',
-                'custom_css_info' => 'ℹ️ Enter CSS <strong>WITHOUT</strong> &lt;style&gt; tags - they will be added automatically.',
+                'custom_css_info' => 'Enter CSS <strong>WITHOUT</strong> &lt;style&gt; tags - they will be added automatically.',
                 'custom_css_placeholder' => 'body {
   background: #fff;
   font-family: Arial, sans-serif;
@@ -878,7 +880,7 @@ add_filter(\'wp_footer\', function() {
                 'robots_template_custom' => 'Custom',
                 'robots_apply' => 'Apply template',
                 'robots_tip' => 'Edit rules for search engines. The robots.txt file tells bots (Google, Bing...) which parts of the site they can index.',
-                'robots_info' => 'ℹ️ After saving, the content <strong>will be written to the physical file</strong> <code>robots.txt</code> in the site root. If the file exists, it will be overwritten.',
+                'robots_info' => 'After saving, the content <strong>will be written to the physical file</strong> <code>robots.txt</code> in the site root. If the file exists, it will be overwritten.',
 
                 'htaccess_editor' => '.htaccess Editor',
                 'htaccess_enable' => 'Enable custom .htaccess rules',
@@ -886,7 +888,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Adds custom Apache rules to the .htaccess file. WARNING: Incorrect configuration can break your site!',
                 'htaccess_content' => 'Custom .htaccess rules',
                 'htaccess_warning' => 'WARNING: Incorrect rules can break your site! Plugin automatically creates backup as <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Rules will be <strong>added TO THE BEGINNING</strong> of the .htaccess file (not overwriting the entire file). They will be wrapped with comments <code># BEGIN WP Admin Studio</code> and <code># END WP Admin Studio</code>.',
+                'htaccess_info' => 'Rules will be <strong>added TO THE BEGINNING</strong> of the .htaccess file (not overwriting the entire file). They will be wrapped with comments <code># BEGIN WP Admin Studio</code> and <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Template',
                 'htaccess_template_security' => 'Security rules',
                 'htaccess_template_cache' => 'Cache headers',
@@ -967,6 +969,8 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_comments' => 'Kommentare',
                 'admin_bar_new' => 'Aktion "Neu hinzufügen" (Beitrag, Seite, Medium...)',
                 'admin_bar_view' => 'Link "Website ansehen"',
+                'admin_bar_avatar' => 'Avatar-Symbol neben dem Benutzernamen (nur Desktop)',
+                'admin_bar_search' => 'Suche (Ctrl + K)',
                 
                 'login_lang' => 'Sprachumschalter ausblenden',
                 'login_lang_desc' => 'Sprachumschalter ausblenden',
@@ -1171,7 +1175,7 @@ Funktioniert bei URLs wie /category/XXX/ oder /tag/XXX/',
                 'enable_trans_tip' => 'Ersetzt ausgewählte englische Texte durch deutsche Äquivalente im Frontend der Website (greift nicht in die Administration ein).',
                 
                 'trans_defs' => 'Übersetzungsdefinitionen',
-                'trans_note' => 'ℹ️ Bearbeiten oder fügen Sie benutzerdefinierte Übersetzungen hinzu. Lassen Sie das Übersetzungsfeld leer, um den Text vollständig aus der Ausgabe zu entfernen. Sie können HTML-Tags im Übersetzungsfeld verwenden.',
+                'trans_note' => 'Bearbeiten oder fügen Sie benutzerdefinierte Übersetzungen hinzu. Lassen Sie das Übersetzungsfeld leer, um den Text vollständig aus der Ausgabe zu entfernen. Sie können HTML-Tags im Übersetzungsfeld verwenden.',
                 'trans_html_allowed' => 'Sie können HTML verwenden (z.B. <a href="">Link</a>)',
                 'from' => 'Originaltext',
                 'to' => 'Übersetzung (Deutsch)',
@@ -1235,7 +1239,7 @@ Funktioniert bei URLs wie /category/XXX/ oder /tag/XXX/',
                 'custom_functions' => 'Eigener PHP-Code (functions.php)',
                 'custom_functions_desc' => 'Eigene PHP-Funktionen aktivieren',
                 'custom_functions_tip' => 'Fügt eigenen PHP-Code hinzu, der beim Laden von WordPress ausgeführt wird. Entspricht dem Hinzufügen von Code zu functions.php Ihres Themes. WARNUNG: Fehlerhafter Code kann Ihre Website beschädigen!',
-                'custom_functions_info' => 'ℹ️ PHP-Code <strong>OHNE</strong> öffnende/schließende &lt;?php ?&gt; Tags eingeben.',
+                'custom_functions_info' => 'PHP-Code <strong>OHNE</strong> öffnende/schließende &lt;?php ?&gt; Tags eingeben.',
                 'custom_functions_placeholder' => '
 
 add_filter(\'wp_footer\', function() {
@@ -1246,7 +1250,7 @@ add_filter(\'wp_footer\', function() {
                 'custom_css_tip' => 'Fügt eigene CSS-Stile zum &lt;head&gt; hinzu. OHNE &lt;style&gt; Tags eingeben.',
                 'custom_css_active_warning' => 'Eigenes CSS ist aktiv und wird auf der gesamten Website angewendet. Deaktivieren, falls unerwartete Stile erscheinen.',
                 'custom_css_theme' => 'Thema:',
-                'custom_css_info' => 'ℹ️ CSS-Code <strong>OHNE</strong> &lt;style&gt; Tags eingeben - diese werden automatisch hinzugefügt.',
+                'custom_css_info' => 'CSS-Code <strong>OHNE</strong> &lt;style&gt; Tags eingeben - diese werden automatisch hinzugefügt.',
                 'custom_css_placeholder' => 'body {
   background: #fff;
 }',
@@ -1279,7 +1283,7 @@ add_filter(\'wp_footer\', function() {
                 'robots_template_custom' => 'Benutzerdefiniert',
                 'robots_apply' => 'Vorlage anwenden',
                 'robots_tip' => 'Bearbeiten Sie Regeln für Suchmaschinen. Die robots.txt-Datei teilt Bots (Google, Bing...) mit, welche Teile der Website sie indexieren können.',
-                'robots_info' => 'ℹ️ Nach dem Speichern wird der Inhalt <strong>in die physische Datei</strong> <code>robots.txt</code> im Website-Stammverzeichnis geschrieben. Wenn die Datei existiert, wird sie überschrieben.',
+                'robots_info' => 'Nach dem Speichern wird der Inhalt <strong>in die physische Datei</strong> <code>robots.txt</code> im Website-Stammverzeichnis geschrieben. Wenn die Datei existiert, wird sie überschrieben.',
 
                 'htaccess_editor' => '.htaccess Editor',
                 'htaccess_enable' => 'Eigene .htaccess Regeln aktivieren',
@@ -1287,7 +1291,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Fügt benutzerdefinierte Apache-Regeln zur .htaccess-Datei hinzu. WARNUNG: Falsche Konfiguration kann Ihre Website unbrauchbar machen!',
                 'htaccess_content' => 'Eigene .htaccess Regeln',
                 'htaccess_warning' => 'WARNUNG: Falsche Regeln können Ihre Website unbrauchbar machen! Plugin erstellt automatisch Backup als <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Regeln werden <strong>AM ANFANG</strong> der .htaccess-Datei hinzugefügt (nicht die gesamte Datei überschreibend). Sie werden mit Kommentaren <code># BEGIN WP Admin Studio</code> und <code># END WP Admin Studio</code> umschlossen.',
+                'htaccess_info' => 'Regeln werden <strong>AM ANFANG</strong> der .htaccess-Datei hinzugefügt (nicht die gesamte Datei überschreibend). Sie werden mit Kommentaren <code># BEGIN WP Admin Studio</code> und <code># END WP Admin Studio</code> umschlossen.',
                 'htaccess_template' => 'Vorlage',
                 'htaccess_template_security' => 'Sicherheitsregeln',
                 'htaccess_template_cache' => 'Cache-Header',
@@ -1367,6 +1371,8 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_comments' => 'Komentáre',
                 'admin_bar_new' => 'Akcia "Pridať nový" (príspevok, stránku, médium...)',
                 'admin_bar_view' => 'Odkaz "Zobraziť web"',
+                'admin_bar_avatar' => 'Ikona avatara pri mene používateľa (len desktop)',
+                'admin_bar_search' => 'Vyhľadávanie (Ctrl + K)',
                 
                 'login_lang' => 'Skryť prepínač jazykov',
                 'login_lang_desc' => 'Skryť prepínač jazykov',
@@ -1579,7 +1585,7 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'enable_trans_tip' => 'Umožňuje nahradiť ľubovoľné texty v administrácii a na frontende. Užitočné pre prispôsobenie termínov alebo opravu nesprávnych prekladov.',
                 
                 'trans_defs' => 'Definície prekladov',
-                'trans_note' => 'ℹ️ Každý riadok nahradí všetky výskyty textu v ľavom poli textom v pravom poli. V poli prekladu môžete používať HTML tagy.',
+                'trans_note' => 'Každý riadok nahradí všetky výskyty textu v ľavom poli textom v pravom poli. V poli prekladu môžete používať HTML tagy.',
                 'trans_html_allowed' => 'Môžete použiť HTML (napr. <a href="">odkaz</a>)',
                 'from' => 'Nahradiť text',
                 'to' => 'Novým textom',
@@ -1640,7 +1646,7 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'custom_functions' => 'Vlastný PHP kód (functions.php)',
                 'custom_functions_desc' => 'Aktivovať vlastné PHP funkcie',
                 'custom_functions_tip' => 'Pridá vlastný PHP kód ktorý sa spustí pri načítaní WordPress. Ekvivalent pridania kódu do functions.php vašej témy. POZOR: Zlý kód môže pokaziť web!',
-                'custom_functions_info' => 'ℹ️ Zadávajte PHP kód <strong>BEZ</strong> otváracích/zatváracích &lt;?php ?&gt; tagov.',
+                'custom_functions_info' => 'Zadávajte PHP kód <strong>BEZ</strong> otváracích/zatváracích &lt;?php ?&gt; tagov.',
                 'custom_functions_placeholder' => '
 
 add_filter(\'wp_footer\', function() {
@@ -1651,7 +1657,7 @@ add_filter(\'wp_footer\', function() {
                 'custom_css_tip' => 'Pridá vlastné CSS štýly do &lt;head&gt;. BEZ &lt;style&gt; tagov.',
                 'custom_css_active_warning' => 'Vlastné CSS je aktívne a aplikuje sa na celý web. Deaktivujte, ak web zobrazuje neočakávané štýly.',
                 'custom_css_theme' => 'Téma:',
-                'custom_css_info' => 'ℹ️ Zadávajte CSS <strong>BEZ</strong> &lt;style&gt; tagov - tie sa pridajú automaticky.',
+                'custom_css_info' => 'Zadávajte CSS <strong>BEZ</strong> &lt;style&gt; tagov - tie sa pridajú automaticky.',
                 'custom_css_placeholder' => 'body {
   background: #fff;
 }',
@@ -1684,7 +1690,7 @@ add_filter(\'wp_footer\', function() {
                 'robots_template_custom' => 'Vlastná',
                 'robots_apply' => 'Použiť šablónu',
                 'robots_tip' => 'Upravte pravidlá pre vyhľadávače.',
-                'robots_info' => 'ℹ️ Po uložení sa obsah <strong>zapíše do fyzického súboru</strong> <code>robots.txt</code> v root priečinku webu. Ak súbor existuje, bude prepísaný.',
+                'robots_info' => 'Po uložení sa obsah <strong>zapíše do fyzického súboru</strong> <code>robots.txt</code> v root priečinku webu. Ak súbor existuje, bude prepísaný.',
 
                 'htaccess_editor' => 'Editor .htaccess',
                 'htaccess_enable' => 'Povoliť vlastné .htaccess pravidlá',
@@ -1692,7 +1698,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Pridá vlastné Apache pravidlá do .htaccess súboru. POZOR: Nesprávna konfigurácia môže spôsobiť nefunkčnosť webu!',
                 'htaccess_content' => 'Vlastné .htaccess pravidlá',
                 'htaccess_warning' => 'VAROVANIE: Nesprávne pravidlá môžu spôsobiť nefunkčnosť webu! Plugin automaticky vytvorí zálohu ako <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Pravidlá sa <strong>pridajú NA ZAČIATOK</strong> .htaccess súboru (neprepíšu celý súbor). Obklopí sa komentármi <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
+                'htaccess_info' => 'Pravidlá sa <strong>pridajú NA ZAČIATOK</strong> .htaccess súboru (neprepíšu celý súbor). Obklopí sa komentármi <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Šablóna',
                 'htaccess_template_security' => 'Bezpečnostné pravidlá',
                 'htaccess_template_cache' => 'Cache hlavičky',
@@ -1772,6 +1778,8 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_comments' => 'Komentarze',
                 'admin_bar_new' => 'Akcja "Dodaj nowy" (wpis, stronę, media...)',
                 'admin_bar_view' => 'Link "Zobacz witrynę"',
+                'admin_bar_avatar' => 'Ikona awatara przy nazwie użytkownika (tylko desktop)',
+                'admin_bar_search' => 'Wyszukiwanie (Ctrl + K)',
                 
                 'login_lang' => 'Ukryj przełącznik języków',
                 'login_lang_desc' => 'Ukryj przełącznik języków',
@@ -1984,7 +1992,7 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'enable_trans_tip' => 'Umożliwia zastąpienie dowolnych tekstów w administracji i na frontendzie. Przydatne do dostosowywania terminów lub naprawy niepoprawnych tłumaczeń.',
                 
                 'trans_defs' => 'Definicje tłumaczeń',
-                'trans_note' => 'ℹ️ Każdy wiersz zastąpi wszystkie wystąpienia tekstu w lewym polu tekstem w prawym polu. Możesz używać tagów HTML w polu tłumaczenia.',
+                'trans_note' => 'Każdy wiersz zastąpi wszystkie wystąpienia tekstu w lewym polu tekstem w prawym polu. Możesz używać tagów HTML w polu tłumaczenia.',
                 'trans_html_allowed' => 'Możesz użyć HTML (np. <a href="">link</a>)',
                 'from' => 'Zastąp tekst',
                 'to' => 'Nowym tekstem',
@@ -2045,7 +2053,7 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'custom_functions' => 'Własny kod PHP (functions.php)',
                 'custom_functions_desc' => 'Aktywować własne funkcje PHP',
                 'custom_functions_tip' => 'Dodaje własny kod PHP, który zostanie wykonany podczas ładowania WordPress. Odpowiednik dodania kodu do functions.php twojego motywu. UWAGA: Błędny kod może zepsuć stronę!',
-                'custom_functions_info' => 'ℹ️ Wprowadź kod PHP <strong>BEZ</strong> otwierających/zamykających tagów &lt;?php ?&gt;.',
+                'custom_functions_info' => 'Wprowadź kod PHP <strong>BEZ</strong> otwierających/zamykających tagów &lt;?php ?&gt;.',
                 'custom_functions_placeholder' => '
 
 add_filter(\'wp_footer\', function() {
@@ -2056,7 +2064,7 @@ add_filter(\'wp_footer\', function() {
                 'custom_css_tip' => 'Dodaje własne style CSS do &lt;head&gt;. BEZ tagów &lt;style&gt;.',
                 'custom_css_active_warning' => 'Własny CSS jest aktywny i stosowany na całej stronie. Dezaktywuj, jeśli strona wyświetla nieoczekiwane style.',
                 'custom_css_theme' => 'Motyw:',
-                'custom_css_info' => 'ℹ️ Wprowadź CSS <strong>BEZ</strong> tagów &lt;style&gt; - zostaną dodane automatycznie.',
+                'custom_css_info' => 'Wprowadź CSS <strong>BEZ</strong> tagów &lt;style&gt; - zostaną dodane automatycznie.',
                 'custom_css_placeholder' => 'body {
   background: #fff;
 }',
@@ -2089,7 +2097,7 @@ add_filter(\'wp_footer\', function() {
                 'robots_template_custom' => 'Własny',
                 'robots_apply' => 'Zastosuj szablon',
                 'robots_tip' => 'Edytuj reguły dla wyszukiwarek.',
-                'robots_info' => 'ℹ️ Po zapisaniu zawartość <strong>zostanie zapisana do fizycznego pliku</strong> <code>robots.txt</code> w katalogu głównym witryny. Jeśli plik istnieje, zostanie nadpisany.',
+                'robots_info' => 'Po zapisaniu zawartość <strong>zostanie zapisana do fizycznego pliku</strong> <code>robots.txt</code> w katalogu głównym witryny. Jeśli plik istnieje, zostanie nadpisany.',
 
                 'htaccess_editor' => 'Edytor .htaccess',
                 'htaccess_enable' => 'Włącz własne reguły .htaccess',
@@ -2097,7 +2105,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_tip' => 'Dodaje własne reguły Apache do pliku .htaccess. UWAGA: Nieprawidłowa konfiguracja może zepsuć stronę!',
                 'htaccess_content' => 'Własne reguły .htaccess',
                 'htaccess_warning' => 'OSTRZEŻENIE: Nieprawidłowe reguły mogą zepsuć stronę! Wtyczka automatycznie tworzy kopię zapasową jako <code>.htaccess.wp-admin-studio-backup</code>.',
-                'htaccess_info' => 'ℹ️ Reguły zostaną <strong>dodane NA POCZĄTKU</strong> pliku .htaccess (nie nadpisując całego pliku). Zostaną otoczone komentarzami <code># BEGIN WP Admin Studio</code> i <code># END WP Admin Studio</code>.',
+                'htaccess_info' => 'Reguły zostaną <strong>dodane NA POCZĄTKU</strong> pliku .htaccess (nie nadpisując całego pliku). Zostaną otoczone komentarzami <code># BEGIN WP Admin Studio</code> i <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Szablon',
                 'htaccess_template_security' => 'Reguły bezpieczeństwa',
                 'htaccess_template_cache' => 'Nagłówki cache',
@@ -3130,7 +3138,8 @@ add_filter(\'wp_footer\', function() {
                                 <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="updates" <?php checked(in_array('updates', $items)); ?>> <?php echo esc_html($this->t('admin_bar_updates')); ?></label><br>
                                 <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="new-content" <?php checked(in_array('new-content', $items)); ?>> <?php echo esc_html($this->t('admin_bar_new')); ?></label><br>
                                 <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="view-site" <?php checked(in_array('view-site', $items)); ?>> <?php echo esc_html($this->t('admin_bar_view')); ?></label><br>
-                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="my-account-avatar" <?php checked(in_array('my-account-avatar', $items)); ?>> <?php echo esc_html($this->t('admin_bar_avatar')); ?></label>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="my-account-avatar" <?php checked(in_array('my-account-avatar', $items)); ?>> <?php echo esc_html($this->t('admin_bar_avatar')); ?></label><br>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="command-palette" <?php checked(in_array('command-palette', $items)); ?>> <?php echo esc_html($this->t('admin_bar_search')); ?></label>
                             </td>
                         </tr>
                         <tr>
@@ -3626,7 +3635,7 @@ add_filter(\'wp_footer\', function() {
                                 
                                 <!-- Advanced Mode Fields -->
                                 <div id="maintenance-advanced-mode" style="margin-top: 20px; <?php echo (!empty($o['maintenance_mode_type']) && $o['maintenance_mode_type'] === 'advanced') ? '' : 'display:none;'; ?>">
-                                    <p style="background:#f0f6fc;border-left:4px solid #72aee6;padding:12px 15px;margin:0 0 15px 0;">
+                                    <p class="wpc-infobox">
                                         <?php echo wp_kses_post($this->t('maintenance_html_tip')); ?>
                                     </p>
                                     <div class="wpc-toolbar">
@@ -3916,7 +3925,7 @@ add_filter(\'wp_footer\', function() {
                 <!-- .HTACCESS EDITOR -->
                 <div class="wpc-section" id="section-htaccess">
                     <h2><span class="dashicons dashicons-admin-tools"></span> <?php echo esc_html($this->t('htaccess_editor')); ?></h2>
-                    <p style="background:#fff3cd;border-left:4px solid #ffc107;padding:12px 15px;margin:0 0 20px 0;">
+                    <p class="wpc-warningbox">
                         <strong><?php echo wp_kses_post($this->t('htaccess_warning')); ?></strong>
                     </p>
                     <table class="form-table">
@@ -3951,7 +3960,6 @@ add_filter(\'wp_footer\', function() {
                                         <?php echo esc_html($this->t('save')); ?>
                                     </button>
                                     <button type="button" id="wpc-restore-htaccess" class="button" style="margin-left:10px;">
-                                        <span class="dashicons dashicons-backup" style="vertical-align:middle;margin-top:-2px;"></span>
                                         <?php echo esc_html($this->t('htaccess_restore_button')); ?>
                                     </button>
                                 </p>
@@ -4168,7 +4176,7 @@ add_filter(\'wp_footer\', function() {
                         </tr>
                     </table>
                     <h3><?php echo esc_html($this->t('trans_defs')); ?></h3>
-                    <p style="background:#f0f6fc;border-left:4px solid #72aee6;padding:12px 15px;margin:0 0 15px 0;"><?php echo $this->t('trans_note'); ?></p>
+                    <p class="wpc-infobox"><?php echo $this->t('trans_note'); ?></p>
                     <div id="translation-rows" class="wpc-translations">
                         <?php foreach ($o['translations'] as $i => $t): ?>
                         <div class="translation-row">
@@ -4205,7 +4213,11 @@ add_filter(\'wp_footer\', function() {
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('protocol')); ?></th>
-                            <td><?php echo is_ssl() ? '🔒 ' . esc_html($this->t('protocol_https')) : '⚠️ ' . esc_html($this->t('protocol_http')); ?></td>
+                            <td><?php
+                                $lock_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="display:inline-block;vertical-align:-2px;margin-right:4px;color:#00a32a;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>';
+                                $warn_svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="14" height="14" style="display:inline-block;vertical-align:-2px;margin-right:4px;color:#d63638;"><path d="M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z"/></svg>';
+                                echo is_ssl() ? $lock_svg . esc_html($this->t('protocol_https')) : $warn_svg . esc_html($this->t('protocol_http'));
+                            ?></td>
                         </tr>
                         <tr>
                             <th><?php echo esc_html($this->t('wp_version')); ?></th>
@@ -4272,13 +4284,6 @@ add_filter(\'wp_footer\', function() {
             </div>
             
             <style>
-                <?php
-                
-                global $_wp_admin_css_colors;
-                $admin_color = get_user_option('admin_color');
-                $color_scheme = isset($_wp_admin_css_colors[$admin_color]) ? $_wp_admin_css_colors[$admin_color] : $_wp_admin_css_colors['fresh'];
-                $primary_color = $color_scheme->colors[2]; 
-                ?>
                 
                 html {
                     scroll-behavior: smooth;
@@ -4291,7 +4296,7 @@ add_filter(\'wp_footer\', function() {
                 .wpc-header-meta { display: flex; justify-content: space-between; align-items: center; }
                 .wpc-header-info { display: flex; align-items: center; gap: 8px; color: #666; font-size: 13px; }
                 .wpc-header-info .wpc-separator { color: #ddd; }
-                .wpc-header-info a { color: <?php echo esc_attr($primary_color); ?>; text-decoration: none; }
+                .wpc-header-info a { color: var(--wp-admin-theme-color); text-decoration: none; }
                 .wpc-header-info a:hover { text-decoration: underline; }
                 .wpc-header-lang { display: flex; align-items: center; gap: 8px; }
                 .wpc-header-lang label { font-weight: 600; font-size: 13px; margin: 0; }
@@ -4339,18 +4344,18 @@ add_filter(\'wp_footer\', function() {
                 }
                 
                 .wpc-nav-item:hover {
-                    color: <?php echo esc_attr($primary_color); ?>;
+                    color: var(--wp-admin-theme-color);
                 }
                 
                 .wpc-backup-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; }
                 .wpc-backup-item { display: flex; flex-direction: column; }
                 .wpc-backup-item form { margin-bottom: 0; }
-                .wpc-backup-item .button { width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; height: auto; }
-                .wpc-backup-item .button .dashicons { font-size: 18px; width: 18px; height: 18px; }
+                .wpc-backup-item .button { width: 100%; justify-content: center; display: inline-flex; align-items: center; gap: 8px; padding: 10px 20px; height: auto; line-height: 1; }
+                .wpc-backup-item .button .dashicons { font-size: 18px; width: 18px; height: 18px; flex-shrink: 0; line-height: 1; position: relative; top: 0; }
                 .wpc-backup-desc { margin: 12px 0 0 0; padding: 10px 0 0 0; color: #666; font-size: 13px; line-height: 1.6; border-top: 1px solid #f0f0f0; }
                 
                 .wpc-section { background: #fff; border: 1px solid #ccd0d4; padding: 20px; margin: 20px 0; box-shadow: 0 1px 1px rgba(0,0,0,.04); }
-                .wpc-section h2 { margin: -20px -20px 20px -20px; padding: 20px; border: 0px solid <?php echo esc_attr($primary_color); ?>; display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 18px; line-height: 1.4; background: <?php echo esc_attr($primary_color); ?>; }
+                .wpc-section h2 { margin: -20px -20px 20px -20px; padding: 20px; border: 0px solid var(--wp-admin-theme-color); display: flex; align-items: center; gap: 10px; color: #ffffff; font-size: 18px; line-height: 1.4; background: var(--wp-admin-theme-color); }
                 .wpc-section h2 .dashicons { font-size: 20px; width: 20px; height: 20px; }
                 .wpc-section h3 { margin: 25px 0 10px 0; font-size: 14px; font-weight: 600; }
                 
@@ -4422,13 +4427,21 @@ add_filter(\'wp_footer\', function() {
                 .wpc-color-table td { padding: 5px 10px; vertical-align: top; }
 
                 .wpc-color-picker { max-width: 100px; }
+                .wp-picker-container { display: inline-block; vertical-align: middle; white-space: nowrap; }
+                .wp-picker-input-wrap { display: none; white-space: nowrap; }
+                .wp-picker-input-wrap > label { display: contents !important; }
+                .wp-picker-input-wrap input[type="text"] { margin: 0 !important; vertical-align: middle; }
+                .wp-picker-clear { float: none !important; margin: 0 0 0 4px !important; vertical-align: middle; }
+                
+                .wpc-infobox { background: color-mix(in srgb, var(--wp-admin-theme-color) 8%, #fff); border-left: 4px solid var(--wp-admin-theme-color); padding: 12px 15px; margin: 0 0 24px 0 !important; }
+                .wpc-warningbox { background: #fff3cd; border-left: 4px solid #ffc107; padding: 12px 15px; margin: 0 0 20px 0; }
                 
                 .wpc-translations { margin: 15px 0; }
                 .wpc-translations .translation-row { display: flex; gap: 10px; margin-bottom: 10px; align-items: flex-start; }
                 .wpc-translations .translation-number { min-width: 30px; padding-top: 8px; font-weight: 600; color: #666; font-size: 13px; }
-                .wpc-translations .translation-row textarea { flex: 1; min-height: 36px; resize: vertical; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; font-size: 13px; line-height: 1.4; padding: 6px 10px; }
-                .wpc-translations .remove-translation { min-width: 40px; padding: 0 8px; display: flex; align-items: center; justify-content: center; margin-top: 3px; }
-                .wpc-translations .remove-translation .dashicons { font-size: 14px; width: 14px; height: 14px; }
+                .wpc-translations .translation-row textarea { flex: 1; min-height: 38px; box-sizing: border-box; resize: vertical; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; font-size: 13px; line-height: 1.4; padding: 6px 10px; }
+                .wpc-translations .remove-translation { min-width: 38px !important; width: 38px !important; height: 38px !important; padding: 0 !important; display: inline-flex !important; align-items: center !important; justify-content: center !important; flex-shrink: 0; margin: 0 !important; line-height: 1 !important; box-sizing: border-box !important; vertical-align: top; }
+                .wpc-translations .remove-translation .dashicons { display: block !important; font-size: 16px !important; width: 16px !important; height: 16px !important; line-height: 16px !important; margin: 0 !important; padding: 0 !important; }
 
                 .wpc-translations .translation-drag-handle { cursor: move; cursor: grab; display: flex; align-items: center; gap: 4px; }
                 .wpc-translations .translation-drag-handle:active { cursor: grabbing; }
@@ -4442,7 +4455,8 @@ add_filter(\'wp_footer\', function() {
                     color: #E91E63 !important; 
                 }
                 
-                .wpc-tip { position: relative; display: inline-flex; align-items: center; margin-left: 0; cursor: help; color: <?php echo esc_attr($primary_color); ?>; flex-shrink: 0; }
+                .wpc-tip { position: relative; display: inline-flex; align-items: center; margin-left: 0; cursor: help; color: #8c8f94; flex-shrink: 0; transition: color 0.15s; }
+                .wpc-tip:hover { color: var(--wp-admin-theme-color); }
                 .wpc-tooltip { display: none; position: absolute; left: 30px; top: 50%; transform: translateY(-50%); background: #1d2327; color: #fff; padding: 12px 16px; border-radius: 4px; font-size: 13px; line-height: 1.5; width: 320px; z-index: 1000; box-shadow: 0 3px 12px rgba(0,0,0,0.3); white-space: normal; font-weight: normal; }
                 .wpc-tooltip:before { content: ''; position: absolute; left: -6px; top: 50%; transform: translateY(-50%); border: 6px solid transparent; border-right-color: #1d2327; }
                 .wpc-tip:hover .wpc-tooltip { display: block; }
@@ -4455,7 +4469,7 @@ add_filter(\'wp_footer\', function() {
                 .wpc-system-info tr:last-child th, .wpc-system-info tr:last-child td { border-bottom: none; }
                 .wpc-system-info code { font-family: inherit !important; background: none !important; padding: 0 !important; border: none !important; font-size: inherit !important; }
                 .wpc-system-info td a { text-decoration: underline !important; text-underline-offset: 2px; color: inherit; transition: all 0.2s; }
-                .wpc-system-info td a:hover { color: #2271b1; text-decoration: none !important; }
+                .wpc-system-info td a:hover { color: var(--wp-admin-theme-color); text-decoration: none !important; }
 
                 .wpc-section code { 
                     background: #f0f0f1; 
@@ -4536,8 +4550,8 @@ add_filter(\'wp_footer\', function() {
                     min-height: 200px;
                 }
 
-                .wpc-section p[style*="background:#e7f3ff"] code,
-                .wpc-section p[style*="background:#fff3cd"] code {
+                .wpc-section .wpc-infobox code,
+                .wpc-section .wpc-warningbox code {
                     background: rgba(0, 0, 0, 0.06);
                     border: 1px solid rgba(0, 0, 0, 0.12);
                     font-weight: 600;
@@ -4587,15 +4601,15 @@ add_filter(\'wp_footer\', function() {
                         padding: 0;
                         border: 1px solid #8c8f94;
                         background: #fff;
-                        border-radius: 4px;
+                        border-radius: 3px;
                         cursor: pointer;
                         color: #50575e;
                         flex-shrink: 0;
                     }
                     .wpc-search-toggle:hover {
                         background: #f6f7f7;
-                        border-color: #2271b1;
-                        color: #2271b1;
+                        border-color: var(--wp-admin-theme-color);
+                        color: var(--wp-admin-theme-color);
                     }
                     .wpc-search-toggle svg {
                         display: block;
@@ -4614,15 +4628,15 @@ add_filter(\'wp_footer\', function() {
                         height: 30px !important;
                         padding: 0 10px;
                         border: 1px solid #8c8f94;
-                        border-radius: 4px;
+                        border-radius: 3px;
                         font-size: 13px !important;
                         flex-shrink: 0;
                         flex: 0 !important;
                     }
                     .wpc-search-field:focus {
                         outline: none;
-                        border-color: #2271b1;
-                        box-shadow: 0 0 0 1px #2271b1;
+                        border-color: var(--wp-admin-theme-color);
+                        box-shadow: 0 0 0 1px var(--wp-admin-theme-color);
                     }
 
                     .wpc-search-count {
@@ -4644,7 +4658,7 @@ add_filter(\'wp_footer\', function() {
                         padding: 0;
                         border: 1px solid #8c8f94;
                         background: #fff;
-                        border-radius: 4px;
+                        border-radius: 3px;
                         cursor: pointer;
                         color: #50575e;
                         flex-shrink: 0;
@@ -4652,8 +4666,8 @@ add_filter(\'wp_footer\', function() {
                     .wpc-search-up:hover:not(:disabled),
                     .wpc-search-down:hover:not(:disabled) {
                         background: #f6f7f7;
-                        border-color: #2271b1;
-                        color: #2271b1;
+                        border-color: var(--wp-admin-theme-color);
+                        color: var(--wp-admin-theme-color);
                     }
                     .wpc-search-up:disabled,
                     .wpc-search-down:disabled {
@@ -4669,7 +4683,7 @@ add_filter(\'wp_footer\', function() {
                         height: 30px !important;
                         padding: 0 8px;
                         border: 1px solid #8c8f94;
-                        border-radius: 4px;
+                        border-radius: 3px;
                         font-size: 13px;
                         background: #fff;
                         flex-shrink: 0 !important;
@@ -4700,10 +4714,10 @@ add_filter(\'wp_footer\', function() {
                     margin-top: 0 !important;
                 }
                 
-                .wpc-badge { display: inline-flex; align-items: center; padding: 4px 15px; border-radius: 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+                .wpc-badge { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 3px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
                 .wpc-badge-success { margin-left: 5px; background: #f5f5f5; color: #666; border: 1px solid #ddd; }
                 .wpc-badge-warning { background: #f0ad4e; color: #ffffff; border: none; margin-left: 5px; }
-                .wpc-badge-css-inactive { background: #f5f5f5; color: #666; border: 1px solid #ddd; margin-left: 8px; font-size: 11px; padding: 4px 10px; vertical-align: middle; border-radius: 16px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+                .wpc-badge-css-inactive { background: #f5f5f5; color: #666; border: 1px solid #ddd; margin-left: 8px; font-size: 11px; padding: 4px 10px; vertical-align: middle; border-radius: 3px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
                 
                 .wpc-toggle-label { display: inline-flex; align-items: center; cursor: pointer; user-select: none; }
                 .wpc-toggle-switch { position: relative; display: inline-block; width: 40px; height: 22px; flex-shrink: 0; top: -2px; }
@@ -4713,7 +4727,7 @@ add_filter(\'wp_footer\', function() {
                 .wpc-toggle-switch input:checked + .wpc-toggle-slider { background: var(--wp-admin-theme-color, #2271b1); }
                 .wpc-toggle-switch input:checked + .wpc-toggle-slider:before { transform: translateX(18px); }
                 .wpc-toggle-text { font-weight: normal; padding-left: 20px; }
-                .wpc-badge-disabled { background: #f5f5f5; color: #666; border: 1px solid #ddd; margin-left: 8px; margin-top: -4px; display: inline-flex; align-items: center; gap: 4px; padding: 6px 12px; font-size: 12px; }
+                .wpc-badge-disabled { background: #f5f5f5; color: #666; border: 1px solid #ddd; margin-left: 8px; margin-top: -4px; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; font-size: 11px; border-radius: 3px; }
                 .wpc-badge-disabled .dashicons { font-size: 14px; width: 14px; height: 14px; }
                 .wpc-badge-active { margin-left: 5px; background: #f5f5f5; color: #666; border: 1px solid #ddd; gap: 5px; }
                 .wpc-badge-active svg { width: 11px; height: 11px; flex-shrink: 0; }
@@ -4755,7 +4769,7 @@ add_filter(\'wp_footer\', function() {
                 .settings-error.notice { display: none !important; }
                 
                 .wpc-footer-info { text-align: right; padding: 10px 0 40px 0; margin-top: 20px; color: #666; font-size: 13px; }
-                .wpc-footer-info a { color: <?php echo esc_attr($primary_color); ?>; text-decoration: none; }
+                .wpc-footer-info a { color: var(--wp-admin-theme-color); text-decoration: none; }
                 .wpc-footer-info a:hover { text-decoration: underline; }
                 
                 @media (max-width: 960px) { 
@@ -4851,7 +4865,7 @@ add_filter(\'wp_footer\', function() {
                         padding: 0;
                         border: 1px solid #8c8f94;
                         background: #fff;
-                        border-radius: 4px;
+                        border-radius: 3px;
                         cursor: pointer;
                         color: #50575e;
                         flex-shrink: 0;
@@ -5448,6 +5462,18 @@ add_filter(\'wp_footer\', function() {
                     clear: function() {
                         $(this).val('');
                     }
+                });
+
+                $(document).on('click', '.wp-color-result', function() {
+                    var $wrap = $(this).siblings('.wp-picker-input-wrap');
+                    setTimeout(function() {
+                        if ($wrap.is(':visible')) {
+                            $wrap.css({ display: 'inline-flex', alignItems: 'center', flexWrap: 'nowrap', gap: '0', marginLeft: '6px', verticalAlign: 'middle' });
+                            $wrap.find('> label').css({ display: 'contents' });
+                            $wrap.find('input[type="text"]').css({ width: '80px', margin: '0', marginRight: '6px' });
+                            $wrap.find('.wp-picker-clear').css({ cssFloat: 'none', 'float': 'none', margin: '0' });
+                        }
+                    }, 0);
                 });
 
 
@@ -6263,7 +6289,8 @@ add_filter(\'wp_footer\', function() {
         
         $map = array('wp-logo' => array('wp-logo', 'about', 'wporg', 'documentation', 'support-forums', 'feedback'),
                     'updates' => array('updates'), 'comments' => array('comments'), 
-                    'new-content' => array('new-content'), 'view-site' => array('view-site'));
+                    'new-content' => array('new-content'), 'view-site' => array('view-site'),
+                    'command-palette' => array('command-palette'));
         
         foreach ($items as $item) {
             if (isset($map[$item])) {
@@ -6568,7 +6595,7 @@ add_filter(\'wp_footer\', function() {
         </script>
         <style>
         .wpc-nav-item.active {
-            color: <?php echo esc_attr($this->get_primary_color()); ?>;
+            color: var(--wp-admin-theme-color);
             background: #f6f7f7;
         }
         .wpc-nav-item:focus {
@@ -7371,7 +7398,7 @@ add_filter(\'wp_footer\', function() {
             .login form input[type="text"]:focus,
             .login form input[type="password"]:focus,
             .login form input[type="email"]:focus {
-                border-color: <?php echo esc_attr($primary_color); ?> !important;
+                border-color: var(--wp-admin-theme-color) !important;
                 box-shadow: none !important;
                 outline: none !important;
             }
@@ -7467,8 +7494,8 @@ add_filter(\'wp_footer\', function() {
             .wp-core-ui .button:not(.button-primary),
             .wp-core-ui .button-secondary,
             button.button.wp-generate-pw {
-                color: <?php echo esc_attr($primary_color); ?> !important;
-                border-color: <?php echo esc_attr($primary_color); ?> !important;
+                color: var(--wp-admin-theme-color) !important;
+                border-color: var(--wp-admin-theme-color) !important;
                 background: #ffffff !important;
                 border-radius: <?php echo esc_attr($button_radius); ?>px !important;
                 padding: 8px 16px !important;
@@ -7478,8 +7505,8 @@ add_filter(\'wp_footer\', function() {
             .wp-core-ui .button:not(.button-primary):hover,
             .wp-core-ui .button-secondary:hover,
             button.button.wp-generate-pw:hover {
-                color: <?php echo esc_attr($primary_color); ?> !important;
-                border-color: <?php echo esc_attr($primary_color); ?> !important;
+                color: var(--wp-admin-theme-color) !important;
+                border-color: var(--wp-admin-theme-color) !important;
             }
             
             /* Password strength indicator */
@@ -7651,8 +7678,8 @@ add_filter(\'wp_footer\', function() {
         <script>
         (function() {
             var COLOR = '<?php echo esc_js($primary_color); ?>';
-            var SVG_OPEN = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
-            var SVG_OFF  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>';
+            var SVG_OPEN = '';
+            var SVG_OFF  = '';
 
             function injectEyeIcons() {
                 var btn = document.querySelector('.wp-hide-pw');
@@ -8534,16 +8561,16 @@ add_filter(\'wp_footer\', function() {
         .wpc-preview-arrow { display: flex; align-items: center; justify-content: center; font-size: 22px; color: #8c8f94; padding-top: 100px; }
         /* Dropzone integrovana do prave preview box */
         .wpc-dropzone { border: 2px dashed #c3c4c7; cursor: pointer; transition: border-color .15s, background .15s; }
-        .wpc-dropzone:hover, .wpc-dropzone.wpc-drag-over { border-color: #2271b1; background: #f0f6fc; }
+        .wpc-dropzone:hover, .wpc-dropzone.wpc-drag-over { border-color: var(--wp-admin-theme-color); background: #f0f6fc; }
         .wpc-dropzone.wpc-has-file { border: 1px solid #c3c4c7; cursor: default; }
         #wpc-drop-inner { display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center; padding: 12px; pointer-events: none; position: relative; }
         #wpc-drop-inner input[type=file] { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; font-size: 0; pointer-events: all; }
         .wpc-drop-dashicon { font-size: 28px !important; width: 28px !important; height: 28px !important; color: #8c8f94; margin-bottom: 2px; }
-        .wpc-dropzone:hover .wpc-drop-dashicon, .wpc-dropzone.wpc-drag-over .wpc-drop-dashicon { color: #2271b1; }
+        .wpc-dropzone:hover .wpc-drop-dashicon, .wpc-dropzone.wpc-drag-over .wpc-drop-dashicon { color: var(--wp-admin-theme-color); }
         #wpc-drop-inner strong { font-size: 12px; color: #1d2327; }
         #wpc-drop-inner span { font-size: 11px; color: #8c8f94; }
         .wpc-dropzone:hover #wpc-drop-inner strong,
-        .wpc-dropzone:hover #wpc-drop-inner span { color: #2271b1; }
+        .wpc-dropzone:hover #wpc-drop-inner span { color: var(--wp-admin-theme-color); }
         /* Clear button */
         #wpc-clear-btn { position: absolute; top: 5px; right: 5px; width: 22px; height: 22px; border-radius: 50%; border: none; background: rgba(0,0,0,.45); color: #fff; font-size: 12px; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 2; padding: 0; }
         #wpc-clear-btn:hover { background: rgba(0,0,0,.7); }
@@ -8557,7 +8584,7 @@ add_filter(\'wp_footer\', function() {
         .wpc-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 16px; }
         .wpc-mode-card { display: flex; align-items: flex-start; gap: 10px; border: 1px solid #c3c4c7; border-radius: 3px; padding: 14px; cursor: pointer; transition: border-color .15s, background .15s; }
         .wpc-mode-card input[type=radio] { margin-top: 3px; flex-shrink: 0; }
-        .wpc-mode-selected { border-color: #2271b1; background: #f0f6fc; }
+        .wpc-mode-selected { border-color: var(--wp-admin-theme-color); background: #f0f6fc; }
         .wpc-mode-body strong { display: block; font-size: 13px; color: #1d2327; margin-bottom: 4px; }
         .wpc-mode-body span { font-size: 12px; color: #646970; line-height: 1.5; }
         .wpc-replace-actions { display: flex; align-items: center; justify-content: flex-end; margin-bottom: 24px; }
