@@ -30,7 +30,7 @@ class WPAdminStudioUpdater {
 
     private function get_release_info() {
         $cached = get_transient($this->cache_key);
-        if ($cached !== false) {
+        if ($cached !== false && $cached !== null) {
             return $cached;
         }
 
@@ -42,7 +42,6 @@ class WPAdminStudioUpdater {
         ));
 
         if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
-            set_transient($this->cache_key, null, $this->cache_expiry);
             return null;
         }
 
