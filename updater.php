@@ -70,7 +70,7 @@ class WPAdminStudioUpdater {
             $download_url = '';
             if (!empty($release->assets)) {
                 foreach ($release->assets as $asset) {
-                    if (str_ends_with($asset->name, '.zip')) {
+                    if (substr($asset->name, -4) === '.zip') {
                         $download_url = $asset->browser_download_url;
                         break;
                     }
@@ -88,8 +88,8 @@ class WPAdminStudioUpdater {
                 'package'     => $download_url,
                 'icons'       => array(),
                 'banners'     => array(),
-                'tested'      => '6.9',
-                'requires'    => '5.8',
+                'tested'      => '7.0',
+                'requires'    => '6.0',
                 'requires_php'=> '7.4',
             );
         }
@@ -115,7 +115,7 @@ class WPAdminStudioUpdater {
 
         if (!empty($release->assets)) {
             foreach ($release->assets as $asset) {
-                if (str_ends_with($asset->name, '.zip')) {
+                if (substr($asset->name, -4) === '.zip') {
                     $download_url = $asset->browser_download_url;
                     break;
                 }
@@ -129,9 +129,9 @@ class WPAdminStudioUpdater {
             'author'        => '<a href="https://kacer.studio">KACER STUDIO s.r.o.</a>',
             'homepage'      => 'https://github.com/' . $this->github_user . '/' . $this->github_repo,
             'download_link' => $download_url,
-            'requires'      => '5.8',
+            'requires'      => '6.0',
             'requires_php'  => '7.4',
-            'tested'        => '6.9',
+            'tested'        => '7.0',
             'last_updated'  => gmdate('Y-m-d', strtotime($release->published_at)),
             'sections'      => array(
                 'description' => isset($release->body) ? wp_kses_post($release->body) : 'WP Admin Studio — Professional WordPress admin toolkit.',
