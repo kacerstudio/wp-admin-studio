@@ -1,10 +1,10 @@
 === WP Admin Studio ===
 Contributors: kacerstudio
 Tags: admin, customization, maintenance, login, scripts
-Requires at least: 5.8
-Tested up to: 6.9
+Requires at least: 6.0
+Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.9.6
+Stable tag: 1.9.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,9 @@ Basic functionality works on multisite. SVG upload support is enabled per-site.
 The plugin automatically creates a backup before saving. You can restore the previous version using the "Restore backup" button on the Editor settings page.
 
 == Changelog ==
+
+= 1.9.7 =
+* Fixed: Automatic update checker was not running — updater was loaded but never initialized, preventing update notifications from appearing in the WordPress dashboard
 
 = 1.9.6 =
 * Improved: Admin UI colors now use WordPress CSS variables for full compatibility with all color schemes, including the Modern scheme introduced in WordPress 7.0
