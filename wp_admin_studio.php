@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: WP Admin Studio
- * Plugin URI: https://kacer.studio/wpadminstudio
+ * Plugin URI: https://wpadminstudio.cz
  * Description: Professional WordPress customization: admin settings, pages & posts, translations, custom scripts & codes, robots.txt & .htaccess editor
  * Version: 1.9.7
  * Author: KACER STUDIO s.r.o.
- * Author URI: https://kacer.studio
+ * Author URI: https://wpadminstudio.cz
  * License: GPL v2 or later
  * Text Domain: wp-admin-studio
  */
@@ -7042,7 +7042,7 @@ add_filter(\'wp_footer\', function() {
     public function modify_plugin_links($links, $file) {
         if ($file === plugin_basename(__FILE__)) {
             
-            $custom_url = 'https://kacer.studio/wpadminstudio';
+            $custom_url = 'https://wpadminstudio.cz';
 
             foreach ($links as $key => $link) {
                 if (strpos($link, 'thickbox') !== false || 
