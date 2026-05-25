@@ -3,7 +3,7 @@
  * Plugin Name: WP Admin Studio
  * Plugin URI: https://wpadminstudio.cz
  * Description: Professional WordPress customization: admin settings, pages & posts, translations, custom scripts & codes, robots.txt & .htaccess editor
- * Version: 1.9.7
+ * Version: 1.9.8
  * Author: KACER STUDIO s.r.o.
  * Author URI: https://wpadminstudio.cz
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!function_exists('wpc_current_year')) {
 }
 
 class WPAdminStudio {
-    const VERSION = '1.9.7';
+    const VERSION = '1.9.8';
     const MAX_UPLOAD_SIZE = 5242880; 
     const MAX_FILE_SIZE = 5242880; 
     
@@ -7800,6 +7800,8 @@ add_filter(\'wp_footer\', function() {
             status_header(200);
             
             $_SERVER['SCRIPT_NAME'] = '/wp-login.php';
+            $user_login = '';
+            $user_pass = '';
             require_once ABSPATH . 'wp-login.php';
             exit;
         }
