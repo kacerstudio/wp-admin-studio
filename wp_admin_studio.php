@@ -7589,7 +7589,12 @@ add_filter(\'wp_footer\', function() {
                 display: block !important;
             }
             
-            .login .wp-pwd input {
+            /* Vyšší specificita než obecné pravidlo polí (.login form input[type=...]),
+               jinak by jeho padding přepsal i pravou rezervu pro ikonu oka a text
+               hesla by podtékal pod ikonu */
+            .login .wp-pwd input,
+            .login form .wp-pwd input[type="password"],
+            .login form .wp-pwd input[type="text"] {
                 padding-right: 50px !important;
             }
             
@@ -7941,28 +7946,46 @@ add_filter(\'wp_footer\', function() {
             /* Velikost checkboxu neřídíme — WP má vlastní rozměry pro desktop
                i mobil (25px + fajfka 23px v media query); vnucená velikost
                způsobovala ujíždějící fajfku na mobilu */
-            .login .forgetmenot input[type="checkbox"] {
+            /* Potvrzení slabého hesla (reset) — stejné chování jako Pamatovat si mě.
+               WP tento řádek zobrazuje jen u slabého hesla (inline display:none),
+               proto flex nesmí přebít jeho skrytí. */
+            .login .pw-weak {
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                margin: 12px 0 16px !important;
+            }
+            .login .pw-weak[style*="display: none"],
+            .login .pw-weak[style*="display:none"] {
+                display: none !important;
+            }
+            .login .forgetmenot input[type="checkbox"],
+            .login .pw-weak input[type="checkbox"] {
                 margin: 0 !important;
                 position: static !important;
                 opacity: 1 !important;
                 flex-shrink: 0 !important;
             }
-            .login .forgetmenot input[type="checkbox"]:focus {
+            /* Checkboxy na login stránce bez focus kroužku */
+            .login input[type="checkbox"]:focus {
                 outline: none !important;
                 box-shadow: none !important;
             }
-            .login .forgetmenot label {
+            .login .forgetmenot label,
+            .login .pw-weak label {
                 margin: 0 !important;
                 cursor: pointer !important;
             }
             /* WP na mobilu zvětšuje checkbox na 25px (a fajfku na 23px) —
                vracíme desktopové rozměry, ať vypadá všude stejně */
             @media screen and (max-width: 782px) {
-                .login .forgetmenot input[type="checkbox"] {
+                .login .forgetmenot input[type="checkbox"],
+                .login .pw-weak input[type="checkbox"] {
                     height: 1rem !important;
                     width: 1rem !important;
                 }
-                .login .forgetmenot input[type="checkbox"]:checked::before {
+                .login .forgetmenot input[type="checkbox"]:checked::before,
+                .login .pw-weak input[type="checkbox"]:checked::before {
                     height: 1.3125rem !important;
                     width: 1.3125rem !important;
                     margin: -0.1875rem 0 0 -0.25rem !important;
