@@ -8038,7 +8038,11 @@ add_filter(\'wp_footer\', function() {
                 box-shadow: none !important;
             }
 
-            /* 4. Formulář — průhledný, rámeček drží karta */
+            /* 4. Formulář — průhledný, rámeček drží karta.
+               #login > form pokryje i další akce wp-login.php (např.
+               admin-email-confirm-form u ověření administračního e-mailu),
+               jinak formulář skočí nad logo a nechá si vlastní rámeček WP. */
+            #login > form,
             #loginform,
             #lostpasswordform,
             #resetpassform,
@@ -8050,6 +8054,79 @@ add_filter(\'wp_footer\', function() {
                 border: none !important;
                 box-shadow: none !important;
                 border-radius: 0 !important;
+            }
+
+            /* Ověření administračního e-mailu — sladit s kartou */
+            .login .admin-email__heading {
+                font-size: 18px !important;
+                font-weight: 700 !important;
+                color: <?php echo esc_attr($card_title_color); ?> !important;
+                border: none !important;
+                margin: 0 0 14px !important;
+                padding: 0 !important;
+            }
+            .login .admin-email__details {
+                font-size: 14px !important;
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                line-height: 1.6 !important;
+            }
+            .login .admin-email__actions {
+                margin-top: 20px !important;
+            }
+            .login .admin-email__actions-primary {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                width: 100% !important;
+            }
+            /* Primární akce nahoře, sekundární pod ní (jako Přihlásit se / Zpět na web) */
+            .login .admin-email__actions-primary .button-primary {
+                order: 1 !important;
+                margin: 0 !important;
+            }
+            .login .admin-email__actions-primary .button:not(.button-primary) {
+                order: 2 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 9px 16px !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                border: 1px solid <?php echo esc_attr($card_border_color); ?> !important;
+                border-radius: <?php echo esc_attr($button_radius); ?>px !important;
+                font-size: 14px !important;
+                font-weight: 400 !important;
+                line-height: 2 !important;
+                text-decoration: none !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                transition: border-color .15s, background .15s !important;
+            }
+            .login .admin-email__actions-primary .button:not(.button-primary):hover {
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                border-color: #c4cedb !important;
+                background: <?php echo esc_attr($bg_color); ?> !important;
+            }
+            .login .admin-email__actions-secondary {
+                text-align: center !important;
+                margin: 8px 0 0 !important;
+            }
+            .login .admin-email__actions-secondary a {
+                display: block !important;
+                padding: 10px 16px !important;
+                background: transparent !important;
+                color: <?php echo esc_attr($links_color); ?> !important;
+                border: 1px solid transparent !important;
+                border-radius: 8px !important;
+                font-size: 13px !important;
+                font-weight: 400 !important;
+                text-decoration: none !important;
+            }
+            .login .admin-email__actions-secondary a:hover {
+                text-decoration: underline !important;
             }
             .login form p.submit {
                 margin: 0 !important;
