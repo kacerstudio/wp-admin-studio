@@ -159,7 +159,7 @@ class WPAdminStudio {
                 
                 'disable_auto_update_emails' => 'Zakázat e-maily o automatických aktualizacích',
                 'disable_auto_update_emails_desc' => 'Zakázat e-maily o automatických aktualizacích',
-                'disable_auto_update_emails_tip' => 'WordPress po každé automatické aktualizaci jádra, pluginů nebo témat posílá e-mail. Tato volba ho utiší.',
+                'disable_auto_update_emails_tip' => 'WordPress po každé automatické aktualizaci jádra, pluginů nebo témat posílá e-mail a upozorňuje i na dostupné nové verze. Tato volba utiší všechny tyto e-maily. Netýká se e-mailů od jiných služeb (např. ManageWP nebo hosting).',
                 
                 'hide_admin_notices' => 'Informační hlášky',
                 'hide_admin_notices_desc' => 'Skrýt informační hlášky pro všechny uživatele',
@@ -582,7 +582,7 @@ add_filter(\'wp_footer\', function() {
                 
                 'disable_auto_update_emails' => 'Disable automatic update emails',
                 'disable_auto_update_emails_desc' => 'Disable automatic update emails',
-                'disable_auto_update_emails_tip' => 'WordPress sends an email after every automatic update of core, plugins or themes. This option silences it.',
+                'disable_auto_update_emails_tip' => 'WordPress sends an email after every automatic update of core, plugins or themes, and also notifies about newly available versions. This option silences all of these emails. It does not affect emails from other services (e.g. ManageWP or your hosting).',
                 
                 'hide_admin_notices' => 'Admin notices',
                 'hide_admin_notices_desc' => 'Hide admin notices for all users',
@@ -1006,7 +1006,7 @@ add_filter(\'wp_footer\', function() {
                 
                 'disable_auto_update_emails' => 'Automatische Update-E-Mails deaktivieren',
                 'disable_auto_update_emails_desc' => 'Automatische Update-E-Mails deaktivieren',
-                'disable_auto_update_emails_tip' => 'WordPress sendet nach jedem automatischen Update von Core, Plugins oder Themes eine E-Mail. Diese Option schaltet sie stumm.',
+                'disable_auto_update_emails_tip' => 'WordPress sendet nach jedem automatischen Update von Core, Plugins oder Themes eine E-Mail und informiert auch über neu verfügbare Versionen. Diese Option schaltet alle diese E-Mails stumm. E-Mails anderer Dienste (z. B. ManageWP oder Hosting) sind nicht betroffen.',
                 
                 'hide_admin_notices' => 'Admin-Hinweise',
                 'hide_admin_notices_desc' => 'Admin-Hinweise für alle Benutzer ausblenden',
@@ -1423,7 +1423,7 @@ add_filter(\'wp_footer\', function() {
                 
                 'disable_auto_update_emails' => 'Zakázať e-maily o automatických aktualizáciách',
                 'disable_auto_update_emails_desc' => 'Zakázať e-maily o automatických aktualizáciách',
-                'disable_auto_update_emails_tip' => 'WordPress po každej automatickej aktualizácii jadra, pluginov alebo tém posiela e-mail. Táto voľba ho utiší.',
+                'disable_auto_update_emails_tip' => 'WordPress po každej automatickej aktualizácii jadra, pluginov alebo tém posiela e-mail a upozorňuje aj na dostupné nové verzie. Táto voľba utiší všetky tieto e-maily. Netýka sa e-mailov od iných služieb (napr. ManageWP alebo hosting).',
                 
                 'hide_admin_notices' => 'Informačné hlášky',
                 'hide_admin_notices_desc' => 'Skryť informačné hlášky pre všetkých používateľov',
@@ -1847,7 +1847,7 @@ add_filter(\'wp_footer\', function() {
                 
                 'disable_auto_update_emails' => 'Wyłącz e-maile o automatycznych aktualizacjach',
                 'disable_auto_update_emails_desc' => 'Wyłącz e-maile o automatycznych aktualizacjach',
-                'disable_auto_update_emails_tip' => 'WordPress wysyła e-mail po każdej automatycznej aktualizacji rdzenia, wtyczek lub motywów. Ta opcja to wyłącza.',
+                'disable_auto_update_emails_tip' => 'WordPress wysyła e-mail po każdej automatycznej aktualizacji rdzenia, wtyczek lub motywów, a także powiadamia o dostępnych nowych wersjach. Ta opcja wyłącza wszystkie te e-maile. Nie dotyczy e-maili od innych usług (np. ManageWP lub hostingu).',
                 
                 'hide_admin_notices' => 'Powiadomienia administratora',
                 'hide_admin_notices_desc' => 'Ukryj powiadomienia dla wszystkich użytkowników',
@@ -2411,9 +2411,14 @@ add_filter(\'wp_footer\', function() {
         if (!empty($o['disable_login_switcher'])) add_filter('login_display_language_dropdown', '__return_false');
         if (!empty($o['hide_updates_non_admin'])) add_action('admin_head', array($this, 'hide_updates_non_admin'));
         if (!empty($o['disable_auto_update_emails'])) {
+            // Výsledkové maily po automatické aktualizaci jádra / pluginů / témat
             add_filter('auto_core_update_send_email', '__return_false');
             add_filter('auto_plugin_update_send_email', '__return_false');
             add_filter('auto_theme_update_send_email', '__return_false');
+            // Upozornění "Je dostupná nová verze WordPressu" (posílá wp_version_check cron)
+            add_filter('send_core_update_notification_email', '__return_false');
+            // Debug e-mail po neúspěšné/vývojové automatické aktualizaci
+            add_filter('automatic_updates_send_debug_email', '__return_false');
         }
         if (!empty($o['hide_admin_notices'])) add_action('admin_head', array($this, 'hide_admin_notices'));
         if (!empty($o['hide_howdy'])) add_filter('gettext', array($this, 'hide_howdy_text'), 10, 3);
@@ -7850,7 +7855,7 @@ add_filter(\'wp_footer\', function() {
             <?php if ($logo && !$hide_logo): ?>
             #login h1 {
                 order: 1 !important;
-                margin: 0 0 13px !important;
+                margin: 14px 0 34px !important;
             }
             #login h1 a {
                 max-width: 100% !important;
