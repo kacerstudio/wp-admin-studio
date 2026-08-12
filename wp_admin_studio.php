@@ -3,7 +3,7 @@
  * Plugin Name: WP Admin Studio
  * Plugin URI: https://wpadminstudio.cz
  * Description: Professional WordPress customization: admin settings, pages & posts, translations, custom scripts & codes, robots.txt & .htaccess editor
- * Version: 1.9.8
+ * Version: 1.9.9
  * Author: KACER STUDIO s.r.o.
  * Author URI: https://wpadminstudio.cz
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!function_exists('wpc_current_year')) {
 }
 
 class WPAdminStudio {
-    const VERSION = '1.9.8';
+    const VERSION = '1.9.9';
     const MAX_UPLOAD_SIZE = 5242880; 
     const MAX_FILE_SIZE = 5242880; 
     
@@ -332,6 +332,11 @@ Funguje na adresách jako /tema/XXX/ nebo /stitek/XXX/',
                 'login_bg_size_repeat' => 'Opakovat (repeat)',
                 'login_primary_color' => 'Primární barva',
                 'login_primary_color_desc' => 'Barva pro odkazy a fokus',
+                'login_card_title_default' => 'Správce',
+                'login_card_subtitle_default' => 'Přihlaste se pro přístup k nastavení',
+                'login_back_to_site' => 'Zpět na web',
+                'login_hide_card_header' => 'Skrýt informační nadpis Správce',
+                'login_hide_logo' => 'Skrýt logo',
                 'login_form_radius' => 'Zaoblení rohů formuláře',
                 'login_form_bg_color' => 'Barva pozadí formuláře',
                 'login_form_text_color' => 'Barva písma formuláře',
@@ -751,6 +756,11 @@ Works on URLs like /category/XXX/ or /tag/XXX/',
                 'login_bg_size_repeat' => 'Repeat (repeat)',
                 'login_primary_color' => 'Primary color',
                 'login_primary_color_desc' => 'Color for links and focus',
+                'login_card_title_default' => 'Administrator',
+                'login_card_subtitle_default' => 'Sign in to access the settings',
+                'login_back_to_site' => 'Back to website',
+                'login_hide_card_header' => 'Hide the "Administrator" info heading',
+                'login_hide_logo' => 'Hide logo',
                 'login_form_radius' => 'Form border radius',
                 'login_form_bg_color' => 'Form background color',
                 'login_form_text_color' => 'Form text color',
@@ -1170,6 +1180,11 @@ Funktioniert bei URLs wie /category/XXX/ oder /tag/XXX/',
                 'login_bg_size_repeat' => 'Wiederholen (repeat)',
                 'login_primary_color' => 'Primärfarbe',
                 'login_primary_color_desc' => 'Farbe für Links und Fokus',
+                'login_card_title_default' => 'Administrator',
+                'login_card_subtitle_default' => 'Melden Sie sich an, um auf die Einstellungen zuzugreifen',
+                'login_back_to_site' => 'Zurück zur Website',
+                'login_hide_card_header' => 'Info-Überschrift "Administrator" ausblenden',
+                'login_hide_logo' => 'Logo ausblenden',
                 'login_form_radius' => 'Formular-Eckenradius',
                 'login_form_bg_color' => 'Formular-Hintergrundfarbe',
                 'login_form_text_color' => 'Formular-Textfarbe',
@@ -1586,6 +1601,11 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'login_bg_size_repeat' => 'Opakovať (repeat)',
                 'login_primary_color' => 'Primárna farba',
                 'login_primary_color_desc' => 'Farba pre odkazy a fokus',
+                'login_card_title_default' => 'Správca',
+                'login_card_subtitle_default' => 'Prihláste sa pre prístup k nastaveniam',
+                'login_back_to_site' => 'Späť na web',
+                'login_hide_card_header' => 'Skryť informačný nadpis Správca',
+                'login_hide_logo' => 'Skryť logo',
                 'login_form_radius' => 'Zaoblenie rohov formulára',
                 'login_form_bg_color' => 'Farba pozadia formulára',
                 'login_form_text_color' => 'Farba písma formulára',
@@ -2005,6 +2025,11 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'login_bg_size_repeat' => 'Powtórz (repeat)',
                 'login_primary_color' => 'Kolor podstawowy',
                 'login_primary_color_desc' => 'Kolor dla linków i fokusa',
+                'login_card_title_default' => 'Administrator',
+                'login_card_subtitle_default' => 'Zaloguj się, aby uzyskać dostęp do ustawień',
+                'login_back_to_site' => 'Powrót do witryny',
+                'login_hide_card_header' => 'Ukryj nagłówek informacyjny „Administrator"',
+                'login_hide_logo' => 'Ukryj logo',
                 'login_form_radius' => 'Zaokrąglenie rogów formularza',
                 'login_form_bg_color' => 'Kolor tła formularza',
                 'login_form_text_color' => 'Kolor tekstu formularza',
@@ -2528,6 +2553,7 @@ add_filter(\'wp_footer\', function() {
             add_action('login_enqueue_scripts', array($this, 'customize_login_page'));
             add_filter('login_headerurl', array($this, 'custom_login_logo_url'));
             add_filter('login_headertext', array($this, 'custom_login_logo_title'));
+            add_filter('login_message', array($this, 'custom_login_card_header'));
         }
         if (!empty($o['remove_comment_url'])) add_filter('comment_form_default_fields', array($this, 'unset_url_field'));
         if (!empty($o['restrict_wpforms_countries'])) add_action('wp_footer', array($this, 'wpforms_restrict_countries'), 99);
@@ -2592,7 +2618,7 @@ add_filter(\'wp_footer\', function() {
                        'login_form_bg_color', 'login_form_text_color',
                        'login_button_bg', 'login_button_text_color', 'login_button_radius',
                        'login_links_color',
-                       'login_hide_lostpassword', 'login_hide_backtoblog', 'login_hide_rememberme', 'login_hide_privacy',
+                       'login_hide_lostpassword', 'login_hide_backtoblog', 'login_hide_rememberme', 'login_hide_privacy', 'login_hide_card_header', 'login_hide_logo',
                        'disable_gutenberg', 'duplicate_posts', 'enable_svg_upload', 'enable_media_replace', 'post_colors', 'edit_link', 'archive_titles', 
                        'year_shortcode', 'responsive_images', 'disable_big_image_threshold', 'disable_comments_completely', 'remove_comment_url',
                        'enable_translations', 'archive_category_prefix', 'archive_tag_prefix', 'css_editor_theme', 'php_editor_theme',
@@ -2626,6 +2652,7 @@ add_filter(\'wp_footer\', function() {
             'disable_user_enumeration', 'change_login_url',
             'disable_auto_update_emails', 'hide_admin_notices', 'show_notices_current_user',
             'login_customize', 'login_hide_lostpassword', 'login_hide_backtoblog', 'login_hide_rememberme', 'login_hide_privacy',
+            'login_hide_card_header', 'login_hide_logo',
             'disable_gutenberg', 'duplicate_posts', 'enable_svg_upload', 'enable_media_replace', 'post_colors', 'edit_link',
             'archive_titles', 'year_shortcode', 'responsive_images', 'disable_big_image_threshold',
             'disable_comments_completely', 'remove_comment_url',
@@ -3758,6 +3785,25 @@ add_filter(\'wp_footer\', function() {
                                     </label>
                                 
                                 <div style="margin-top: 20px;">
+                                    <!-- Hide logo / hide card header -->
+                                    <div style="margin-bottom: 20px;">
+                                        <label class="wpc-toggle-label">
+                                            <span class="wpc-toggle-switch">
+                                                <input type="checkbox" name="<?php echo $this->option_name; ?>[login_hide_logo]" value="1" <?php checked(!empty($o['login_hide_logo'])); ?>>
+                                                <span class="wpc-toggle-slider"></span>
+                                            </span>
+                                            <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_hide_logo')); ?></span>
+                                        </label>
+                                        <br>
+                                        <label class="wpc-toggle-label">
+                                            <span class="wpc-toggle-switch">
+                                                <input type="checkbox" name="<?php echo $this->option_name; ?>[login_hide_card_header]" value="1" <?php checked(!empty($o['login_hide_card_header'])); ?>>
+                                                <span class="wpc-toggle-slider"></span>
+                                            </span>
+                                            <span class="wpc-toggle-text"><?php echo esc_html($this->t('login_hide_card_header')); ?></span>
+                                        </label>
+                                    </div>
+
                                     <!-- Logo -->
                                     <div style="margin-bottom: 20px;">
                                         <label class="wpc-maintenance-field-label" style="display: block; font-weight: 600; margin-bottom: 5px;"><?php echo esc_html($this->t('login_logo')); ?></label>
@@ -7324,7 +7370,17 @@ add_filter(\'wp_footer\', function() {
         $hide_rememberme = !empty($o['login_hide_rememberme']);
         $hide_privacy = !empty($o['login_hide_privacy']);
         $custom_css = !empty($o['login_custom_css']) ? $o['login_custom_css'] : '';
-        
+
+        // Skrýt logo (skrývá logo i ikonu) — výchozí je vypnuto, logo/ikona se zobrazují
+        $hide_logo = !empty($o['login_hide_logo']);
+
+        // Styl "Karta" — logo, nadpis, formulář i odkazy uvnitř jednoho rámečku.
+        // Vzhled karty je pevný (dle designu demo-akce), needituje se.
+        $style = 'card';
+        $card_title_color = '#000000';
+        $card_border_color = '#dce3ec';
+        $card_width = 320;
+
         ?>
         <style>
             body.login {
@@ -7336,12 +7392,79 @@ add_filter(\'wp_footer\', function() {
                 background-repeat: <?php echo $bg_size === 'repeat' ? 'repeat' : 'no-repeat'; ?>;
                 <?php endif; ?>
                 display: flex !important;
+                flex-direction: column !important;
                 align-items: center !important;
                 justify-content: center !important;
                 min-height: 100vh !important;
                 padding: 20px !important;
+                /* padding se počítá do 100vh — jinak je stránka 100vh + 40px
+                   a vpravo se zbytečně ukazuje scrollbar */
+                box-sizing: border-box !important;
             }
-            
+
+            /* Language switcher — WP ho vypisuje jako sourozence #login;
+               flex-direction: column výše ho drží POD formulářem (jinak by
+               ve flex řádku ujel doprava vedle něj) */
+            .login .language-switcher {
+                margin: 36px 0 0 !important;
+                padding: 0 !important;
+            }
+            .login .language-switcher form {
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 8px !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            .login .language-switcher .dashicons {
+                display: none !important;
+            }
+            .login .language-switcher label {
+                margin: 0 !important;
+            }
+            .login .language-switcher select {
+                height: 40px !important;
+                box-sizing: border-box !important;
+                padding: 0 32px 0 12px !important;
+                font-size: 14px !important;
+                line-height: 38px !important;
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                background-color: <?php echo esc_attr($form_bg_color); ?> !important;
+                border: 1px solid #dcdcde !important;
+                border-radius: <?php echo esc_attr($button_radius); ?>px !important;
+                box-shadow: none !important;
+                max-width: none !important;
+            }
+            /* Select bez focus efektu — vypadá pořád stejně */
+            .login .language-switcher select:focus {
+                border-color: #dcdcde !important;
+                box-shadow: none !important;
+                outline: none !important;
+            }
+            .login .language-switcher .button {
+                height: 40px !important;
+                box-sizing: border-box !important;
+                padding: 0 16px !important;
+                font-size: 14px !important;
+                line-height: 38px !important;
+                color: #000000 !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+                border: 1px solid #dcdcde !important;
+                border-radius: <?php echo esc_attr($button_radius); ?>px !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+                min-height: 0 !important;
+                cursor: pointer !important;
+            }
+            /* Tlačítko Změnit bez hover efektu — vypadá pořád stejně */
+            .login .language-switcher .button:hover,
+            .login .language-switcher .button:focus {
+                border-color: #dcdcde !important;
+                color: #000000 !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+            }
+
             /* Hide default WordPress logo if no custom logo is set */
             <?php if (!$logo): ?>
             #login h1 a {
@@ -7693,15 +7816,329 @@ add_filter(\'wp_footer\', function() {
             }
             <?php endif; ?>
             
+            <?php if ($style === 'card'): ?>
+            /* ============================================================
+               Styl "Karta"
+               Kartou se stává #login, ne #loginform — WordPress do #login
+               vkládá logo, hlášky, formulář i odkazy #nav a #backtoblog,
+               takže přesunutím rámečku o úroveň výš se všechno ocitne
+               uvnitř karty. Pořadí se pak srovná přes order, protože WP
+               vypisuje #nav před #backtoblog.
+               ============================================================ */
+            #login {
+                width: <?php echo esc_attr($card_width); ?>px !important;
+                max-width: 100% !important;
+                margin: 0 auto !important;
+                padding: 26px !important;
+                /* šířka VČETNĚ paddingu — bez toho je karta reálně
+                   374px a na mobilu přetéká doprava */
+                box-sizing: border-box !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+                border: none !important;
+                border-radius: <?php echo esc_attr($form_radius); ?>px !important;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+            /* Od 680px širší karta */
+            @media screen and (min-width: 680px) {
+                #login {
+                    width: 380px !important;
+                }
+            }
+
+            /* 1. Logo (skryté, když je zapnuto Skrýt logo nebo žádné není) */
+            <?php if ($logo && !$hide_logo): ?>
+            #login h1 {
+                order: 1 !important;
+                margin: 0 0 13px !important;
+            }
+            #login h1 a {
+                max-width: 100% !important;
+                margin: 0 auto !important;
+            }
+            <?php else: ?>
+            #login h1 {
+                display: none !important;
+            }
+            <?php endif; ?>
+
+            /* 2. Hlavička — vkládá filtr login_message */
+            .login .wpas-login-head {
+                order: 2;
+                text-align: center;
+                margin: 10px 0 30px;
+            }
+            .login .wpas-login-circ {
+                width: 60px;
+                height: 60px;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: 0 auto 23px;
+                background: #edf0f4;
+                color: #9aaab8;
+            }
+            .login .wpas-login-circ svg {
+                width: 28px;
+                height: 28px;
+            }
+            .login .wpas-login-title {
+                font-size: 22px;
+                font-weight: 700;
+                color: <?php echo esc_attr($card_title_color); ?>;
+                margin: 0 0 8px;
+                line-height: 1.3;
+            }
+            .login .wpas-login-sub {
+                font-size: 14px;
+                color: #7e93a8;
+                margin: 0;
+                line-height: 1.5;
+            }
+
+            /* 3. Hlášky a chyby — uvnitř karty na loginu, lostpassword i resetpass */
+            .login .message,
+            .login .notice,
+            .login .success,
+            .login #login_error {
+                order: 3 !important;
+                margin: 0 0 20px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Popisky polí */
+            .login label {
+                margin-bottom: 12px !important;
+            }
+
+            /* Tlačítka */
+            .wp-core-ui .button-group.button-large .button,
+            .wp-core-ui .button.button-large {
+                line-height: 2 !important;
+            }
+
+            /* Zapamatovat si mě — checkbox drží na místě, bez focus kroužku.
+               Pozor: display:flex nesmí přebít skrývání pole (hide_rememberme) */
+            <?php if (!$hide_rememberme): ?>
+            .login .forgetmenot {
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                float: none !important;
+                width: 100% !important;
+                margin: 0 0 6px !important;
+            }
+            <?php endif; ?>
+            /* Velikost checkboxu neřídíme — WP má vlastní rozměry pro desktop
+               i mobil (25px + fajfka 23px v media query); vnucená velikost
+               způsobovala ujíždějící fajfku na mobilu */
+            .login .forgetmenot input[type="checkbox"] {
+                margin: 0 !important;
+                position: static !important;
+                opacity: 1 !important;
+                flex-shrink: 0 !important;
+            }
+            .login .forgetmenot input[type="checkbox"]:focus {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+            .login .forgetmenot label {
+                margin: 0 !important;
+                cursor: pointer !important;
+            }
+            /* WP na mobilu zvětšuje checkbox na 25px (a fajfku na 23px) —
+               vracíme desktopové rozměry, ať vypadá všude stejně */
+            @media screen and (max-width: 782px) {
+                .login .forgetmenot input[type="checkbox"] {
+                    height: 1rem !important;
+                    width: 1rem !important;
+                }
+                .login .forgetmenot input[type="checkbox"]:checked::before {
+                    height: 1.3125rem !important;
+                    width: 1.3125rem !important;
+                    margin: -0.1875rem 0 0 -0.25rem !important;
+                }
+            }
+
+            /* 4. Formulář — průhledný, rámeček drží karta */
+            #loginform,
+            #lostpasswordform,
+            #resetpassform,
+            #registerform {
+                order: 4 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: transparent !important;
+                border: none !important;
+                box-shadow: none !important;
+                border-radius: 0 !important;
+            }
+            .login form p.submit {
+                margin: 0 !important;
+            }
+
+            /* 5. Zpět na web — sekundární tlačítko jako .btn-out v demo-akce
+               (zaoblení přebírá nastavení tlačítka z Admin Studia) */
+            .login #backtoblog {
+                order: 5 !important;
+                margin: 8px 0 0 !important;
+                padding: 0 !important;
+                text-align: center !important;
+            }
+            .login #backtoblog a {
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                gap: 7px !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 9px 16px !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                border: 1px solid <?php echo esc_attr($card_border_color); ?> !important;
+                border-radius: <?php echo esc_attr($button_radius); ?>px !important;
+                font-size: 14px !important;
+                font-weight: 400 !important;
+                line-height: 2 !important;
+                text-decoration: none !important;
+                transition: border-color .15s, background .15s !important;
+            }
+            .login #backtoblog a::after {
+                content: '' !important;
+                width: 14px !important;
+                height: 14px !important;
+                flex-shrink: 0 !important;
+                background: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256' fill='%23000000'%3E%3Cpath d='M224 104a8 8 0 0 1-16 0V59.32l-66.33 66.34a8 8 0 0 1-11.32-11.32L196.68 48H152a8 8 0 0 1 0-16h64a8 8 0 0 1 8 8Zm-40 24a8 8 0 0 0-8 8v72H48V80h72a8 8 0 0 0 0-16H48a16 16 0 0 0-16 16v128a16 16 0 0 0 16 16h128a16 16 0 0 0 16-16v-72a8 8 0 0 0-8-8Z'/%3E%3C/svg%3E") center / contain no-repeat !important;
+            }
+            .login #backtoblog a:hover {
+                border-color: #c4cedb !important;
+                background: <?php echo esc_attr($bg_color); ?> !important;
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+            }
+
+            /* 6. Zapomenuté heslo — nenápadný odkaz úplně dole */
+            .login #nav {
+                order: 6 !important;
+                margin: 8px 0 0 !important;
+                padding: 0 !important;
+                text-align: center !important;
+            }
+            .login #nav a {
+                display: block !important;
+                padding: 10px 16px !important;
+                background: transparent !important;
+                color: <?php echo esc_attr($links_color); ?> !important;
+                border: 1px solid transparent !important;
+                border-radius: 8px !important;
+                font-size: 13px !important;
+                font-weight: 400 !important;
+                text-decoration: none !important;
+            }
+            .login #nav a:hover {
+                text-decoration: underline !important;
+            }
+            /* 7. Zpracování osobních údajů — pod Zapomenutým heslem, stejný styl */
+            .login .privacy-policy-page-link {
+                order: 7 !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                text-align: center !important;
+            }
+            .login .privacy-policy-page-link a {
+                display: block !important;
+                padding: 10px 16px !important;
+                background: transparent !important;
+                color: <?php echo esc_attr($links_color); ?> !important;
+                border: 1px solid transparent !important;
+                border-radius: 8px !important;
+                font-size: 13px !important;
+                font-weight: 400 !important;
+                text-decoration: none !important;
+            }
+            .login .privacy-policy-page-link a:hover {
+                text-decoration: underline !important;
+            }
+            .login .privacy-policy-page-link a:focus {
+                outline: none !important;
+                box-shadow: none !important;
+                text-decoration: none !important;
+            }
+
+            /* Tlačítka a odkazy bez focus kroužku */
+            .wp-core-ui .button:focus,
+            .wp-core-ui .button-primary:focus,
+            .wp-core-ui .button-primary:focus:active,
+            .login #backtoblog a:focus,
+            .login #nav a:focus,
+            .login .language-switcher .button:focus,
+            .login .language-switcher select:focus {
+                outline: none !important;
+                box-shadow: none !important;
+            }
+            .login #backtoblog a:focus,
+            .login #nav a:focus {
+                text-decoration: none !important;
+            }
+
+            /* Hlášky: border-left v barvě tlačítka, bez zaoblení */
+            .login .message,
+            .login .notice,
+            .login .success {
+                border-left: 4px solid <?php echo esc_attr($button_bg); ?> !important;
+                border-radius: 0 !important;
+            }
+
+            /* Přepínač jazyků pod kartou — definitivní styl tlačítka Změnit.
+               Musí být až tady na konci: obecné pravidlo pro sekundární tlačítka
+               (.wp-core-ui .button:not(.button-primary)) má stejnou specificitu
+               a jinak by vyhrálo pořadím (modrý text, jiný padding). */
+            .login .language-switcher select,
+            .login .language-switcher select:focus,
+            .login .language-switcher .button,
+            .login .language-switcher .button:hover,
+            .login .language-switcher .button:focus {
+                border-color: <?php echo esc_attr($card_border_color); ?> !important;
+            }
+            .login .language-switcher .button,
+            .login .language-switcher .button:hover,
+            .login .language-switcher .button:focus,
+            .login .language-switcher .button:active {
+                color: #000000 !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+                height: 40px !important;
+                box-sizing: border-box !important;
+                padding: 0 16px !important;
+                margin: 0 !important;
+                font-size: 14px !important;
+                font-weight: 400 !important;
+                line-height: 38px !important;
+                vertical-align: top !important;
+                box-shadow: none !important;
+                text-shadow: none !important;
+                min-height: 0 !important;
+            }
+            <?php endif; ?>
+
             <?php if ($custom_css): ?>
             <?php echo $custom_css; ?>
             <?php endif; ?>
         </style>
         <script>
         (function() {
+            var CARD_STYLE = <?php echo ($style === 'card') ? 'true' : 'false'; ?>;
+            var BACK_LABEL = '<?php echo esc_js($this->t('login_back_to_site')); ?>';
             function removeBackToText() {
                 var backLink = document.querySelector('#backtoblog a');
                 if (backLink) {
+                    if (CARD_STYLE) {
+                        // Kartový styl: tlačítko má pevný popisek "Zpět na web"
+                        if (backLink.textContent !== BACK_LABEL) {
+                            backLink.textContent = BACK_LABEL;
+                        }
+                        return;
+                    }
                     var text = backLink.textContent || backLink.innerText;
                     // Remove all variations of arrow, "Back to", and "Zpět:" text
                     var siteName = text
@@ -7725,8 +8162,8 @@ add_filter(\'wp_footer\', function() {
         <script>
         (function() {
             var COLOR = '<?php echo esc_js($primary_color); ?>';
-            var SVG_OPEN = '';
-            var SVG_OFF  = '';
+            var SVG_OPEN = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M247.31 124.76c-.35-.79-8.82-19.58-27.65-38.41C194.57 61.26 162.88 48 128 48S61.43 61.26 36.34 86.35C17.51 105.18 9 124 8.69 124.76a8 8 0 0 0 0 6.5c.35.79 8.82 19.57 27.65 38.4C61.43 194.74 93.12 208 128 208s66.57-13.26 91.66-38.34c18.83-18.83 27.3-37.61 27.65-38.4a8 8 0 0 0 0-6.5ZM128 192c-30.78 0-57.67-11.19-79.93-33.25A133.47 133.47 0 0 1 25 128a133.33 133.33 0 0 1 23.07-30.75C70.33 75.19 97.22 64 128 64s57.67 11.19 79.93 33.25A133.46 133.46 0 0 1 231.05 128c-7.21 13.46-38.62 64-103.05 64Zm0-112a48 48 0 1 0 48 48 48.05 48.05 0 0 0-48-48Zm0 80a32 32 0 1 1 32-32 32 32 0 0 1-32 32Z"/></svg>';
+            var SVG_OFF  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M53.92 34.62a8 8 0 1 0-11.84 10.76l19.24 21.17C25.72 88.84 9.4 123.2 8.69 124.76a8 8 0 0 0 0 6.5c.35.79 8.82 19.57 27.65 38.4C61.43 194.74 93.12 208 128 208a127.11 127.11 0 0 0 52.07-10.83l22 24.21a8 8 0 1 0 11.84-10.76Zm47.33 75.84 41.67 45.85a32 32 0 0 1-41.67-45.85ZM128 192c-30.78 0-57.67-11.19-79.93-33.25A133.16 133.16 0 0 1 25 128c4.69-8.79 19.66-33.39 47.35-49.38l18 19.75a48 48 0 0 0 63.66 70l14.73 16.2A112 112 0 0 1 128 192Zm6.16-95.62a8 8 0 0 1 3-15.72 48.16 48.16 0 0 1 38.77 42.64 8 8 0 0 1-7.22 8.71 6.39 6.39 0 0 1-.75 0 8 8 0 0 1-8-7.26 32.09 32.09 0 0 0-25.8-28.37Zm113.15 34.88c-.42.94-10.55 23.37-33.36 43.8a8 8 0 1 1-10.67-11.92 132.77 132.77 0 0 0 27.8-35.14 133.15 133.15 0 0 0-23.12-30.77C185.67 75.19 158.78 64 128 64c-2.59 0-5.16.08-7.67.24a8 8 0 1 1-1-16c2.89-.18 5.79-.27 8.69-.27 34.88 0 66.57 13.26 91.66 38.35 18.83 18.83 27.3 37.62 27.65 38.41a8 8 0 0 1 0 6.5Z"/></svg>';
 
             function injectEyeIcons() {
                 var btn = document.querySelector('.wp-hide-pw');
@@ -7765,9 +8202,48 @@ add_filter(\'wp_footer\', function() {
         $logo_url = !empty($o['login_logo_url']) ? $o['login_logo_url'] : home_url();
         return esc_url($logo_url);
     }
-    
+
     public function custom_login_logo_title() {
         return get_bloginfo('name');
+    }
+
+    public function custom_login_card_header($message) {
+        $o = get_option($this->option_name, array());
+
+        // Skrytí informačního nadpisu se týká JEN textů (nadpis + podtitulek);
+        // logo/ikonu řídí výhradně volba Skrýt logo
+        $hide_header = !empty($o['login_hide_card_header']);
+
+        // Texty jsou pevné dle jazyka pluginu (hlavička karty se needituje)
+        $title    = $hide_header ? '' : $this->t('login_card_title_default');
+        $subtitle = $hide_header ? '' : $this->t('login_card_subtitle_default');
+
+        // Logo nahrané => zobrazí se logo (h1), ikona se skryje.
+        // Bez loga => automaticky kolečko s ikonou uživatele.
+        // Skrýt logo (výchozí vypnuto) => nezobrazí se ani logo, ani ikona.
+        $has_logo  = !empty($o['login_logo']);
+        $hide_logo = !empty($o['login_hide_logo']);
+        $show_icon = !$hide_logo && !$has_logo;
+
+        if ($title === '' && $subtitle === '' && !$show_icon) {
+            return $message;
+        }
+
+        $head = '<div class="wpas-login-head">';
+        if ($show_icon) {
+            $head .= '<div class="wpas-login-circ" aria-hidden="true">'
+                   . '<svg viewBox="0 0 256 256" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M230.92 212c-15.23-26.33-38.7-45.21-66.09-54.16a72 72 0 1 0-73.66 0c-27.39 8.94-50.86 27.82-66.09 54.16a8 8 0 1 0 13.85 8c18.84-32.56 52.14-52 89.07-52s70.23 19.44 89.07 52a8 8 0 1 0 13.85-8ZM72 96a56 56 0 1 1 56 56 56.06 56.06 0 0 1-56-56Z"/></svg>'
+                   . '</div>';
+        }
+        if ($title !== '') {
+            $head .= '<h2 class="wpas-login-title">' . esc_html($title) . '</h2>';
+        }
+        if ($subtitle !== '') {
+            $head .= '<p class="wpas-login-sub">' . esc_html($subtitle) . '</p>';
+        }
+        $head .= '</div>';
+
+        return $head . $message;
     }
     
     public function custom_login_url_intercept() {
