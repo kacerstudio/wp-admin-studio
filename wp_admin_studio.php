@@ -7573,7 +7573,7 @@ add_filter(\'wp_footer\', function() {
             .login form input[type="text"]:focus,
             .login form input[type="password"]:focus,
             .login form input[type="email"]:focus {
-                border-color: var(--wp-admin-theme-color) !important;
+                border-color: <?php echo esc_attr($button_bg); ?> !important;
                 box-shadow: none !important;
                 outline: none !important;
             }
@@ -7614,10 +7614,12 @@ add_filter(\'wp_footer\', function() {
                 justify-content: center !important;
             }
             
-            /* Reset password form - different position */
+            /* Reset hesla: .wp-pwd obsahuje pod polem i ukazatel síly hesla,
+               takže top v procentech necentruje na pole. Pole má pevnou výšku
+               50px (padding 12+12, řádek 24, rámeček 1+1) => střed je 25px. */
             #resetpassform .wp-pwd button.button,
             #resetpassform .wp-pwd .wp-hide-pw {
-                top: 25% !important;
+                top: 25px !important;
             }
             
             .login .wp-pwd button.button:hover,
@@ -7967,6 +7969,52 @@ add_filter(\'wp_footer\', function() {
                 }
             }
 
+            /* Generovat heslo (reset hesla) — sekundární tlačítko jako Zpět na web,
+               NAD primárním Uložit heslo. Musí být v tomto bloku (na konci CSS),
+               aby přebilo obecné pravidlo sekundárních tlačítek. */
+            .login p.reset-pass-submit {
+                display: flex !important;
+                flex-direction: column !important;
+                gap: 8px !important;
+                margin: 0 !important;
+            }
+            .login p.reset-pass-submit .button-primary {
+                order: 2 !important;
+            }
+            .login .button.wp-generate-pw {
+                order: 1 !important;
+                display: inline-flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                width: 100% !important;
+                box-sizing: border-box !important;
+                padding: 9px 16px !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                border: 1px solid <?php echo esc_attr($card_border_color); ?> !important;
+                border-radius: <?php echo esc_attr($button_radius); ?>px !important;
+                font-size: 14px !important;
+                font-weight: 400 !important;
+                line-height: 2 !important;
+                text-shadow: none !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                cursor: pointer !important;
+                transition: border-color .15s, background .15s !important;
+            }
+            .login .button.wp-generate-pw:hover {
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                border-color: #c4cedb !important;
+                background: <?php echo esc_attr($bg_color); ?> !important;
+            }
+            .login .button.wp-generate-pw:focus {
+                color: <?php echo esc_attr($form_text_color); ?> !important;
+                border-color: <?php echo esc_attr($card_border_color); ?> !important;
+                background: <?php echo esc_attr($form_bg_color); ?> !important;
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
             /* 4. Formulář — průhledný, rámeček drží karta */
             #loginform,
             #lostpasswordform,
@@ -8171,24 +8219,37 @@ add_filter(\'wp_footer\', function() {
             var SVG_OFF  = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 256 256" fill="currentColor"><path d="M53.92 34.62a8 8 0 1 0-11.84 10.76l19.24 21.17C25.72 88.84 9.4 123.2 8.69 124.76a8 8 0 0 0 0 6.5c.35.79 8.82 19.57 27.65 38.4C61.43 194.74 93.12 208 128 208a127.11 127.11 0 0 0 52.07-10.83l22 24.21a8 8 0 1 0 11.84-10.76Zm47.33 75.84 41.67 45.85a32 32 0 0 1-41.67-45.85ZM128 192c-30.78 0-57.67-11.19-79.93-33.25A133.16 133.16 0 0 1 25 128c4.69-8.79 19.66-33.39 47.35-49.38l18 19.75a48 48 0 0 0 63.66 70l14.73 16.2A112 112 0 0 1 128 192Zm6.16-95.62a8 8 0 0 1 3-15.72 48.16 48.16 0 0 1 38.77 42.64 8 8 0 0 1-7.22 8.71 6.39 6.39 0 0 1-.75 0 8 8 0 0 1-8-7.26 32.09 32.09 0 0 0-25.8-28.37Zm113.15 34.88c-.42.94-10.55 23.37-33.36 43.8a8 8 0 1 1-10.67-11.92 132.77 132.77 0 0 0 27.8-35.14 133.15 133.15 0 0 0-23.12-30.77C185.67 75.19 158.78 64 128 64c-2.59 0-5.16.08-7.67.24a8 8 0 1 1-1-16c2.89-.18 5.79-.27 8.69-.27 34.88 0 66.57 13.26 91.66 38.35 18.83 18.83 27.3 37.62 27.65 38.41a8 8 0 0 1 0 6.5Z"/></svg>';
 
             function injectEyeIcons() {
-                var btn = document.querySelector('.wp-hide-pw');
-                if (!btn) return;
-                var span = btn.querySelector('.dashicons');
-                if (span) span.style.display = 'none';
-                var iconEl = btn.querySelector('.wpc-eye-icon');
-                if (!iconEl) {
-                    iconEl = document.createElement('span');
-                    iconEl.className = 'wpc-eye-icon';
-                    iconEl.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;color:' + COLOR + ';';
-                    btn.appendChild(iconEl);
-                    btn.addEventListener('click', function() {
-                        setTimeout(function() {
-                            var input = document.querySelector('#user_pass');
-                            iconEl.innerHTML = (input && input.type === 'text') ? SVG_OFF : SVG_OPEN;
-                        }, 10);
-                    });
-                }
-                iconEl.innerHTML = SVG_OPEN;
+                // Obecně pro každé pole s přepínačem viditelnosti (#user_pass na
+                // loginu, #pass1 na resetu hesla). Stav ikony se odvozuje přímo
+                // z atributu type daného pole, takže funguje i když viditelnost
+                // přepne něco jiného než klik na oko (např. Generovat heslo).
+                document.querySelectorAll('.login .wp-pwd').forEach(function(wrap) {
+                    var btn = wrap.querySelector('.wp-hide-pw');
+                    var input = wrap.querySelector('input.password-input, input[type="password"], input[type="text"]');
+                    if (!btn || !input) return;
+
+                    var span = btn.querySelector('.dashicons');
+                    if (span) span.style.display = 'none';
+
+                    var iconEl = btn.querySelector('.wpc-eye-icon');
+                    var isNew = false;
+                    if (!iconEl) {
+                        isNew = true;
+                        iconEl = document.createElement('span');
+                        iconEl.className = 'wpc-eye-icon';
+                        iconEl.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;color:' + COLOR + ';';
+                        btn.appendChild(iconEl);
+                    }
+
+                    function sync() {
+                        iconEl.innerHTML = (input.getAttribute('type') === 'text') ? SVG_OFF : SVG_OPEN;
+                    }
+
+                    if (isNew && window.MutationObserver) {
+                        new MutationObserver(sync).observe(input, { attributes: true, attributeFilter: ['type'] });
+                    }
+                    sync();
+                });
             }
 
             if (document.readyState === 'loading') {
