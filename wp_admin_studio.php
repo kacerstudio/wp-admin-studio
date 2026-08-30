@@ -3,7 +3,7 @@
  * Plugin Name: WP Admin Studio
  * Plugin URI: https://wpadminstudio.cz
  * Description: Professional WordPress customization: admin settings, pages & posts, translations, custom scripts & codes, robots.txt & .htaccess editor
- * Version: 1.9.9
+ * Version: 2.0
  * Author: KACER STUDIO s.r.o.
  * Author URI: https://wpadminstudio.cz
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!function_exists('wpc_current_year')) {
 }
 
 class WPAdminStudio {
-    const VERSION = '1.9.9';
+    const VERSION = '2.0';
     const MAX_UPLOAD_SIZE = 5242880; 
     const MAX_FILE_SIZE = 5242880; 
     
@@ -147,6 +147,7 @@ class WPAdminStudio {
                 'admin_bar_view' => 'Odkaz "Zobrazit web"',
                 'admin_bar_avatar' => 'Ikona avatara u jména uživatele (pouze desktop)',
                 'admin_bar_search' => 'Vyhledávání (Ctrl + K)',
+                'admin_bar_site_icon' => 'Ikona webu (favicon) u názvu webu',
                 
                 'login_lang' => 'Skrýt přepínač jazyků',
                 'login_lang_desc' => 'Skrýt přepínač jazyků',
@@ -319,6 +320,8 @@ Funguje na adresách jako /tema/XXX/ nebo /stitek/XXX/',
                 'login_logo_upload' => 'Nahrát logo',
                 'login_logo_remove' => 'Odstranit logo',
                 'login_logo_height' => 'Výška loga',
+                'login_logo_width' => 'Šířka loga',
+                'login_logo_height_hint' => 'prázdné nebo 0 = původní velikost',
                 'login_logo_url' => 'Odkaz loga',
                 'login_logo_url_placeholder' => 'https://vase-stranka.cz',
                 'login_logo_url_desc' => 'URL, kam povede klik na logo (výchozí: homepage)',
@@ -571,6 +574,7 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_view' => 'Link "View Site"',
                 'admin_bar_avatar' => 'Avatar icon next to username (desktop only)',
                 'admin_bar_search' => 'Search (Ctrl + K)',
+                'admin_bar_site_icon' => 'Site icon (favicon) next to the site name',
                 
                 'login_lang' => 'Hide language switcher',
                 'login_lang_desc' => 'Hide language switcher',
@@ -743,6 +747,8 @@ Works on URLs like /category/XXX/ or /tag/XXX/',
                 'login_logo_upload' => 'Upload logo',
                 'login_logo_remove' => 'Remove logo',
                 'login_logo_height' => 'Logo height',
+                'login_logo_width' => 'Logo width',
+                'login_logo_height_hint' => 'empty or 0 = original size',
                 'login_logo_url' => 'Logo link',
                 'login_logo_url_placeholder' => 'https://your-site.com',
                 'login_logo_url_desc' => 'URL where logo click leads to (default: homepage)',
@@ -995,6 +1001,7 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_view' => 'Link "Website ansehen"',
                 'admin_bar_avatar' => 'Avatar-Symbol neben dem Benutzernamen (nur Desktop)',
                 'admin_bar_search' => 'Suche (Ctrl + K)',
+                'admin_bar_site_icon' => 'Website-Icon (Favicon) neben dem Website-Namen',
                 
                 'login_lang' => 'Sprachumschalter ausblenden',
                 'login_lang_desc' => 'Sprachumschalter ausblenden',
@@ -1167,6 +1174,8 @@ Funktioniert bei URLs wie /category/XXX/ oder /tag/XXX/',
                 'login_logo_upload' => 'Logo hochladen',
                 'login_logo_remove' => 'Logo entfernen',
                 'login_logo_height' => 'Logo-Höhe',
+                'login_logo_width' => 'Logo-Breite',
+                'login_logo_height_hint' => 'leer oder 0 = Originalgröße',
                 'login_logo_url' => 'Logo-Link',
                 'login_logo_url_placeholder' => 'https://ihre-seite.de',
                 'login_logo_url_desc' => 'URL, zu der der Logo-Klick führt (Standard: Homepage)',
@@ -1412,6 +1421,7 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_view' => 'Odkaz "Zobraziť web"',
                 'admin_bar_avatar' => 'Ikona avatara pri mene používateľa (len desktop)',
                 'admin_bar_search' => 'Vyhľadávanie (Ctrl + K)',
+                'admin_bar_site_icon' => 'Ikona webu (favicon) pri názve webu',
                 
                 'login_lang' => 'Skryť prepínač jazykov',
                 'login_lang_desc' => 'Skryť prepínač jazykov',
@@ -1588,6 +1598,8 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'login_logo_upload' => 'Nahrať logo',
                 'login_logo_remove' => 'Odstrániť logo',
                 'login_logo_height' => 'Výška loga',
+                'login_logo_width' => 'Šírka loga',
+                'login_logo_height_hint' => 'prázdne alebo 0 = pôvodná veľkosť',
                 'login_logo_url' => 'Odkaz loga',
                 'login_logo_url_placeholder' => 'https://vasa-stranka.sk',
                 'login_logo_url_desc' => 'URL, kam povedie klik na logo (predvolená: homepage)',
@@ -1836,6 +1848,7 @@ add_filter(\'wp_footer\', function() {
                 'admin_bar_view' => 'Link "Zobacz witrynę"',
                 'admin_bar_avatar' => 'Ikona awatara przy nazwie użytkownika (tylko desktop)',
                 'admin_bar_search' => 'Wyszukiwanie (Ctrl + K)',
+                'admin_bar_site_icon' => 'Ikona witryny (favicon) obok nazwy witryny',
                 
                 'login_lang' => 'Ukryj przełącznik języków',
                 'login_lang_desc' => 'Ukryj przełącznik języków',
@@ -2012,6 +2025,8 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'login_logo_upload' => 'Prześlij logo',
                 'login_logo_remove' => 'Usuń logo',
                 'login_logo_height' => 'Wysokość loga',
+                'login_logo_width' => 'Szerokość loga',
+                'login_logo_height_hint' => 'puste lub 0 = oryginalny rozmiar',
                 'login_logo_url' => 'Link loga',
                 'login_logo_url_placeholder' => 'https://twoja-strona.pl',
                 'login_logo_url_desc' => 'URL, do którego prowadzi kliknięcie loga (domyślnie: strona główna)',
@@ -2407,7 +2422,14 @@ add_filter(\'wp_footer\', function() {
 
         add_action('update_option_salient_redux', array($this, 'restore_google_maps_key_after_save'), 10, 2);
         
-        if (!empty($o['admin_bar_items'])) add_action('admin_bar_menu', array($this, 'remove_admin_bar_links'), 999);
+        if (!empty($o['admin_bar_items'])) {
+            add_action('admin_bar_menu', array($this, 'remove_admin_bar_links'), 999);
+            // Ikonu webu u nazvu webu resi filtr jadra (WP 7.1+); musi byt
+            // registrovan drive, nez se uzel site-name vykresli
+            if (in_array('site-icon', (array) $o['admin_bar_items'], true)) {
+                add_filter('wp_admin_bar_show_site_icons', '__return_false');
+            }
+        }
         if (!empty($o['disable_login_switcher'])) add_filter('login_display_language_dropdown', '__return_false');
         if (!empty($o['hide_updates_non_admin'])) add_action('admin_head', array($this, 'hide_updates_non_admin'));
         if (!empty($o['disable_auto_update_emails'])) {
@@ -2617,7 +2639,7 @@ add_filter(\'wp_footer\', function() {
                        'wp_emails_enable', 'wp_email_from_name', 'wp_email_from_email', 'auto_delete_files', 'disable_user_enumeration',
                        'disable_auto_update_emails', 'hide_admin_notices', 'show_notices_current_user', 'notices_user_id',
                        'change_login_url', 'custom_login_slug',
-                       'login_customize', 'login_logo_height',
+                       'login_customize', 'login_logo_height', 'login_logo_width',
                        'login_bg_size',
                        'login_primary_color', 'login_form_radius',
                        'login_form_bg_color', 'login_form_text_color',
@@ -3218,7 +3240,8 @@ add_filter(\'wp_footer\', function() {
                                 <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="new-content" <?php checked(in_array('new-content', $items)); ?>> <?php echo esc_html($this->t('admin_bar_new')); ?></label><br>
                                 <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="view-site" <?php checked(in_array('view-site', $items)); ?>> <?php echo esc_html($this->t('admin_bar_view')); ?></label><br>
                                 <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="my-account-avatar" <?php checked(in_array('my-account-avatar', $items)); ?>> <?php echo esc_html($this->t('admin_bar_avatar')); ?></label><br>
-                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="command-palette" <?php checked(in_array('command-palette', $items)); ?>> <?php echo esc_html($this->t('admin_bar_search')); ?></label>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="command-palette" <?php checked(in_array('command-palette', $items)); ?>> <?php echo esc_html($this->t('admin_bar_search')); ?></label><br>
+                                <label><input type="checkbox" name="<?php echo $this->option_name; ?>[admin_bar_items][]" value="site-icon" <?php checked(in_array('site-icon', $items)); ?>> <?php echo esc_html($this->t('admin_bar_site_icon')); ?></label>
                             </td>
                         </tr>
                         <tr>
@@ -3814,14 +3837,21 @@ add_filter(\'wp_footer\', function() {
                                         <label class="wpc-maintenance-field-label" style="display: block; font-weight: 600; margin-bottom: 5px;"><?php echo esc_html($this->t('login_logo')); ?></label>
                                         <div>
                                             <?php if (!empty($o['login_logo'])): ?>
-                                                <img src="<?php echo esc_url($o['login_logo']); ?>" style="<?php echo !empty($o['login_logo_height']) ? 'height: ' . intval($o['login_logo_height']) . 'px; width: auto;' : 'max-height: 100px; width: auto;'; ?> display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px;" id="login_logo_preview">
+                                                <img src="<?php echo esc_url($o['login_logo']); ?>" style="<?php $wpc_lh = (isset($o['login_logo_height']) && $o['login_logo_height'] !== '') ? max(0, intval($o['login_logo_height'])) : 0; echo 'height: ' . ($wpc_lh > 0 ? $wpc_lh . 'px' : 'auto') . '; width: auto; max-width: 328px;'; ?> display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px;" id="login_logo_preview">
                                             <?php endif; ?>
                                             <input type="hidden" id="login_logo" name="<?php echo $this->option_name; ?>[login_logo]" value="<?php echo esc_attr(!empty($o['login_logo']) ? $o['login_logo'] : ''); ?>">
                                             <button type="button" class="button" id="login_logo_upload"><?php echo esc_html($this->t('login_logo_upload')); ?></button>
                                             <button type="button" class="button" id="login_logo_remove" style="<?php echo empty($o['login_logo']) ? 'display:none;' : ''; ?>"><?php echo esc_html($this->t('login_logo_remove')); ?></button>
-                                            <div style="margin-top: 10px;">
-                                                <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_logo_height')); ?></label>
-                                                <input type="number" name="<?php echo $this->option_name; ?>[login_logo_height]" value="<?php echo esc_attr(!empty($o['login_logo_height']) ? $o['login_logo_height'] : ''); ?>" min="50" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
+                                            <div style="margin-top: 10px; display: flex; gap: 16px; flex-wrap: wrap;">
+                                                <div>
+                                                    <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_logo_width')); ?></label>
+                                                    <input type="number" id="login_logo_width" name="<?php echo $this->option_name; ?>[login_logo_width]" value="<?php echo esc_attr((isset($o['login_logo_width']) && $o['login_logo_width'] !== '') ? $o['login_logo_width'] : ''); ?>" min="0" max="328" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
+                                                </div>
+                                                <div>
+                                                    <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_logo_height')); ?></label>
+                                                    <input type="number" id="login_logo_height" name="<?php echo $this->option_name; ?>[login_logo_height]" value="<?php echo esc_attr((isset($o['login_logo_height']) && $o['login_logo_height'] !== '') ? $o['login_logo_height'] : ''); ?>" min="0" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
+                                                    <p class="description" style="margin: 4px 0 0; font-size: 12px;"><?php echo esc_html($this->t('login_logo_height_hint')); ?></p>
+                                                </div>
                                             </div>
                                             <div style="margin-top: 10px;">
                                                 <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_logo_url')); ?></label>
@@ -6244,6 +6274,107 @@ add_filter(\'wp_footer\', function() {
                     $(this).hide();
                 });
 
+                /* --- Logo: pomerove provazani sirky a vysky (max. sirka 328px) --- */
+                var WPC_LOGO_MAX_W = 328;
+                var wpcLogoRatio = 0;      // sirka / vyska
+                var wpcLogoSyncing = false;
+
+                function wpcLogoApply(w, h) {
+                    wpcLogoSyncing = true;
+                    $('#login_logo_width').val(w);
+                    $('#login_logo_height').val(h);
+                    wpcLogoSyncing = false;
+                }
+
+                // Prepocet z vysky (respektuje strop sirky 328px)
+                function wpcLogoFromHeight(h) {
+                    if (!wpcLogoRatio || !(h > 0)) return;
+                    var w = Math.round(h * wpcLogoRatio);
+                    if (w > WPC_LOGO_MAX_W) {
+                        w = WPC_LOGO_MAX_W;
+                        h = Math.round(w / wpcLogoRatio);
+                    }
+                    wpcLogoApply(w, h);
+                }
+
+                function wpcLogoFromWidth(w) {
+                    if (!wpcLogoRatio || !(w > 0)) return;
+                    if (w > WPC_LOGO_MAX_W) w = WPC_LOGO_MAX_W;
+                    wpcLogoApply(w, Math.round(w / wpcLogoRatio));
+                }
+
+                // Nastavi pomer stran; pri fill=true rovnou vyplni zjistene rozmery
+                // (zmensene, pokud presahuji maximalni sirku 328px)
+                function wpcLogoSetRatio(ratio, fill, natW, natH) {
+                    if (!ratio || !isFinite(ratio)) return;
+                    wpcLogoRatio = ratio;
+                    if (!fill) return;
+
+                    var w = natW, h = natH;
+                    if (!(w > 0) || !(h > 0)) { h = 50; w = h * ratio; }
+                    if (w > WPC_LOGO_MAX_W) {
+                        w = WPC_LOGO_MAX_W;
+                        h = w / ratio;
+                    }
+                    wpcLogoApply(Math.round(w), Math.round(h));
+                }
+
+                // SVG: WP mu neuklada rozmery do metadat a naturalWidth/Height je
+                // nespolehlive, kdyz ma soubor jen viewBox (bez width/height).
+                // Pomer proto ctem primo ze souboru.
+                function wpcLogoRatioFromSvg(url, fill) {
+                    $.ajax({ url: url, dataType: 'text' }).done(function(txt) {
+                        var svg;
+                        try {
+                            svg = new DOMParser().parseFromString(txt, 'image/svg+xml').querySelector('svg');
+                        } catch (e) { return; }
+                        if (!svg) return;
+
+                        // 1) width/height v absolutnich jednotkach (procenta ignorovat)
+                        var wAttr = svg.getAttribute('width') || '';
+                        var hAttr = svg.getAttribute('height') || '';
+                        if (wAttr.indexOf('%') === -1 && hAttr.indexOf('%') === -1) {
+                            var w = parseFloat(wAttr), h = parseFloat(hAttr);
+                            if (w > 0 && h > 0) { wpcLogoSetRatio(w / h, fill, w, h); return; }
+                        }
+
+                        // 2) jinak pomer z viewBox
+                        var vb = (svg.getAttribute('viewBox') || '').trim().split(/[\s,]+/);
+                        if (vb.length === 4) {
+                            var vw = parseFloat(vb[2]), vh = parseFloat(vb[3]);
+                            if (vw > 0 && vh > 0) wpcLogoSetRatio(vw / vh, fill, vw, vh);
+                        }
+                    });
+                }
+
+                function wpcLogoRatioFromUrl(url, fill) {
+                    if (!url) return;
+                    if (/\.svg(\?|#|$)/i.test(url)) { wpcLogoRatioFromSvg(url, fill); return; }
+                    var img = new Image();
+                    img.onload = function() {
+                        if (img.naturalWidth && img.naturalHeight) {
+                            wpcLogoSetRatio(img.naturalWidth / img.naturalHeight, fill, img.naturalWidth, img.naturalHeight);
+                        }
+                    };
+                    img.src = url;
+                }
+
+                $('#login_logo_height').on('input', function() {
+                    if (wpcLogoSyncing) return;
+                    wpcLogoFromHeight(parseInt($(this).val(), 10));
+                });
+                $('#login_logo_width').on('input', function() {
+                    if (wpcLogoSyncing) return;
+                    wpcLogoFromWidth(parseInt($(this).val(), 10));
+                });
+
+                // Pri nacteni stranky zjistit pomer ze soucasneho loga
+                // (pole neprepisovat, pokud uz sirka vyplnena je)
+                (function() {
+                    var current = $('#login_logo').val();
+                    if (current) wpcLogoRatioFromUrl(current, false);
+                })();
+
                 var loginLogoFrame;
                 $('#login_logo_upload').on('click', function(e) {
                     e.preventDefault();
@@ -6265,8 +6396,17 @@ add_filter(\'wp_footer\', function() {
                         var attachment = loginLogoFrame.state().get('selection').first().toJSON();
                         $('#login_logo').val(attachment.url);
                         
-                        var logoHeight = $('input[name="<?php echo $this->option_name; ?>[login_logo_height]"]').val() || 100;
-                        var styleAttr = 'height: ' + parseInt(logoHeight) + 'px; width: auto;';
+                        // Zjistene rozmery loga -> pomer stran + predvyplneni obou poli
+                        var isSvg = /\.svg(\?|#|$)/i.test(attachment.url || '') || attachment.mime === 'image/svg+xml';
+                        if (!isSvg && attachment.width && attachment.height) {
+                            wpcLogoSetRatio(attachment.width / attachment.height, true, attachment.width, attachment.height);
+                        } else {
+                            wpcLogoRatioFromUrl(attachment.url, true);
+                        }
+
+                        var logoHeight = parseInt($('#login_logo_height').val(), 10);
+                        if (isNaN(logoHeight) || logoHeight < 0) logoHeight = 0;
+                        var styleAttr = 'height: ' + (logoHeight > 0 ? logoHeight + 'px' : 'auto') + '; width: auto; max-width: 328px;';
                         styleAttr += ' display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px;';
 
                         if ($('#login_logo_preview').length) {
@@ -6394,6 +6534,11 @@ add_filter(\'wp_footer\', function() {
             if (isset($map[$item])) {
                 foreach ($map[$item] as $menu) $wp_admin_bar->remove_menu($menu);
             }
+        }
+
+        // Pojistka pro pripad, ze filtr jadra neni k dispozici
+        if (in_array('site-icon', $items)) {
+            echo '<style>#wpadminbar #wp-admin-bar-site-name .site-icon { display: none !important; }</style>';
         }
 
         if (in_array('my-account-avatar', $items)) {
@@ -7349,11 +7494,130 @@ add_filter(\'wp_footer\', function() {
         }
     }
     
+    /**
+     * Skutecne rozmery loga (pro vysku 0 = puvodni velikost).
+     * Vraci array(sirka, vyska) nebo null. Vysledek se cachuje na den.
+     */
+    private function get_login_logo_dimensions($url) {
+        if (empty($url)) {
+            return null;
+        }
+
+        $key = 'wpas_logo_dim_' . md5($url);
+        $cached = get_transient($key);
+        if (is_array($cached)) {
+            return (!empty($cached[0]) && !empty($cached[1])) ? $cached : null;
+        }
+
+        $dim = null;
+
+        // 1) Metadata prilohy (rastr) - bez cteni souboru
+        if (function_exists('attachment_url_to_postid')) {
+            $id = attachment_url_to_postid($url);
+            if ($id) {
+                $meta = wp_get_attachment_metadata($id);
+                if (!empty($meta['width']) && !empty($meta['height'])) {
+                    $dim = array(intval($meta['width']), intval($meta['height']));
+                }
+            }
+        }
+
+        // 2) Lokalni soubor (vcetne SVG, ktere WP do metadat neuklada)
+        if (!$dim) {
+            $path = $this->login_logo_local_path($url);
+            if ($path && file_exists($path)) {
+                if (preg_match('/\.svg$/i', $path)) {
+                    $dim = $this->svg_dimensions($path);
+                } else {
+                    $size = @getimagesize($path);
+                    if (!empty($size[0]) && !empty($size[1])) {
+                        $dim = array(intval($size[0]), intval($size[1]));
+                    }
+                }
+            }
+        }
+
+        set_transient($key, $dim ? $dim : array(0, 0), DAY_IN_SECONDS);
+        return $dim;
+    }
+
+    /** URL v ramci uploads -> cesta na disku (ignoruje http/https) */
+    private function login_logo_local_path($url) {
+        $uploads = wp_get_upload_dir();
+        if (empty($uploads['baseurl']) || empty($uploads['basedir'])) {
+            return null;
+        }
+        $strip = function ($u) { return preg_replace('#^https?:#i', '', $u); };
+        $url_n = $strip($url);
+        $base_n = $strip($uploads['baseurl']);
+        if (strpos($url_n, $base_n) !== 0) {
+            return null;
+        }
+        $rel = substr($url_n, strlen($base_n));
+        $rel = strtok($rel, '?');
+        if (strpos($rel, '..') !== false) {
+            return null;
+        }
+        return $uploads['basedir'] . $rel;
+    }
+
+    /** Rozmery SVG: width/height v absolutnich jednotkach, jinak pomer z viewBox */
+    private function svg_dimensions($path) {
+        $content = @file_get_contents($path, false, null, 0, 16384);
+        if (!$content || !preg_match('/<svg[^>]*>/i', $content, $m)) {
+            return null;
+        }
+        $tag = $m[0];
+
+        $w = preg_match('/\swidth\s*=\s*["\']([^"\']+)["\']/i', $tag, $mw) ? trim($mw[1]) : '';
+        $h = preg_match('/\sheight\s*=\s*["\']([^"\']+)["\']/i', $tag, $mh) ? trim($mh[1]) : '';
+        if ($w !== '' && $h !== '' && strpos($w, '%') === false && strpos($h, '%') === false) {
+            $wf = floatval($w);
+            $hf = floatval($h);
+            if ($wf > 0 && $hf > 0) {
+                return array($wf, $hf);
+            }
+        }
+
+        if (preg_match('/\sviewBox\s*=\s*["\']([^"\']+)["\']/i', $tag, $mv)) {
+            $vb = preg_split('/[\s,]+/', trim($mv[1]));
+            if (count($vb) === 4) {
+                $vw = floatval($vb[2]);
+                $vh = floatval($vb[3]);
+                if ($vw > 0 && $vh > 0) {
+                    return array($vw, $vh);
+                }
+            }
+        }
+
+        return null;
+    }
+
     public function customize_login_page() {
         $o = get_option($this->option_name, array());
         
         $logo = !empty($o['login_logo']) ? $o['login_logo'] : '';
-        $logo_height = isset($o['login_logo_height']) && $o['login_logo_height'] !== '' ? intval($o['login_logo_height']) : 0;
+        // Vychozi vyska loga 50px; explicitne zadana 0 se respektuje (logo bude 0px vysoke)
+        // Prazdne pole i 0 = puvodni rozmery loga (dopocitaji se nize)
+        $logo_height = (isset($o['login_logo_height']) && $o['login_logo_height'] !== '') ? max(0, intval($o['login_logo_height'])) : 0;
+        // Sirka loga je volitelna; strop 328px = vnitrni sirka karty
+        $logo_width  = (isset($o['login_logo_width']) && $o['login_logo_width'] !== '') ? max(0, intval($o['login_logo_width'])) : 0;
+        if ($logo_width > 328) { $logo_width = 328; }
+
+        // Vyska 0 = puvodni velikost loga (zmensena, jen kdyz presahuje max. sirku)
+        $logo_max_w = $logo_width > 0 ? $logo_width : 328;
+        $logo_render_h = $logo_height;
+        if ($logo_height === 0 && $logo) {
+            $natural = $this->get_login_logo_dimensions($logo);
+            if ($natural) {
+                list($nat_w, $nat_h) = $natural;
+                $logo_render_h = ($nat_w > $logo_max_w)
+                    ? max(1, (int) round($nat_h * ($logo_max_w / $nat_w)))
+                    : max(1, (int) round($nat_h));
+            } else {
+                $logo_render_h = 50; // rozmery se nepodarilo zjistit
+            }
+        }
         
         // DEBUG: Uncomment to see actual value
         // error_log('Logo height from DB: ' . print_r($o['login_logo_height'], true));
@@ -7494,15 +7758,12 @@ add_filter(\'wp_footer\', function() {
                 background-image: url('<?php echo esc_url($logo); ?>') !important;
                 background-position: center center !important;
                 background-repeat: no-repeat !important;
-                <?php if ($logo_height > 0): ?>
-                background-size: auto <?php echo esc_attr($logo_height); ?>px !important;
-                height: <?php echo esc_attr($logo_height); ?>px !important;
-                <?php else: ?>
-                background-size: auto 84px !important;
-                height: 84px !important;
-                <?php endif; ?>
+                /* contain = logo se vejde cele do ramce; u siroke "nudlicky" ho
+                   omezi sirka 328px (vnitrni sirka karty) a neusekne se po stranach */
+                background-size: contain !important;
+                height: <?php echo esc_attr($logo_render_h); ?>px !important;
                 width: 100% !important;
-                max-width: 400px !important;
+                max-width: <?php echo esc_attr($logo_max_w); ?>px !important;
                 margin: 0 !important;
                 padding: 0 !important;
                 text-indent: -9999px !important;
@@ -7563,6 +7824,9 @@ add_filter(\'wp_footer\', function() {
                 background: #fff !important;
                 box-shadow: none !important;
                 width: 100% !important;
+                /* padding a rámeček se počítají do šířky — jinak pole hesla
+                   (rezerva 50px pro ikonu oka) přeteče kartu, nejvíc na mobilu */
+                box-sizing: border-box !important;
                 margin: 0 !important;
             }
             
