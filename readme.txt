@@ -4,7 +4,7 @@ Tags: admin, customization, maintenance, login, scripts
 Requires at least: 6.0
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 1.9.9
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Basic functionality works on multisite. SVG upload support is enabled per-site.
 The plugin automatically creates a backup before saving. You can restore the previous version using the "Restore backup" button on the Editor settings page.
 
 == Changelog ==
+
+= 2.0 =
+* Added: Option to hide the site icon (favicon) shown next to the site name in the admin bar (WordPress 7.1+)
+* Improved: Improved login page — the logo can be sized by width and height with the aspect ratio kept automatically, plus a unified look for the password reset and admin email verification screens
 
 = 1.9.9 =
 * Improved: More options for customizing the login page — new card design with heading and subtitle, stacked action buttons, "Hide logo" and "Hide info heading" toggles, restyled language switcher, and better mobile rendering
