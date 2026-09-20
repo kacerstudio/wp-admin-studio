@@ -118,7 +118,7 @@ The plugin automatically creates a backup before saving. You can restore the pre
 == Changelog ==
 
 = 2.1 =
-* Added: Live preview of the login page directly in the settings — shown next to the options and refreshed automatically on every change
+* Added: Live preview of the login page directly in the settings
 * Improved: Minor UX/UI improvements
 
 = 2.0 =
