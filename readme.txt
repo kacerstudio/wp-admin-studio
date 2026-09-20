@@ -2,9 +2,9 @@
 Contributors: kacerstudio
 Tags: admin, customization, maintenance, login, scripts
 Requires at least: 6.0
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 2.0
+Stable tag: 2.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -116,6 +116,10 @@ Basic functionality works on multisite. SVG upload support is enabled per-site.
 The plugin automatically creates a backup before saving. You can restore the previous version using the "Restore backup" button on the Editor settings page.
 
 == Changelog ==
+
+= 2.1 =
+* Added: Live preview of the login page directly in the settings — shown next to the options and refreshed automatically on every change
+* Improved: Minor UX/UI improvements
 
 = 2.0 =
 * Added: Option to hide the site icon (favicon) shown next to the site name in the admin bar (WordPress 7.1+)

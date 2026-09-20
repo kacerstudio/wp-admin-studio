@@ -88,7 +88,7 @@ class WPAdminStudioUpdater {
                 'package'     => $download_url,
                 'icons'       => array(),
                 'banners'     => array(),
-                'tested'      => '7.0',
+                'tested'      => '7.1',
                 'requires'    => '6.0',
                 'requires_php'=> '7.4',
             );
@@ -131,7 +131,7 @@ class WPAdminStudioUpdater {
             'download_link' => $download_url,
             'requires'      => '6.0',
             'requires_php'  => '7.4',
-            'tested'        => '7.0',
+            'tested'        => '7.1',
             'last_updated'  => gmdate('Y-m-d', strtotime($release->published_at)),
             'sections'      => array(
                 'description' => isset($release->body) ? wp_kses_post($release->body) : 'WP Admin Studio — Professional WordPress admin toolkit.',

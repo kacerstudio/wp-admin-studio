@@ -3,7 +3,7 @@
  * Plugin Name: WP Admin Studio
  * Plugin URI: https://wpadminstudio.cz
  * Description: Professional WordPress customization: admin settings, pages & posts, translations, custom scripts & codes, robots.txt & .htaccess editor
- * Version: 2.0
+ * Version: 2.1
  * Author: KACER STUDIO s.r.o.
  * Author URI: https://wpadminstudio.cz
  * License: GPL v2 or later
@@ -19,7 +19,7 @@ if (!function_exists('wpc_current_year')) {
 }
 
 class WPAdminStudio {
-    const VERSION = '2.0';
+    const VERSION = '2.1';
     const MAX_UPLOAD_SIZE = 5242880; 
     const MAX_FILE_SIZE = 5242880; 
     
@@ -96,7 +96,76 @@ class WPAdminStudio {
         return isset($translations[$lang][$key]) ? $translations[$lang][$key] : $translations['en'][$key];
     }
     
+    /**
+     * Nahled prihlasovaci stranky v nastaveni: hodnoty z formulare (POST, nonce)
+     * prekryji ulozene volby. Plati jen pro prihlaseneho administratora, jinak
+     * se pouziji ulozene volby. Nic se neuklada.
+     */
+    private $login_preview_overrides = null;
+
+    private function get_login_preview_overrides() {
+        if ($this->login_preview_overrides !== null) {
+            return $this->login_preview_overrides;
+        }
+        $this->login_preview_overrides = false;
+        if (!isset($_REQUEST['wpas_preview']) || !isset($_POST['wpas_preview_opts']) || !isset($_POST['_wpas_preview_nonce'])) {
+            return false;
+        }
+        if (!function_exists('wp_verify_nonce') || !is_user_logged_in() || !current_user_can('manage_options')) {
+            return false;
+        }
+        if (!wp_verify_nonce($_POST['_wpas_preview_nonce'], 'wpas_login_preview')) {
+            return false;
+        }
+        $raw = json_decode(wp_unslash($_POST['wpas_preview_opts']), true);
+        if (!is_array($raw)) {
+            return false;
+        }
+        // jen volby prihlasovaci stranky
+        $allowed = array();
+        foreach ($raw as $k => $v) {
+            if (($k === 'disable_login_switcher' || strpos($k, 'login_') === 0) && is_scalar($v)) {
+                $allowed[$k] = (string) $v;
+            }
+        }
+        // stejna sanitizace jako pri ukladani (robots/htaccess klice chybi => nic se nezapisuje)
+        $san = $this->sanitize_settings(array_merge(array('restrict_wpforms_countries' => ''), $allowed));
+        $over = array();
+        foreach ($allowed as $k => $v) {
+            $over[$k] = array_key_exists($k, $san) ? $san[$k] : '';
+        }
+        $this->login_preview_overrides = $over;
+        return $over;
+    }
+
+    private function is_login_preview() {
+        return is_array($this->get_login_preview_overrides());
+    }
+
+    /** Ulozene volby, v rezimu nahledu prekryte hodnotami z formulare. */
+    private function get_login_options() {
+        $o = get_option($this->option_name, array());
+        $over = $this->get_login_preview_overrides();
+        if (is_array($over)) {
+            $o = array_merge($o, $over);
+        }
+        return $o;
+    }
+
+    /**
+     * Respektuje WP konstanty DISALLOW_FILE_EDIT / DISALLOW_FILE_MODS:
+     * blokuje editor vlastnich PHP funkci (eval) a zapis robots.txt / .htaccess.
+     */
+    private function file_edit_disabled() {
+        return (defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT)
+            || (defined('DISALLOW_FILE_MODS') && DISALLOW_FILE_MODS);
+    }
+
     private function t($key) {
+        // Pole prekladu (~2000 radku, 5 jazyku) se sestavi jen jednou za request,
+        // ne pri kazdem z ~320 volani na strance nastaveni.
+        static $translations = null;
+        if ($translations === null) {
         $translations = array(
             'cs' => array(
                 'page_title' => 'WP Admin Studio',
@@ -321,7 +390,6 @@ Funguje na adresách jako /tema/XXX/ nebo /stitek/XXX/',
                 'login_logo_remove' => 'Odstranit logo',
                 'login_logo_height' => 'Výška loga',
                 'login_logo_width' => 'Šířka loga',
-                'login_logo_height_hint' => 'prázdné nebo 0 = původní velikost',
                 'login_logo_url' => 'Odkaz loga',
                 'login_logo_url_placeholder' => 'https://vase-stranka.cz',
                 'login_logo_url_desc' => 'URL, kam povede klik na logo (výchozí: homepage)',
@@ -353,6 +421,7 @@ Funguje na adresách jako /tema/XXX/ nebo /stitek/XXX/',
                 'login_hide_privacy' => 'Skrýt odkaz Zpracování osobních údajů',
                 'login_custom_css' => 'Vlastní CSS',
                 'login_custom_css_desc' => 'Pokročilé CSS úpravy',
+                'login_preview' => 'Náhled přihlašovací stránky',
                 
                 'wpforms_countries' => 'Omezit předvolby v telefonních polích',
                 'wpforms_countries_tip' => 'Omezí výběr předvolby na vybranou skupinu zemí. Funguje automaticky s WPForms, SureForms, Fluent Forms a dalšími pluginy, které používají knihovnu intl-tel-input.',
@@ -489,7 +558,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_desc' => 'Přidat vlastní pravidla do .htaccess',
                 'htaccess_enable_tip' => 'Přidá vlastní Apache pravidla do .htaccess souboru. POZOR: Nesprávná konfigurace může způsobit nefunkčnost webu!',
                 'htaccess_content' => 'Vlastní .htaccess pravidla',
-                'htaccess_warning' => 'VAROVÁNÍ: Nesprávná pravidla mohou způsobit nefunkčnost webu! Plugin automaticky vytvoří zálohu jako <code>.htaccess.wp-admin-studio-backup</code>.',
+                'file_edit_locked' => 'Zakázáno konstantou <code>DISALLOW_FILE_EDIT</code> nebo <code>DISALLOW_FILE_MODS</code> ve <code>wp-config.php</code>. Tato funkce upravuje soubory / spouští kód, proto ji plugin respektuje.',
                 'htaccess_info' => 'Pravidla se <strong>přidají NA ZAČÁTEK</strong> .htaccess souboru (nepřepisují celý soubor). Obklopí se komentáři <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Šablona',
                 'htaccess_template_security' => 'Bezpečnostní pravidla',
@@ -748,7 +817,6 @@ Works on URLs like /category/XXX/ or /tag/XXX/',
                 'login_logo_remove' => 'Remove logo',
                 'login_logo_height' => 'Logo height',
                 'login_logo_width' => 'Logo width',
-                'login_logo_height_hint' => 'empty or 0 = original size',
                 'login_logo_url' => 'Logo link',
                 'login_logo_url_placeholder' => 'https://your-site.com',
                 'login_logo_url_desc' => 'URL where logo click leads to (default: homepage)',
@@ -780,6 +848,7 @@ Works on URLs like /category/XXX/ or /tag/XXX/',
                 'login_hide_privacy' => 'Hide Privacy Policy link',
                 'login_custom_css' => 'Custom CSS',
                 'login_custom_css_desc' => 'Advanced CSS customizations',
+                'login_preview' => 'Login page preview',
                 
                 'wpforms_countries' => 'Restrict phone field prefixes',
                 'wpforms_countries_tip' => 'Restricts the prefix selection to the chosen group of countries. Works automatically with WPForms, SureForms, Fluent Forms and other plugins using the intl-tel-input library.',
@@ -916,7 +985,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_desc' => 'Add custom rules to .htaccess',
                 'htaccess_enable_tip' => 'Adds custom Apache rules to the .htaccess file. WARNING: Incorrect configuration can break your site!',
                 'htaccess_content' => 'Custom .htaccess rules',
-                'htaccess_warning' => 'WARNING: Incorrect rules can break your site! Plugin automatically creates backup as <code>.htaccess.wp-admin-studio-backup</code>.',
+                'file_edit_locked' => 'Disabled by the <code>DISALLOW_FILE_EDIT</code> or <code>DISALLOW_FILE_MODS</code> constant in <code>wp-config.php</code>. This feature edits files / runs code, so the plugin honours it.',
                 'htaccess_info' => 'Rules will be <strong>added TO THE BEGINNING</strong> of the .htaccess file (not overwriting the entire file). They will be wrapped with comments <code># BEGIN WP Admin Studio</code> and <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Template',
                 'htaccess_template_security' => 'Security rules',
@@ -1175,7 +1244,6 @@ Funktioniert bei URLs wie /category/XXX/ oder /tag/XXX/',
                 'login_logo_remove' => 'Logo entfernen',
                 'login_logo_height' => 'Logo-Höhe',
                 'login_logo_width' => 'Logo-Breite',
-                'login_logo_height_hint' => 'leer oder 0 = Originalgröße',
                 'login_logo_url' => 'Logo-Link',
                 'login_logo_url_placeholder' => 'https://ihre-seite.de',
                 'login_logo_url_desc' => 'URL, zu der der Logo-Klick führt (Standard: Homepage)',
@@ -1207,6 +1275,7 @@ Funktioniert bei URLs wie /category/XXX/ oder /tag/XXX/',
                 'login_hide_privacy' => 'Datenschutzrichtlinie-Link ausblenden',
                 'login_custom_css' => 'Benutzerdefiniertes CSS',
                 'login_custom_css_desc' => 'Erweiterte CSS-Anpassungen',
+                'login_preview' => 'Vorschau der Anmeldeseite',
                 
                 'wpforms_countries' => 'Telefonvorwahl-Auswahl einschränken',
                 'wpforms_countries_tip' => 'Schränkt die Vorwahlauswahl auf die gewählte Ländergruppe ein. Funktioniert automatisch mit WPForms, SureForms, Fluent Forms und anderen Plugins, die die intl-tel-input-Bibliothek verwenden.',
@@ -1336,7 +1405,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_desc' => 'Eigene Regeln zu .htaccess hinzufügen',
                 'htaccess_enable_tip' => 'Fügt benutzerdefinierte Apache-Regeln zur .htaccess-Datei hinzu. WARNUNG: Falsche Konfiguration kann Ihre Website unbrauchbar machen!',
                 'htaccess_content' => 'Eigene .htaccess Regeln',
-                'htaccess_warning' => 'WARNUNG: Falsche Regeln können Ihre Website unbrauchbar machen! Plugin erstellt automatisch Backup als <code>.htaccess.wp-admin-studio-backup</code>.',
+                'file_edit_locked' => 'Deaktiviert durch die Konstante <code>DISALLOW_FILE_EDIT</code> oder <code>DISALLOW_FILE_MODS</code> in <code>wp-config.php</code>. Diese Funktion bearbeitet Dateien / führt Code aus, daher respektiert das Plugin die Einstellung.',
                 'htaccess_info' => 'Regeln werden <strong>AM ANFANG</strong> der .htaccess-Datei hinzugefügt (nicht die gesamte Datei überschreibend). Sie werden mit Kommentaren <code># BEGIN WP Admin Studio</code> und <code># END WP Admin Studio</code> umschlossen.',
                 'htaccess_template' => 'Vorlage',
                 'htaccess_template_security' => 'Sicherheitsregeln',
@@ -1562,9 +1631,6 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'disable_big_image_threshold_tip' => 'WordPress od verzie 5.3 automaticky zmenšuje veľké obrázky (nad 2560px) pri nahrávaní. Táto voľba to vypne - vhodné, ak potrebujete zachovať pôvodnú veľkosť obrázkov.',
                 'disable_big_image_threshold_note' => 'Zachová pôvodné rozmery nahratých obrázkov.',
                 
-                'remove_comment_url' => 'Odstrániť pole URL z formulára komentárov',
-                'remove_comment_url_desc' => 'Skryť pole "Webová stránka"',
-                'remove_comment_url_tip' => 'Odstráni pole pre zadanie webovej stránky z formulára komentárov. Znižuje spam a zjednodušuje formulár.',
                 
                 'comment_url' => 'Odstrániť pole "Webová stránka" z komentárov',
                 'comment_url_desc' => 'Skryť nepovinné pole URL',
@@ -1599,7 +1665,6 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'login_logo_remove' => 'Odstrániť logo',
                 'login_logo_height' => 'Výška loga',
                 'login_logo_width' => 'Šírka loga',
-                'login_logo_height_hint' => 'prázdne alebo 0 = pôvodná veľkosť',
                 'login_logo_url' => 'Odkaz loga',
                 'login_logo_url_placeholder' => 'https://vasa-stranka.sk',
                 'login_logo_url_desc' => 'URL, kam povedie klik na logo (predvolená: homepage)',
@@ -1631,10 +1696,8 @@ Funguje na adresách ako /tema/XXX/ alebo /stitok/XXX/',
                 'login_hide_privacy' => 'Skryť odkaz Ochrana osobných údajov',
                 'login_custom_css' => 'Vlastné CSS',
                 'login_custom_css_desc' => 'Pokročilé CSS úpravy',
+                'login_preview' => 'Náhľad prihlasovacej stránky',
                 
-                'restrict_wpforms' => 'Obmedziť WPForms na krajiny',
-                'restrict_wpforms_desc' => 'Zobraziť len predvoľby CZ a SK',
-                'restrict_wpforms_tip' => 'V dropdown menu krajín vo WPForms zobrazí len Česko a Slovensko. Zjednodušuje výber pre lokálne webstránky.',
                 
                 'wpforms_countries' => 'Obmedziť predvoľby v telefónnych poliach',
                 'wpforms_countries_tip' => 'Obmedzí výber predvoľby na vybranú skupinu krajín. Funguje automaticky s WPForms, SureForms, Fluent Forms a ďalšími pluginmi, ktoré používajú knižnicu intl-tel-input.',
@@ -1763,7 +1826,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_desc' => 'Pridať vlastné pravidlá do .htaccess',
                 'htaccess_enable_tip' => 'Pridá vlastné Apache pravidlá do .htaccess súboru. POZOR: Nesprávna konfigurácia môže spôsobiť nefunkčnosť webu!',
                 'htaccess_content' => 'Vlastné .htaccess pravidlá',
-                'htaccess_warning' => 'VAROVANIE: Nesprávne pravidlá môžu spôsobiť nefunkčnosť webu! Plugin automaticky vytvorí zálohu ako <code>.htaccess.wp-admin-studio-backup</code>.',
+                'file_edit_locked' => 'Zakázané konštantou <code>DISALLOW_FILE_EDIT</code> alebo <code>DISALLOW_FILE_MODS</code> vo <code>wp-config.php</code>. Táto funkcia upravuje súbory / spúšťa kód, preto ju plugin rešpektuje.',
                 'htaccess_info' => 'Pravidlá sa <strong>pridajú NA ZAČIATOK</strong> .htaccess súboru (neprepíšu celý súbor). Obklopí sa komentármi <code># BEGIN WP Admin Studio</code> a <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Šablóna',
                 'htaccess_template_security' => 'Bezpečnostné pravidlá',
@@ -1989,9 +2052,6 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'disable_big_image_threshold_tip' => 'Od WordPress 5.3, duże obrazy (powyżej 2560px) są automatycznie pomniejszane podczas przesyłania. Ta opcja wyłącza to - przydatne, gdy trzeba zachować oryginalne wymiary obrazów.',
                 'disable_big_image_threshold_note' => 'Zachowuje oryginalne wymiary przesłanych obrazów.',
                 
-                'remove_comment_url' => 'Usuń pole URL z formularza komentarzy',
-                'remove_comment_url_desc' => 'Ukryj pole "Strona internetowa"',
-                'remove_comment_url_tip' => 'Usuwa pole do wprowadzania strony internetowej z formularza komentarzy. Zmniejsza spam i upraszcza formularz.',
                 
                 'comment_url' => 'Usuń pole "Strona internetowa" z komentarzy',
                 'comment_url_desc' => 'Ukryj opcjonalne pole URL',
@@ -2026,7 +2086,6 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'login_logo_remove' => 'Usuń logo',
                 'login_logo_height' => 'Wysokość loga',
                 'login_logo_width' => 'Szerokość loga',
-                'login_logo_height_hint' => 'puste lub 0 = oryginalny rozmiar',
                 'login_logo_url' => 'Link loga',
                 'login_logo_url_placeholder' => 'https://twoja-strona.pl',
                 'login_logo_url_desc' => 'URL, do którego prowadzi kliknięcie loga (domyślnie: strona główna)',
@@ -2058,10 +2117,8 @@ Działa na adresach jak /category/XXX/ lub /tag/XXX/',
                 'login_hide_privacy' => 'Ukryj link Polityki prywatności',
                 'login_custom_css' => 'Własny CSS',
                 'login_custom_css_desc' => 'Zaawansowane dostosowania CSS',
+                'login_preview' => 'Podgląd strony logowania',
                 
-                'restrict_wpforms' => 'Ogranicz WPForms do krajów',
-                'restrict_wpforms_desc' => 'Pokaż tylko opcje CZ i SK',
-                'restrict_wpforms_tip' => 'W menu wyboru kraju w WPForms wyświetla tylko Czechy i Słowację. Upraszcza wybór dla lokalnych stron.',
                 
                 'wpforms_countries' => 'Ogranicz prefiksy w polach telefonu',
                 'wpforms_countries_tip' => 'Ogranicza wybór prefiksu do wybranej grupy krajów. Działa automatycznie z WPForms, SureForms, Fluent Forms i innymi wtyczkami używającymi biblioteki intl-tel-input.',
@@ -2190,7 +2247,7 @@ add_filter(\'wp_footer\', function() {
                 'htaccess_enable_desc' => 'Dodaj własne reguły do .htaccess',
                 'htaccess_enable_tip' => 'Dodaje własne reguły Apache do pliku .htaccess. UWAGA: Nieprawidłowa konfiguracja może zepsuć stronę!',
                 'htaccess_content' => 'Własne reguły .htaccess',
-                'htaccess_warning' => 'OSTRZEŻENIE: Nieprawidłowe reguły mogą zepsuć stronę! Wtyczka automatycznie tworzy kopię zapasową jako <code>.htaccess.wp-admin-studio-backup</code>.',
+                'file_edit_locked' => 'Wyłączone przez stałą <code>DISALLOW_FILE_EDIT</code> lub <code>DISALLOW_FILE_MODS</code> w <code>wp-config.php</code>. Ta funkcja modyfikuje pliki / uruchamia kod, dlatego wtyczka to respektuje.',
                 'htaccess_info' => 'Reguły zostaną <strong>dodane NA POCZĄTKU</strong> pliku .htaccess (nie nadpisując całego pliku). Zostaną otoczone komentarzami <code># BEGIN WP Admin Studio</code> i <code># END WP Admin Studio</code>.',
                 'htaccess_template' => 'Szablon',
                 'htaccess_template_security' => 'Reguły bezpieczeństwa',
@@ -2228,7 +2285,9 @@ add_filter(\'wp_footer\', function() {
                 'search_placeholder' => 'Szukaj...',
             ),
         );
-        return isset($translations[$this->get_lang()][$key]) ? $translations[$this->get_lang()][$key] : $key;
+        }
+        $lang = $this->get_lang();
+        return isset($translations[$lang][$key]) ? $translations[$lang][$key] : $key;
     }
     
     public function ajax_change_language() {
@@ -2375,6 +2434,10 @@ add_filter(\'wp_footer\', function() {
             wp_send_json_error(array('message' => 'Insufficient permissions'));
             return;
         }
+        if ($this->file_edit_disabled()) {
+            wp_send_json_error(array('message' => wp_strip_all_tags($this->t('file_edit_locked'))));
+            return;
+        }
         
         $htaccess_file = ABSPATH . '.htaccess';
         $backup_file = $htaccess_file . '.wp-admin-studio-backup';
@@ -2430,7 +2493,7 @@ add_filter(\'wp_footer\', function() {
                 add_filter('wp_admin_bar_show_site_icons', '__return_false');
             }
         }
-        if (!empty($o['disable_login_switcher'])) add_filter('login_display_language_dropdown', '__return_false');
+        if (!empty($o['disable_login_switcher']) || isset($_REQUEST['wpas_preview'])) add_filter('login_display_language_dropdown', array($this, 'login_language_dropdown'));
         if (!empty($o['hide_updates_non_admin'])) add_action('admin_head', array($this, 'hide_updates_non_admin'));
         if (!empty($o['disable_auto_update_emails'])) {
             // Výsledkové maily po automatické aktualizaci jádra / pluginů / témat
@@ -2576,7 +2639,13 @@ add_filter(\'wp_footer\', function() {
         if (!empty($o['auto_delete_files'])) {
             add_action('_core_updated_successfully', array($this, 'delete_unnecessary_files'));
         }
-        if (!empty($o['login_customize'])) {
+        // Pri nahledu z nastaveni se hooky registruji vzdy; kazdy callback si
+        // overi nonce a bez platneho nahledu se ridi ulozenou volbou login_customize
+        if (isset($_REQUEST['wpas_preview'])) {
+            add_filter('wp_login_errors', array($this, 'login_preview_errors'));
+            add_action('login_head', array($this, 'login_preview_head'), 999);
+        }
+        if (!empty($o['login_customize']) || isset($_REQUEST['wpas_preview'])) {
             add_action('login_enqueue_scripts', array($this, 'customize_login_page'));
             add_filter('login_headerurl', array($this, 'custom_login_logo_url'));
             add_filter('login_headertext', array($this, 'custom_login_logo_title'));
@@ -2612,7 +2681,7 @@ add_filter(\'wp_footer\', function() {
             }
         }
         if (isset($o['google_maps_api_key']) && $o['google_maps_api_key'] !== '') add_action('wp_head', array($this, 'insert_google_maps_api'), 5);
-        if (!empty($o['custom_functions_enable'])) add_action('init', array($this, 'execute_custom_functions'), 1);
+        if (!empty($o['custom_functions_enable']) && !$this->file_edit_disabled()) add_action('init', array($this, 'execute_custom_functions'), 1);
         
         if (!empty($o['change_login_url']) && !empty($o['custom_login_slug'])) {
             add_action('template_redirect', array($this, 'custom_login_url_intercept'), -1);
@@ -2634,6 +2703,14 @@ add_filter(\'wp_footer\', function() {
     public function sanitize_settings($input) {
         if (!is_array($input)) return array();
         $output = array();
+
+        // DISALLOW_FILE_EDIT/MODS: zmeny editoru souboru a PHP kodu se neukladaji
+        $locked_fields = array('custom_functions_enable', 'custom_functions_code',
+                               'robots_enable', 'robots_content', 'htaccess_enable', 'htaccess_content');
+        $file_edit_locked = $this->file_edit_disabled();
+        if ($file_edit_locked) {
+            foreach ($locked_fields as $lf) { unset($input[$lf]); }
+        }
         $fields = array('admin_bar_items', 'disable_login_switcher', 'hide_updates_non_admin', 'hide_howdy', 
                        'hide_wp_version', 'remove_wp_news_widget', 'hidden_dashboard_widgets', 'admin_page_titles_enable', 'admin_page_title_format',
                        'wp_emails_enable', 'wp_email_from_name', 'wp_email_from_email', 'auto_delete_files', 'disable_user_enumeration',
@@ -2941,6 +3018,13 @@ add_filter(\'wp_footer\', function() {
         }
 
         set_transient('wpc_settings_saved', true, 30);
+        if ($file_edit_locked) {
+            $current = get_option($this->option_name, array());
+            foreach ($locked_fields as $lf) {
+                $output[$lf] = isset($current[$lf]) ? $current[$lf] : '';
+            }
+        }
+
         return $output;
     }
     
@@ -3556,6 +3640,12 @@ add_filter(\'wp_footer\', function() {
                                 <p class="description" style="margin-top: 8px; clear: both;"><?php echo esc_html($this->t('google_maps_api_key_desc')); ?> <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank"><?php echo esc_html($this->t('google_maps_api_key_link')); ?></a>.</p>
                             </td>
                         </tr>
+                        <?php if ($this->file_edit_disabled()): ?>
+                        <tr>
+                            <th><?php echo esc_html($this->t('custom_functions')); ?></th>
+                            <td><p class="wpc-warningbox"><?php echo wp_kses_post($this->t('file_edit_locked')); ?></p></td>
+                        </tr>
+                        <?php else: ?>
                         <tr>
                             <th>
                                 <?php echo esc_html($this->t('custom_functions')); ?>
@@ -3616,6 +3706,7 @@ add_filter(\'wp_footer\', function() {
                                 <p class="description" style="margin-top: 8px;"><?php echo wp_kses_post($this->t('custom_functions_info')); ?></p>
                             </td>
                         </tr>
+                        <?php endif; ?>
                     </table>
                 </div>
                 
@@ -3791,6 +3882,19 @@ add_filter(\'wp_footer\', function() {
                 <!-- LOGIN PAGE -->
                 <div class="wpc-section" id="section-login">
                     <h2><span class="dashicons dashicons-lock"></span> <?php echo esc_html($this->t('login_page')); ?></h2>
+                    <style>
+                        /* sloupec nahledu az 680px = 1:1 se zivou strankou; na uzsim okne se zmensi (min. 520px) */
+                        .wpas-login-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(520px, 680px); gap: 24px; align-items: start; }
+                        .wpas-login-preview { position: sticky; top: 92px; }
+                        /* iframe ma desktopovou sirku (stranka se vykresli jako na zivem webu, karta 380px)
+                           a jen se vizualne zmensi, aby se vesel do sloupce */
+                        .wpas-login-preview-frame { position: relative; border-radius: 6px; overflow: hidden; background: #f0f0f1; min-height: 200px; }
+                        .wpas-login-preview-frame iframe { position: absolute; top: 0; left: 0; width: 680px; height: 600px; border: 0; transform-origin: 0 0; }
+                        .wpas-login-preview-shield { position: absolute; inset: 0; }
+                        @media (max-width: 1280px) { .wpas-login-layout { grid-template-columns: 1fr; } .wpas-login-preview { display: none; } }
+                    </style>
+                    <div class="wpas-login-layout">
+                    <div class="wpas-login-settings">
                     <table class="form-table">
                         <tr>
                             <th>
@@ -3850,7 +3954,6 @@ add_filter(\'wp_footer\', function() {
                                                 <div>
                                                     <label style="display: block; font-weight: 600; margin-bottom: 5px; font-size: 13px; white-space: nowrap;"><?php echo esc_html($this->t('login_logo_height')); ?></label>
                                                     <input type="number" id="login_logo_height" name="<?php echo $this->option_name; ?>[login_logo_height]" value="<?php echo esc_attr((isset($o['login_logo_height']) && $o['login_logo_height'] !== '') ? $o['login_logo_height'] : ''); ?>" min="0" style="width: 100px; padding: 4px 8px; font-size: 13px;"> px
-                                                    <p class="description" style="margin: 4px 0 0; font-size: 12px;"><?php echo esc_html($this->t('login_logo_height_hint')); ?></p>
                                                 </div>
                                             </div>
                                             <div style="margin-top: 10px;">
@@ -4008,11 +4111,24 @@ add_filter(\'wp_footer\', function() {
                             </td>
                         </tr>
                     </table>
+                    </div>
+                    <div class="wpas-login-preview"
+                         data-action="<?php echo esc_url(add_query_arg('wpas_preview', '1', site_url('wp-login.php', 'login_post'))); ?>"
+                         data-nonce="<?php echo esc_attr(wp_create_nonce('wpas_login_preview')); ?>">
+                        <div class="wpas-login-preview-frame">
+                            <iframe name="wpas-login-preview-frame" id="wpas-login-preview-frame" title="<?php echo esc_attr($this->t('login_preview')); ?>"></iframe>
+                            <div class="wpas-login-preview-shield"></div>
+                        </div>
+                    </div>
+                    </div>
                 </div>
                 
                 <!-- ROBOTS.TXT EDITOR -->
                 <div class="wpc-section" id="section-robots">
                     <h2><span class="dashicons dashicons-text-page"></span> <?php echo esc_html($this->t('robots_editor')); ?></h2>
+                    <?php if ($this->file_edit_disabled()): ?>
+                    <p class="wpc-warningbox"><?php echo wp_kses_post($this->t('file_edit_locked')); ?></p>
+                    <?php else: ?>
                     <table class="form-table">
                         <tr>
                             <th>
@@ -4048,14 +4164,15 @@ add_filter(\'wp_footer\', function() {
                             </td>
                         </tr>
                     </table>
+                    <?php endif; ?>
                 </div>
                 
                 <!-- .HTACCESS EDITOR -->
                 <div class="wpc-section" id="section-htaccess">
                     <h2><span class="dashicons dashicons-admin-tools"></span> <?php echo esc_html($this->t('htaccess_editor')); ?></h2>
-                    <p class="wpc-warningbox">
-                        <strong><?php echo wp_kses_post($this->t('htaccess_warning')); ?></strong>
-                    </p>
+                    <?php if ($this->file_edit_disabled()): ?>
+                    <p class="wpc-warningbox"><?php echo wp_kses_post($this->t('file_edit_locked')); ?></p>
+                    <?php else: ?>
                     <table class="form-table">
                         <tr>
                             <th>
@@ -4094,6 +4211,7 @@ add_filter(\'wp_footer\', function() {
                             </td>
                         </tr>
                     </table>
+                    <?php endif; ?>
                 </div>
                 
                 <!-- EDITOR & POSTS -->
@@ -4300,7 +4418,15 @@ add_filter(\'wp_footer\', function() {
                     <table class="form-table">
                         <tr>
                             <th><label><?php echo esc_html($this->t('enable_trans')); ?> <?php echo $this->tip($this->t('enable_trans_tip')); ?></label></th>
-                            <td><label><input type="checkbox" name="<?php echo $this->option_name; ?>[enable_translations]" value="1" <?php checked(1, !empty($o['enable_translations'])); ?>> <?php echo esc_html($this->t('enable_trans_desc')); ?></label></td>
+                            <td>
+                                <label class="wpc-toggle-label">
+                                    <span class="wpc-toggle-switch">
+                                        <input type="checkbox" name="<?php echo $this->option_name; ?>[enable_translations]" value="1" <?php checked(!empty($o['enable_translations'])); ?>>
+                                        <span class="wpc-toggle-slider"></span>
+                                    </span>
+                                    <span class="wpc-toggle-text"><?php echo esc_html($this->t('enable_trans_desc')); ?></span>
+                                </label>
+                            </td>
                         </tr>
                     </table>
                     <h3><?php echo esc_html($this->t('trans_defs')); ?></h3>
@@ -4487,7 +4613,12 @@ add_filter(\'wp_footer\', function() {
                 .wpc-section h2 .dashicons { font-size: 20px; width: 20px; height: 20px; }
                 .wpc-section h3 { margin: 25px 0 10px 0; font-size: 14px; font-weight: 600; }
                 
+                /* Pevne rozvrzeni: bunka se nesmi roztahnout podle obsahu (CodeMirror s dlouhym radkem
+                   jinak vytlaci editor i tabulku pres okraj sekce) */
+                .wpc-section .form-table { table-layout: fixed; width: 100%; }
                 .form-table th { width: 360px; padding: 15px 10px 15px 0; vertical-align: top; }
+                .form-table td { max-width: 100%; }
+                .form-table td .CodeMirror, .form-table td .wpc-toolbar { max-width: 100%; }
                 .form-table td { padding: 15px 10px; vertical-align: top; }
                 .form-table th label { display: flex; align-items: flex-start; gap: 8px; font-weight: 600; }
                 .form-table td label:not(.wpc-maintenance-radio) { display: grid; grid-template-columns: 20px 1fr; gap: 10px; align-items: start; }
@@ -4612,6 +4743,8 @@ add_filter(\'wp_footer\', function() {
 
                 .wpc-code-textarea {
                     width: 100%;
+                    max-width: 100%;
+                    box-sizing: border-box;
                     font-family: Consolas, Monaco, monospace;
                     font-size: 13px;
                     line-height: 1.6;
@@ -4622,6 +4755,9 @@ add_filter(\'wp_footer\', function() {
 
                 .CodeMirror {
                     width: 100% !important;
+                    max-width: 100%;
+                    box-sizing: border-box;
+                    border-radius: 4px;   /* stejne jako inputy/textarea (WP default 4px); pod toolbarem se horni rohy nuluji nize */
                     min-height: 200px;
                     max-height: 1000px;
                     position: relative;
@@ -4910,7 +5046,8 @@ add_filter(\'wp_footer\', function() {
                     input, textarea { font-size: 14px; }
                     
                     .wpc-wrap {
-                        padding-bottom: 100px;
+                        /* WP sam dava #wpbody-content padding-bottom 65px, coz fixni listu (60px) pokryje */
+                        padding-bottom: 0;
                     }
                     
                     .wpc-sticky-footer { 
@@ -5023,8 +5160,13 @@ add_filter(\'wp_footer\', function() {
                     
                     .wpc-backup-grid { grid-template-columns: 1fr; gap: 20px; }
                     
-                    .form-table th { width: 100%; display: block; padding: 10px 0 5px 0; }
-                    .form-table td { display: block; padding: 0 0 20px 0; }
+                    /* cela tabulka jako bloky, jinak se roztahne podle nejsirsi bunky a obsah pretece sekci */
+                    .form-table, .form-table tbody, .form-table tr { display: block; width: 100%; max-width: 100%; }
+                    .form-table th { width: 100%; display: block; padding: 10px 0 5px 0; box-sizing: border-box; }
+                    .form-table td { display: block; padding: 0 0 20px 0; max-width: 100%; box-sizing: border-box; }
+                    .form-table td > div { max-width: 100%; }
+                    /* admin bar ma na mobilu 46px */
+                    .wpc-sticky-nav { top: 46px; }
 
                     .wpc-section:has(h2 .dashicons-admin-tools) .form-table tr:nth-child(2) th {
                         padding-bottom: 20px !important;
@@ -5116,12 +5258,14 @@ add_filter(\'wp_footer\', function() {
                     .wpc-wpforms-label .wpc-badge-active,
                     .wpc-wpforms-label .wpc-badge-notice { 
                         display: block !important; 
-                        width: auto !important;
-                        max-width: calc(100% - 20px) !important; 
-                        margin: 0 auto !important;
+                        width: 100% !important;
+                        max-width: 100% !important; 
+                        margin: 8px 0 0 !important;   /* mezera pod selectem (blokovy layout nema gap) */
+                        box-sizing: border-box;
                         text-align: center;
                         padding: 10px 12px;
                     }
+                    .wpc-wpforms-label select { width: 100% !important; max-width: 100% !important; box-sizing: border-box; }
                     
                     .wpc-tip { position: relative; }
                     .wpc-tooltip { position: fixed !important; left: 20px !important; right: 20px !important; top: 50% !important; transform: translateY(-50%) !important; margin: 0 !important; padding: 40px 20px 20px 20px !important; width: auto !important; max-width: none !important; z-index: 10000 !important; text-align: left !important; }
@@ -5146,8 +5290,10 @@ add_filter(\'wp_footer\', function() {
                     .wpc-translations .translation-number { padding-top: 0; text-align: center; }
                     .wpc-translations .translation-drag-handle { justify-content: center; padding: 8px; background: #f0f0f1; border-radius: 4px; }
                     .wpc-translations .translation-row textarea { width: 100%; }
-                    .wpc-translations .translation-row .button { width: 100%; margin: 0; }
-                    .wpc-translations .remove-translation .dashicons { display: none; }
+                    /* desktopova pravidla maji !important (38px, ikona) - zde je nutne prebit */
+                    .wpc-translations .translation-row .button,
+                    .wpc-translations .remove-translation { width: 100% !important; min-width: 0 !important; height: auto !important; min-height: 36px !important; padding: 6px 12px !important; margin: 0 !important; }
+                    .wpc-translations .remove-translation .dashicons { display: none !important; }
                     .wpc-translations .remove-translation:after { content: '<?php echo esc_js($this->t('remove')); ?>'; }
                     
                     .wpc-system-info { display: block; }
@@ -5345,6 +5491,8 @@ add_filter(\'wp_footer\', function() {
                 @media (max-width: 782px) {
                     .wpc-footer-feedback {
                         text-align: center;
+                        margin-top: 20px;
+                        padding-bottom: 0;
                     }
                     .wpc-modal {
                         width: 95%;
@@ -5414,6 +5562,10 @@ add_filter(\'wp_footer\', function() {
                     }
                 }
                 
+                @media (max-width: 600px) {
+                    .wpc-sticky-nav { top: 0; }
+                }
+
                 @media (max-width: 767px) {
                     /* Responzivní tlačítka pro překlady */
                     .wpc-translation-buttons {
@@ -5583,12 +5735,89 @@ add_filter(\'wp_footer\', function() {
                     });
                 });
 
+                // ---- Nahled prihlasovaci stranky ----
+                (function() {
+                    var $sec = $('#section-login');
+                    var $box = $sec.find('.wpas-login-preview');
+                    if (!$sec.length || !$box.length) return;
+                    var action = $box.data('action');
+                    var nonce  = $box.data('nonce');
+                    var $nav = $('.wpc-sticky-nav');
+                    if ($nav.length) { $box.css('top', (32 + $nav.outerHeight() + 16) + 'px'); }
+
+                    // Zmenseni iframu se zachovanim desktopove sirky (proporce 1:1 se zivou strankou)
+                    var $wrap = $box.find('.wpas-login-preview-frame');
+                    var $iframe = $('#wpas-login-preview-frame');
+                    var BASE_W = 680, contentH = 600;   // 680px = nejmensi sirka s desktopovym rozvrzenim prihlasovaci stranky
+                    function fit() {
+                        var w = $wrap.width(); if (!w) return;
+                        var scale = Math.min(1, w / BASE_W);
+                        $wrap.css('height', Math.round(contentH * scale) + 'px');
+                        $iframe.css({ width: BASE_W + 'px', height: contentH + 'px', transform: 'scale(' + scale + ')' });
+                    }
+                    function measure() {
+                        try {
+                            var d = $iframe[0].contentDocument;
+                            if (d && d.documentElement) {
+                                var h = Math.max(d.documentElement.scrollHeight, d.body ? d.body.scrollHeight : 0);
+                                if (h > 100) contentH = h;
+                            }
+                        } catch (e) {}
+                        fit();
+                    }
+                    // vyska nahledu = skutecna vyska stranky (meni se podle zapnutych prvku)
+                    $iframe.on('load', function() { measure(); setTimeout(measure, 300); });
+                    fit();
+                    $(window).on('resize', fit);
+                    var optionName = '<?php echo esc_js($this->option_name); ?>';
+                    var re = new RegExp('^' + optionName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\[([^\\]]+)\\]$');
+                    var timer = null;
+
+                    function collect() {
+                        if (window.wpasLoginCssCm) { window.wpasLoginCssCm.save(); }
+                        var o = {};
+                        $sec.find('input, select, textarea').each(function() {
+                            var m = (this.name || '').match(re);
+                            if (!m) return;
+                            var key = m[1];
+                            if (key !== 'disable_login_switcher' && key.indexOf('login_') !== 0) return;
+                            if (this.type === 'checkbox') { o[key] = this.checked ? '1' : ''; }
+                            else if (this.type === 'radio') { if (this.checked) o[key] = $(this).val(); }
+                            else { o[key] = $(this).val(); }
+                        });
+                        return o;
+                    }
+                    function refresh() {
+                        if (!$box.is(':visible')) return;   // na uzkych obrazovkach je nahled skryty
+                        // Vnoreny <form> uvnitr formulare nastaveni by prohlizec zahodil,
+                        // proto se odesilaci formular vytvari az ted, primo v <body>
+                        var form = document.createElement('form');
+                        form.method = 'post';
+                        form.action = action;
+                        form.target = 'wpas-login-preview-frame';
+                        form.style.display = 'none';
+                        var fields = { wpas_preview: '1', _wpas_preview_nonce: nonce, wpas_preview_opts: JSON.stringify(collect()) };
+                        for (var name in fields) {
+                            var inp = document.createElement('input');
+                            inp.type = 'hidden'; inp.name = name; inp.value = fields[name];
+                            form.appendChild(inp);
+                        }
+                        document.body.appendChild(form);
+                        form.submit();
+                        setTimeout(function() { if (form.parentNode) form.parentNode.removeChild(form); }, 0);
+                    }
+                    function schedule() { clearTimeout(timer); timer = setTimeout(refresh, 300); }
+
+                    $sec.on('input change wpas-changed', 'input, select, textarea', schedule);
+                    refresh();
+                })();
+
                 $('.wpc-color-picker').wpColorPicker({
                     change: function(event, ui) {
-                        $(this).val(ui.color.toString());
+                        $(this).val(ui.color.toString()).trigger('wpas-changed');
                     },
                     clear: function() {
-                        $(this).val('');
+                        $(this).val('').trigger('wpas-changed');
                     }
                 });
 
@@ -5898,6 +6127,13 @@ add_filter(\'wp_footer\', function() {
                         };
                         
                         var loginCssCmInstance = wp.codeEditor.initialize(loginCssEditor, loginCssEditorSettings);
+                        if (loginCssCmInstance && loginCssCmInstance.codemirror) {
+                            window.wpasLoginCssCm = loginCssCmInstance.codemirror;
+                            loginCssCmInstance.codemirror.on('change', function() {
+                                loginCssCmInstance.codemirror.save();
+                                $('#login_custom_css_editor').trigger('wpas-changed');
+                            });
+                        }
 
                         $('#css_editor_theme').on('change', function() {
                             var newTheme = $(this).val();
@@ -6394,7 +6630,7 @@ add_filter(\'wp_footer\', function() {
                     
                     loginLogoFrame.on('select', function() {
                         var attachment = loginLogoFrame.state().get('selection').first().toJSON();
-                        $('#login_logo').val(attachment.url);
+                        $('#login_logo').val(attachment.url).trigger('wpas-changed');
                         
                         // Zjistene rozmery loga -> pomer stran + predvyplneni obou poli
                         var isSvg = /\.svg(\?|#|$)/i.test(attachment.url || '') || attachment.mime === 'image/svg+xml';
@@ -6422,7 +6658,7 @@ add_filter(\'wp_footer\', function() {
                 
                 $('#login_logo_remove').on('click', function(e) {
                     e.preventDefault();
-                    $('#login_logo').val('');
+                    $('#login_logo').val('').trigger('wpas-changed');
                     $('#login_logo_preview').remove();
                     $(this).hide();
                 });
@@ -6446,7 +6682,7 @@ add_filter(\'wp_footer\', function() {
                     
                     loginBgFrame.on('select', function() {
                         var attachment = loginBgFrame.state().get('selection').first().toJSON();
-                        $('#login_bg_image').val(attachment.url);
+                        $('#login_bg_image').val(attachment.url).trigger('wpas-changed');
                         
                         var styleAttr = 'max-width: 200px; display: block; margin-bottom: 10px; border: 1px solid #c3c4c7; padding: 5px; height: auto;';
 
@@ -6463,7 +6699,7 @@ add_filter(\'wp_footer\', function() {
                 
                 $('#login_bg_image_remove').on('click', function(e) {
                     e.preventDefault();
-                    $('#login_bg_image').val('');
+                    $('#login_bg_image').val('').trigger('wpas-changed');
                     $('#login_bg_image_preview').remove();
                     $(this).hide();
                 });
@@ -7594,7 +7830,10 @@ add_filter(\'wp_footer\', function() {
     }
 
     public function customize_login_page() {
-        $o = get_option($this->option_name, array());
+        $o = $this->get_login_options();
+        if (empty($o['login_customize'])) {
+            return;
+        }
         
         $logo = !empty($o['login_logo']) ? $o['login_logo'] : '';
         // Vychozi vyska loga 50px; explicitne zadana 0 se respektuje (logo bude 0px vysoke)
@@ -8627,18 +8866,57 @@ add_filter(\'wp_footer\', function() {
         <?php
     }
     
-    public function custom_login_logo_url() {
-        $o = get_option($this->option_name, array());
+    public function custom_login_logo_url($url = '') {
+        $o = $this->get_login_options();
+        if (empty($o['login_customize'])) {
+            return $url;
+        }
         $logo_url = !empty($o['login_logo_url']) ? $o['login_logo_url'] : home_url();
         return esc_url($logo_url);
     }
 
-    public function custom_login_logo_title() {
+    public function custom_login_logo_title($title = '') {
+        $o = $this->get_login_options();
+        if (empty($o['login_customize'])) {
+            return $title;
+        }
         return get_bloginfo('name');
     }
 
+    /**
+     * Nahled se do wp-login.php posila POSTem bez prihlasovacich udaju; WP to
+     * vyhodnoti jako prazdny pokus o prihlaseni. Tyto dve chyby v nahledu skryjeme.
+     */
+    public function login_preview_errors($errors) {
+        if ($this->is_login_preview() && is_wp_error($errors)) {
+            $errors->remove('empty_username');
+            $errors->remove('empty_password');
+        }
+        return $errors;
+    }
+
+    /**
+     * V nahledu nesmi stranka roztahovat telo na 100vh — vyska pak odpovida
+     * obsahu (zapnutym/vypnutym prvkum) a iframe v nastaveni se jí prizpusobi.
+     */
+    public function login_preview_head() {
+        if (!$this->is_login_preview()) {
+            return;
+        }
+        echo '<style>html, body.login { min-height: 0 !important; height: auto !important; }</style>' . "
+";
+    }
+
+    public function login_language_dropdown($display) {
+        $o = $this->get_login_options();
+        return empty($o['disable_login_switcher']) ? $display : false;
+    }
+
     public function custom_login_card_header($message) {
-        $o = get_option($this->option_name, array());
+        $o = $this->get_login_options();
+        if (empty($o['login_customize'])) {
+            return $message;
+        }
 
         // Skrytí informačního nadpisu se týká JEN textů (nadpis + podtitulek);
         // logo/ikonu řídí výhradně volba Skrýt logo
@@ -8717,6 +8995,9 @@ add_filter(\'wp_footer\', function() {
         global $wpc_custom_login_valid, $error;
         
         if (!empty($wpc_custom_login_valid)) {
+            return;
+        }
+        if ($this->is_login_preview()) {
             return;
         }
         
